@@ -4,21 +4,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>PLAYFLIX</title>
+    <title>Studyflix</title>
     <link href="estilo.css" rel="stylesheet" type="text/css" />
-    <link rel="shortcut icon" type="imagex/png" href="https://static.wixstatic.com/media/7b8f70_be75a5bfe1ae42e39af978410f60521c~mv2.png/v1/fill/w_71,h_86,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/neoplay-%5B26-06-22%5D%5B10-58-27%5D.png">
+    <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
 </head>
 
 <body>
-    <img id="imagem" src="https://acrediteounao.com/wp-content/uploads/2017/02/filmes.png" alt="Sua Imagem">
+    <img id="imagem" src="https://i.ibb.co/mFqwpnsZ/photo-1618044619888-009e412ff12a.jpg">
 
-    <table>
+    <table class="shadow">
         <tr>
-            <td><img class="logo"
-                    src="https://static.wixstatic.com/media/7b8f70_be75a5bfe1ae42e39af978410f60521c~mv2.png/v1/fill/w_71,h_86,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/neoplay-%5B26-06-22%5D%5B10-58-27%5D.png">
-            </td>
+            <td><img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png"></td>
             <td>
-                <p id="name">PLAYFLIX</p>
+                <p id="name">tudyflix</p>
             </td>
         </tr>
     </table>
@@ -27,18 +25,49 @@
         <section>
             <div class="container">
                 <h2>CADASTRE-SE</h2>
-                </br>
-                <form id="cadastroForm" onsubmit="return validarForm()"></br>
-                    <input type="text" id="nome" placeholder="Nome" required></br>
-                    <input type="text" id="email" placeholder="E-mail" required></br>
-                    <input type="password" id="senha" placeholder="Senha" required></br>
-                    <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required></br>
-                    <a href="page.html"><button type="submit">Cadastrar</button></a></br>
+                <form id="cadastroForm" onsubmit="return validarForm()">
+                    <br>
+                    <input type="text" id="nome" placeholder="   Nome" required><br>
+                    <input type="email" id="email" placeholder="   E-mail" required><br>
+                    <input type="password" id="senha" placeholder="   Senha" required><br>
+                    <input type="password" id="confirmarSenha" placeholder="   Confirmar Senha" required><br>
+                    <button id="pip" type="submit">Cadastrar</button><br>
                 </form>
                 <p id="cadaster">Tem uma conta? <a href="index.html">Acesse aqui</a></p>
             </div>
         </section>
     </center>
+
+    <script>
+        function validarForm() {
+            var email = document.getElementById("email").value;
+            var senha = document.getElementById("senha").value;
+            var confirmarSenha = document.getElementById("confirmarSenha").value;
+
+            // Verifica se o e-mail é válido
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                alert("Por favor, insira um e-mail válido.");
+                return false;
+            }
+
+            // Verifica se a senha tem pelo menos 5 caracteres
+            if (senha.length < 5) {
+                alert("A senha deve ter pelo menos 5 caracteres.");
+                return false;
+            }
+
+            // Verifica se a senha e a confirmação da senha são iguais
+            if (senha !== confirmarSenha) {
+                alert("As senhas não coincidem.");
+                return false;
+            }
+
+            // Se todas as validações passarem, redireciona para a página desejada
+            window.location.href = "page.html";
+            return false; // Impede o envio do formulário
+        }
+    </script>
 </body>
 
 </html>
