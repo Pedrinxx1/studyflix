@@ -1,25 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>PLAYFLIX</title>
   <link href="style.css" rel="stylesheet" type="text/css" />
-  <link rel="shortcut icon" type="imagex/png" href="https://static.wixstatic.com/media/7b8f70_be75a5bfe1ae42e39af978410f60521c~mv2.png/v1/fill/w_71,h_86,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/neoplay-%5B26-06-22%5D%5B10-58-27%5D.png">
+  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
 </head>
 
 <body>
-  <img id="imagem" src="https://www.amofilmeseseries.com/wp-content/uploads/2023/06/Filmes.jpg" alt="Sua Imagem">
+  <img id="imagem" src="https://i.ibb.co/X1XPLSv/d357201784d70bacfbc59b16c01be8be.jpg" alt="Sua Imagem">
 
   <div class="header" id="conteudo">
     <table>
       <tr>
-        <td><img class="logo"
-            src="https://static.wixstatic.com/media/7b8f70_be75a5bfe1ae42e39af978410f60521c~mv2.png/v1/fill/w_71,h_86,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/neoplay-%5B26-06-22%5D%5B10-58-27%5D.png">
-        </td>
+        <td><img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png"></td>
         <td>
-          <p id="name">PLAYFLIX</p>
+          <p id="name">tudyflix</p>
         </td>
       </tr>
     </table>
@@ -28,12 +26,12 @@
   <div id="login">
     <center>
       <section>
-        <form action="page.html" method="get" onsubmit="redirecionarParaPage()">
+        <form id="loginForm" onsubmit="return validarLogin()">
           <br />
           <h2 id="jh">ENTRAR</h2>
-          <input type="text" placeholder="E-mail" required>
+          <input type="text" id="email" placeholder="   Nome de usuário ou e-mail" required>
           <br />
-          <input type="password" placeholder="Senha" required>
+          <input type="password" id="senha" placeholder="   Senha" required>
           <br />
           <button type="submit">Entrar</button>
         </form>
@@ -44,10 +42,33 @@
   </div>
 
   <script>
-    function redirecionarParaPage() {
-      // Simular redirecionamento (pode ser substituído pelo código real, se necessário)
-      console.log("Redirecionando para page.html...");
-      return false; // Isso impede que o formulário seja enviado normalmente
+    function validarLogin() {
+      var usuarioEmail = document.getElementById("email").value;
+      var senha = document.getElementById("senha").value;
+
+      // Verifica se o e-mail é válido
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailPattern.test(usuarioEmail)) {
+        // Se for um e-mail, valida a senha
+        if (senha.length < 5) {
+          alert("A senha deve ter pelo menos 5 caracteres.");
+          return false;
+        }
+      } else {
+        // Se não for um e-mail, assume que é um nome de usuário
+        if (usuarioEmail.length < 3) {
+          alert("O nome de usuário deve ter pelo menos 3 caracteres.");
+          return false;
+        }
+        if (senha.length < 5) {
+          alert("A senha deve ter pelo menos 5 caracteres.");
+          return false;
+        }
+      }
+
+      // Se todas as validações passarem, redireciona para a página desejada
+      window.location.href = "page.html";
+      return false; // Impede o envio do formulário
     }
   </script>
 </body>
