@@ -48,16 +48,13 @@
         <td><img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
         </td>
         <td>
-          <li><a link href="page.html" class="k" id="itens">INÍCIO</p>
+          <h3 class="kk" id="iten">VIDEOAULAS</h3>
         </td>
         <td>
-          <li><a link href="videoaulas.html" class="kk" id="itens">VIDEOAULAS</p>
+          <h3 class="kkk" id="itens">RESUMOS</h3>
         </td>
         <td>
-          <li><a link href="resumos.html" class="kkk" id="itens">RESUMOS</p>
-        </td>
-        <td>
-          <li><a link href="Questoes.html" class="kkkk" id="itens">QUESTÕES</p>
+          <h3 class="kkkk" id="itenss">QUESTÕES</h3>
         </td>
       </tr>
     </table>
@@ -185,6 +182,14 @@
         event.preventDefault();
         // Redireciona para a URL desejada
         window.location.href = "https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23";
+    });
+
+    // Seleciona o link pelo ID
+  document.getElementById("iten").addEventListener("click", function(event) {
+        // Previne o comportamento padrão do link
+        event.preventDefault();
+        // Redireciona para a URL desejada
+        window.location.href = "videoaulas.html";
     });
   </script>
 </body>
