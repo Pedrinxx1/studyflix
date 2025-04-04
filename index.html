@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Studyflix</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
+</head>
+
+<body>
+  <img id="imagem" src="https://i.ibb.co/X1XPLSv/d357201784d70bacfbc59b16c01be8be.jpg" alt="Sua Imagem">
+
+  <div class="header" id="conteudo">
+    <table>
+      <tr>
+        <td><img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png"></td>
+        <td>
+          <p id="name">Studyflix</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="login">
+    <center>
+      <section>
+        <form id="loginForm" onsubmit="return validarLogin()">
+          <br />
+          <h2 id="jh">ENTRAR</h2>
+          <input type="text" id="email" placeholder="   Nome de usuário ou e-mail" required>
+          <br />
+          <input type="password" id="senha" placeholder="   Senha" required>
+          <br />
+          <button type="submit">Entrar</button>
+        </form>
+        <br>
+        <p id="cadaster">Novo por aqui? <a href="cadaster.html">Assine agora</a></p>
+      </section>
+    </center>
+  </div>
+
+  <script>
+    function validarLogin() {
+      var usuarioEmail = document.getElementById("email").value;
+      var senha = document.getElementById("senha").value;
+
+      // Verifica se o e-mail é válido
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailPattern.test(usuarioEmail)) {
+        // Se for um e-mail, valida a senha
+        if (senha.length < 5) {
+          alert("A senha deve ter pelo menos 5 caracteres.");
+          return false;
+        }
+      } else {
+        // Se não for um e-mail, assume que é um nome de usuário
+        if (usuarioEmail.length < 3) {
+          alert("O nome de usuário deve ter pelo menos 3 caracteres.");
+          return false;
+        }
+        if (senha.length < 5) {
+          alert("A senha deve ter pelo menos 5 caracteres.");
+          return false;
+        }
+      }
+
+      // Se todas as validações passarem, redireciona para a página desejada
+      window.location.href = "page.html";
+      return false; // Impede o envio do formulário
+    }
+  </script>
+</body>
+
+</html>

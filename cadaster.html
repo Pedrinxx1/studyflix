@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Studyflix</title>
+    <link href="estilo.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
+</head>
+
+<body>
+    <img id="imagem" src="https://i.ibb.co/mFqwpnsZ/photo-1618044619888-009e412ff12a.jpg">
+
+    <table class="shadow">
+        <tr>
+            <td><img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png"></td>
+            <td>
+                <p id="name">tudyflix</p>
+            </td>
+        </tr>
+    </table>
+
+    <center>
+        <section>
+            <div class="container">
+                <h2>CADASTRE-SE</h2>
+                <form id="cadastroForm" onsubmit="return validarForm()">
+                    
+                    <input type="text" id="nome" placeholder="   Nome" required><br>
+                    <input type="email" id="email" placeholder="   E-mail" required><br>
+                    <input type="password" id="senha" placeholder="   Senha" required><br>
+                    <input type="password" id="confirmarSenha" placeholder="   Confirmar Senha" required><br>
+                    <button id="pip" type="submit">Cadastrar</button><br>
+                </form>
+                <p id="cadaster">Tem uma conta? <a href="index.html">Acesse aqui</a></p>
+            </div>
+        </section>
+    </center>
+
+    <script>
+        function validarForm() {
+            var email = document.getElementById("email").value;
+            var senha = document.getElementById("senha").value;
+            var confirmarSenha = document.getElementById("confirmarSenha").value;
+
+            // Verifica se o e-mail é válido
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                alert("Por favor, insira um e-mail válido.");
+                return false;
+            }
+
+            // Verifica se a senha tem pelo menos 5 caracteres
+            if (senha.length < 5) {
+                alert("A senha deve ter pelo menos 5 caracteres.");
+                return false;
+            }
+
+            // Verifica se a senha e a confirmação da senha são iguais
+            if (senha !== confirmarSenha) {
+                alert("As senhas não coincidem.");
+                return false;
+            }
+
+            // Se todas as validações passarem, redireciona para a página desejada
+            window.location.href = "page.html";
+            return false; // Impede o envio do formulário
+        }
+    </script>
+</body>
+
+</html>
