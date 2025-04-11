@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>PAS</title>
+  <title>Studyflix</title>
   <link href="pas.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
   <link rel="shortcut icon" type="imagex/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
@@ -40,7 +40,7 @@
 </head>
 
 <body>
-  <img id="imagem" src="https://i.imgur.com/f3OifNV_d.webp?maxwidth=760&fidelity=grand" alt="Sua Imagem">
+  <img id="imagem" src="https://i.ibb.co/HLXPV5hy/Whats-App-Image-2025-04-10-at-20-22-40.jpg" alt="Sua Imagem">
 
   <div id="background">
     <table>
@@ -63,15 +63,17 @@
   <i id="nameimg">SAIBA COMO FUNCIONA A PROVA<BR>PARA PARA REALIZA-LA</i>
   <div class="all">
 
-    <a href="aselement.html"><button class="l" id="play">
-        <table>
+    <a href="tudos.html"><button class="l" id="play">
+        <table id="assi"><a href="" id="assi">
           <tr>
-            <td><img class="l" id="h" src="https://icons.iconarchive.com/icons/steve/zondicons/256/Play-icon.png"></td>
+            <td><img class="l" id="h" 
+              src="https://icons.iconarchive.com/icons/steve/zondicons/256/Play-icon.png"></td>
             <td>
-              <a href="https://www.youtube.com/watch?v=jp6PB1IeS9M" target="_blank">ASSISTIR (YouTube)</a>
+              <p>ASSISTIR</p>
 
             </td>
           </tr>
+          </a>
         </table>
       </button></a>
     <a href="ifelementos.html">
@@ -183,6 +185,23 @@
         event.preventDefault();
         // Redireciona para a URL desejada
         window.location.href = "https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23";
+    });
+
+    // Seleciona o link pelo ID
+  document.getElementById("iten").addEventListener("click", function(event) {
+        // Previne o comportamento padrão do link
+        event.preventDefault();
+        // Redireciona para a URL desejada
+        window.location.href = "page.html";
+    });
+
+    // Seleciona o link pelo ID
+  document.getElementById("itens").addEventListener("click", function(event) {
+        // Previne o comportamento padrão do link
+        event.preventDefault();
+        // Redireciona para a URL desejada
+        window.location.href = "enem.html";
+
     });
   </script>
 </body>
