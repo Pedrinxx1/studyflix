@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StudyFlix - Plataforma de Estudos</title>
+    <style>
+        /* Cores e estilos base */
+        body {
+            margin: 0;
+            background-color: #141414;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background: linear-gradient(to bottom, #e44aff5d, transparent);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            height: 60px;
+        }
+
+        /* Logo no header */
+        #logo {
+            padding-top: 15px;
+            height: 90px; /* Ajuste a altura conforme sua logo */
+            width: 90px;
+            cursor: pointer;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            border-bottom: 2px solid #e44aff5d;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* Sinopse */
+        #sinopse p {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* Matéria */
+        #materia {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 6px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #materia img {
+            max-width: 300px;
+            width: 100%;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        #materia-content {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        #materia h3 {
+            margin-top: 0;
+            color: #e44aff;
+        }
+
+        #materia p {
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        /* Player estilo Netflix */
+        #player-section {
+            background-color: #222;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        #main-video {
+            width: 100%;
+            height: 400px;
+            border-radius: 8px;
+            background-color: black;
+        }
+
+        #video-list {
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        #video-list::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        #video-list::-webkit-scrollbar-thumb {
+            background-color: #e44aff5d;
+            border-radius: 4px;
+        }
+
+        .video-thumb {
+            flex: 0 0 160px;
+            cursor: pointer;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .video-thumb.selected {
+            border-color: #e44aff;
+        }
+
+        .video-thumb img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .video-thumb p {
+            margin: 5px 0 0 5px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            #materia {
+                flex-direction: column;
+            }
+
+            #main-video {
+                height: 220px;
+            }
+
+            #video-list {
+                gap: 10px;
+            }
+
+            .video-thumb {
+                flex: 0 0 120px;
+            }
+
+            .video-thumb img {
+                height: 70px;
+            }
+
+            .arv {
+                font-size:80px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <!-- Substitua o caminho abaixo pelo caminho da sua logo -->
+    <img id="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="" />
+</header>
+
+<main>
+    <!-- Sinopse do site -->
+    <section id="sinopse">
+        <h2 class="arv">Sobre o StudyFlix</h2>
+        <p>
+            O StudyFlix é uma plataforma online inspirada no estilo da Netflix, dedicada a oferecer conteúdos educacionais de forma organizada e acessível. Aqui você encontra matérias, sinopses e videoaulas para facilitar seu aprendizado.
+        </p>
+    </section>
+
+    <!-- Matéria a ser estudada com imagem -->
+    <section id="materia">
+        <img src="https://conhecimentocientifico.r7.com/wp-content/uploads/2020/04/matematica-o-que-e-conceito-historia-e-importancia.jpg.webp" alt="Imagem ilustrativa de física quântica" />
+        <div id="materia-content">
+            <h2>Matéria em Destaque</h2>
+            <h3>Introdução à Matemática Básica</h3>
+            <p>
+                Nesta matéria, você vai aprender os conceitos básicos da matemática básica, como soma, substração, divisão, multiplicação, frações, etc. Ideal para quem quer entender e aprender os preceitos e conceitos da Matemática.
+            </p>
+        </div>
+    </section>
+
+    <!-- Player estilo Netflix -->
+    <section id="player-section">
+        <h2>Assista às Videoaulas</h2>
+        <!-- Vídeo principal -->
+        <iframe id="main-video" src="https://www.youtube.com/embed/ScX9v6q6v7k" title="Videoaula principal" allowfullscreen></iframe>
+
+        <!-- Lista de vídeos para seleção -->
+        <div id="video-list">
+            <div class="video-thumb selected" data-video="https://www.youtube.com/embed/ScX9v6q6v7k">
+                <img src="https://img.youtube.com/vi/ScX9v6q6v7k/hqdefault.jpg" alt="Videoaula 1" />
+                <p>Videoaula 1</p>
+            </div>
+            <div class="video-thumb" data-video="https://www.youtube.com/embed/2z8JmcrW-As">
+                <img src="https://img.youtube.com/vi/2z8JmcrW-As/hqdefault.jpg" alt="Videoaula 2" />
+                <p>Videoaula 2</p>
+            </div>
+            <div class="video-thumb" data-video="https://www.youtube.com/embed/1Z2k6v6v7k">
+                <img src="https://img.youtube.com/vi/1Z2k6v6v7k/hqdefault.jpg" alt="Videoaula 3" />
+                <p>Videoaula 3</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    // Script para trocar o vídeo principal ao clicar nas miniaturas
+    const mainVideo = document.getElementById('main-video');
+    const videoThumbs = document.querySelectorAll('.video-thumb');
+
+    videoThumbs.forEach(thumb => {
+        thumb.addEventListener('click', () => {
+            // Atualiza o src do iframe principal
+            const videoUrl = thumb.getAttribute('data-video');
+            mainVideo.src = videoUrl;
+
+            // Atualiza a borda selecionada
+            videoThumbs.forEach(t => t.classList.remove('selected'));
+            thumb.classList.add('selected');
+        });
+    });
+</script>
+
+</body>
+</html>

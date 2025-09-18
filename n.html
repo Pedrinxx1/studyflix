@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      background: #1f1f1f;
+      padding: 20px;
+      cursor: pointer;
+    }
+    header img {
+      height: 60px;
+    }
+    header h1 {
+      margin: 10px 0 0;
+      font-size: 24px;
+      color: #ffcc00;
+    }
+    .container {
+      padding: 20px;
+    }
+    h2 {
+      margin-top: 30px;
+      color: #ffcc00;
+    }
+    h3 {
+      margin-top: 20px;
+      color: #ff9900;
+    }
+    iframe {
+      width: 100%;
+      height: 315px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+    }
+    .btn {
+      display: inline-block;
+      margin: 15px 0 40px;
+      padding: 10px 20px;
+      background: #ffcc00;
+      color: #121212;
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo" id="logo">
+    <h1>Artes</h1>
+  </header>
+  
+  <div class="container" id="content"></div>
+
+  <script>
+    const artesData = {
+      "PAS 1": {
+        "Arte Rupestre e Antiguidade": [
+          { title: "Arte Rupestre", url: "https://www.youtube.com/embed/1VY5XoJ5FzY" },
+          { title: "Arte Egípcia", url: "https://www.youtube.com/embed/o6NruM4brNA" }
+        ],
+        "Arte Clássica": [
+          { title: "Arte Grega", url: "https://www.youtube.com/embed/ZqF5uWcIuP4" },
+          { title: "Arte Romana", url: "https://www.youtube.com/embed/FeCfG6Rt9K4" }
+        ]
+      },
+      "PAS 2": {
+        "Arte Medieval": [
+          { title: "Arte Medieval", url: "https://www.youtube.com/embed/Nz8P5k4xwR4" }
+        ],
+        "Arte Renascentista": [
+          { title: "Renascentismo nas Artes", url: "https://www.youtube.com/embed/wnK6apOAG7o" }
+        ]
+      },
+      "PAS 3": {
+        "Arte Barroca e Neoclássica": [
+          { title: "Arte Barroca", url: "https://www.youtube.com/embed/U8O9t8FCE6I" }
+        ],
+        "Arte Moderna e Vanguardas": [
+          { title: "Arte Moderna", url: "https://www.youtube.com/embed/nr8imphZKxE" }
+        ]
+      },
+      "ENEM": {
+        "Arte no Brasil": [
+          { title: "Arte no Brasil Colonial", url: "https://www.youtube.com/embed/jEnb5ZexiJQ" }
+        ],
+        "Arte Contemporânea": [
+          { title: "Arte Contemporânea", url: "https://www.youtube.com/embed/1iK5d5t4dJs" }
+        ]
+      }
+    };
+
+    function loadContent() {
+      const container = document.getElementById("content");
+      container.innerHTML = "";
+
+      for (const etapa in artesData) {
+        const etapaTitle = document.createElement("h2");
+        etapaTitle.textContent = etapa;
+        container.appendChild(etapaTitle);
+
+        for (const topic in artesData[etapa]) {
+          const h3 = document.createElement("h3");
+          h3.textContent = topic;
+          container.appendChild(h3);
+
+          artesData[etapa][topic].forEach(video => {
+            const iframe = document.createElement("iframe");
+            iframe.src = video.url;
+            iframe.title = video.title;
+            container.appendChild(iframe);
+          });
+        }
+
+        const btn = document.createElement("a");
+        btn.href = "#";
+        btn.textContent = "Questões";
+        btn.className = "btn";
+        container.appendChild(btn);
+      }
+    }
+
+    loadContent();
+
+    document.getElementById("logo").addEventListener("click", () => {
+      window.location.href = "page.html";
+    });
+  </script>
+</body>
+</html>

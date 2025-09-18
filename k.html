@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Studyflix - Probabilidade e Estatística</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #141414;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    header img.logo {
+      position: absolute;
+      left: 20px;
+      height: 60px;
+      cursor: pointer;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin: 0;
+      color: #fff;
+    }
+
+    button {
+      background-color: #7100bc;
+      border: none;
+      color: white;
+      padding: 12px 25px;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #5a0094;
+    }
+
+    button.active {
+      background-color: #4a007c;
+      cursor: default;
+    }
+
+    #subject-bar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    #subject-bar button {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #subject-bar button:hover {
+      background-color: #555;
+    }
+
+    #subject-bar button.active {
+      background-color: #4a007c;
+      cursor: default;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      flex-grow: 1;
+    }
+
+    .sidebar {
+      min-width: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      background-color: #222;
+      border-radius: 8px;
+      padding: 15px;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+      border-bottom: 2px solid #7100bc;
+      padding-bottom: 5px;
+    }
+
+    .topic-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .topic-list li {
+      margin-bottom: 10px;
+    }
+
+    .topic-list button {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #ccc;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .topic-list button:hover {
+      background-color: #7100bc;
+      color: white;
+    }
+
+    .topic-list button.active {
+      background-color: #4a007c;
+      color: white;
+      cursor: default;
+    }
+
+    .btn-questoes {
+      margin-top: 20px;
+      background-color: #7100bc;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-questoes:hover {
+      background-color: #5a0094;
+    }
+
+    .videos-area {
+      flex: 1;
+      min-width: 320px;
+    }
+
+    .videos-area h2 {
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+      border-bottom: 3px solid #7100bc;
+      padding-bottom: 5px;
+    }
+
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .video-card {
+      background-color: #222;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px #7100bc;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-card iframe {
+      width: 100%;
+      height: 180px;
+      border: none;
+    }
+
+    .video-info {
+      padding: 10px;
+      font-weight: 600;
+      text-align: center;
+      color: #eee;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .sidebar {
+        max-height: none;
+        width: 100%;
+      }
+
+      .videos-area {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo Studyflix" class="logo" id="logo" />
+    <h1>Probabilidade e Estatística</h1>
+  </header>
+
+  <nav id="subject-bar"></nav>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h2 id="sidebar-title">Tópicos</h2>
+      <ul class="topic-list" id="topic-list"></ul>
+      <button class="btn-questoes" id="btn-questoes">Questões</button>
+    </aside>
+
+    <section class="videos-area">
+      <h2 id="topic-title">Selecione um tópico</h2>
+      <div class="videos-grid" id="videos-grid"></div>
+    </section>
+  </div>
+
+  <script>
+    // Redireciona ao clicar na logo
+    document.getElementById('logo').addEventListener('click', () => {
+      window.location.href = 'page.html';
+    });
+
+    // Dados Probabilidade e Estatística
+    const peData = {
+      pas1: {
+        topics: {
+          "Conceitos Básicos": [
+            { title: "Probabilidade Básica", url: "https://www.youtube.com/embed/0D9EyoZ5eFQ" },
+            { title: "Eventos e Experimentos", url: "https://www.youtube.com/embed/5n8uJY1D1AE" }
+          ],
+          "Gráficos e Tabelas": [
+            { title: "Interpretando Gráficos", url: "https://www.youtube.com/embed/qE7Y6B2G1vA" }
+          ]
+        }
+      },
+      pas2: {
+        topics: {
+          "Probabilidade Condicional": [
+            { title: "Probabilidade Condicional", url: "https://www.youtube.com/embed/zy1p6_kOHHo" }
+          ],
+          "Distribuição de Probabilidade": [
+            { title: "Distribuição de Probabilidade", url: "https://www.youtube.com/embed/5FRxpxg4R6U" }
+          ]
+        }
+      },
+      pas3: {
+        topics: {
+          "Estatística Descritiva": [
+            { title: "Média, Mediana e Moda", url: "https://www.youtube.com/embed/Z2yXbU0A7kY" }
+          ],
+          "Variância e Desvio Padrão": [
+            { title: "Variância e Desvio Padrão", url: "https://www.youtube.com/embed/XsB8JZ1Kj3E" }
+          ]
+        }
+      },
+      enem: {
+        topics: {
+          "Probabilidade e Estatística": [
+            { title: "Probabilidade e Estatística ENEM", url: "https://www.youtube.com/embed/0eB9cFoPCt0" }
+          ]
+        }
+      }
+    };
+
+    // DOM
+    const subjectBar = document.getElementById('subject-bar');
+    const topicList = document.getElementById('topic-list');
+    const topicTitle = document.getElementById('topic-title');
+    const sidebarTitle = document.getElementById('sidebar-title');
+    const videosGrid = document.getElementById('videos-grid');
+    const btnQuestoes = document.getElementById('btn-questoes');
+
+    let current = 'pas1';
+    let currentTopic = null;
+
+    function clearActive(container) {
+      container.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function clearAll() {
+      topicList.innerHTML = '';
+      videosGrid.innerHTML = '';
+    }
+
+    function loadSubjectBar() {
+      subjectBar.innerHTML = '';
+      ['pas1', 'pas2', 'pas3', 'enem'].forEach((item) => {
+        const btn = document.createElement('button');
+        btn.textContent = item.toUpperCase();
+        if (item === current) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          if (current === item) return;
+          current = item;
+          currentTopic = null;
+          clearActive(subjectBar);
+          btn.classList.add('active');
+          loadTopics();
+        });
+        subjectBar.appendChild(btn);
+      });
+    }
+
+    function loadTopics() {
+      sidebarTitle.textContent = `Tópicos - ${current.toUpperCase()}`;
+      clearAll();
+      topicTitle.textContent = 'Selecione um tópico';
+
+      const topics = peData[current].topics;
+      Object.keys(topics).forEach(topicName => {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.textContent = topicName;
+        btn.addEventListener('click', () => {
+          if (currentTopic === topicName) return;
+          currentTopic = topicName;
+          clearActive(topicList);
+          btn.classList.add('active');
+          loadVideos(topicName);
+        });
+        li.appendChild(btn);
+        topicList.appendChild(li);
+      });
+    }
+
+    function loadVideos(topicName) {
+      topicTitle.textContent = topicName;
+      videosGrid.innerHTML = '';
+      const videos = peData[current].topics[topicName];
+      videos.forEach(video => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML = `
+          <iframe src="${video.url}" allowfullscreen></iframe>
+          <div class="video-info">${video.title}</div>
+        `;
+        videosGrid.appendChild(card);
+      });
+    }
+
+    btnQuestoes.addEventListener('click', () => {
+      window.open('questoese.html', '_blank');
+    });
+
+    function init() {
+      loadSubjectBar();
+      loadTopics();
+    }
+
+    init();
+  </script>
+</body>
+
+</html>

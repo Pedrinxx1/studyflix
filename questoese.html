@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Quiz PAS & ENEM — Studyflix</title>
+  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: linear-gradient(180deg, #07070f 0%, #0a0a18 70%);
+      color: #fff;
+    }
+    .header {
+      background: #0a0a1b;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    .header .logo {
+      height: 40px;
+    }
+    .header #name {
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin: 0;
+      color: #a855f7; /* Roxo */
+    }
+    #quizContainer {
+      max-width: 980px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #0c0c16;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab {
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s;
+      background: #0a0a16;
+      color: #fff;
+    }
+    .tab:hover {
+      background: rgba(168, 85, 247, 0.1);
+    }
+    .tab.active {
+      background: #a855f7;
+      color: #fff;
+      font-weight: 600;
+      border-color: #a855f7;
+    }
+    .top-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    select,
+    input[type=text] {
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: none;
+      outline: 2px solid rgba(168, 85, 247, 0.2);
+      background: #0a0a16;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    select:focus,
+    input[type=text]:focus {
+      outline-color: #a855f7;
+    }
+    .btn {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: none;
+      background: #a855f7;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: #9333ea;
+    }
+    .btn.secondary {
+      background: transparent;
+      color: #a855f7;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .btn.secondary:hover {
+      background: rgba(168, 85, 247, 0.1);
+    }
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+    }
+    #questionArea {
+      background: #0b0b14;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+      min-height: 200px;
+    }
+    .question-title {
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+      color: #fff; /* Letras brancas */
+    }
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .answer {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      background: #0a0a16;
+      color: #fff; /* Letras brancas */
+      transition: all 0.2s;
+    }
+    .answer:hover {
+      background: rgba(168, 85, 247, 0.1);
+    }
+    .answer.selected {
+      outline: 3px solid #a855f7;
+      background: rgba(168, 85, 247, 0.15);
+    }
+    .result {
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-top: 16px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .result.correct {
+      background: rgba(167, 139, 250,0.15);
+      border:1px solid rgba(167, 139, 250,0.3);
+      color:#84cc16;
+    }
+    .result.wrong {
+      background: rgba(239,68,68,0.12);
+      border:1px solid rgba(239,68,68,0.2);
+      color:#ef4444;
+    }
+    aside .card {
+      background: #0b0b14;
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    }
+    .leaderboard {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .lb-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #0a0a16;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      transition: all 0.2s;
+      color: #fff;
+    }
+    .lb-item:hover {
+      background: rgba(168,85,247,0.05);
+    }
+    small { color: #c4b5fd; }
+    @media(max-width:880px){.main{grid-template-columns:1fr} .leaderboard{order:2}}
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
+    <p id="name">Studyflix Quiz</p>
+  </div>
+
+  <div id="quizContainer">
+    <div class="top-row">
+      <label for="nickname">Apelido</label>
+      <input id="nickname" type="text" placeholder="Seu apelido" />
+      <button id="saveNick" class="btn secondary">Salvar</button>
+    </div>
+
+    <div class="tabs" id="examTabs">
+      <button class="tab active" data-exam="pas">PAS</button>
+      <button class="tab" data-exam="enem">ENEM</button>
+    </div>
+
+    <div class="top-row">
+      <label for="topic">Tópico</label>
+      <select id="topic">
+        <option value="logica">Lógica</option>
+        <option value="matematica">Matemática</option>
+        <option value="portugues">Português</option>
+      </select>
+      <div style="flex:1"></div>
+      <button id="startQuiz" class="btn">Iniciar/Próxima</button>
+    </div>
+
+    <div class="main">
+      <div id="questionArea">
+        <p class="question-title">Clique em Iniciar para começar o quiz.</p>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h3>Placar</h3>
+          <div id="userStats"><small>Nenhum jogador salvo.</small></div>
+          <hr />
+          <h3>Ranking local</h3>
+          <div class="leaderboard" id="leaderboard"></div>
+          <hr />
+          <button id="resetBoard" class="btn secondary">Resetar ranking local</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+ <script>
+const QUESTIONS = {
+  pas: {
+    logica: [
+      {id:1,q:'Se todo A é B e todo B é C, então...',choices:['Algum C é A','Todo A é C','Todo C é A','Nenhuma das anteriores'],answer:1,explain:'Se A ⊂ B e B ⊂ C, então A ⊂ C.'},
+      {id:2,q:'Se p→q e q→r, então p→r é uma propriedade de:',choices:['Reflexividade','Transitividade','Simetria','Antissimetria'],answer:1,explain:'Transitividade de implicação.'}
+    ],
+    matematica:[
+      {id:3,q:'Qual o valor de 2^3 × 2^2?',choices:['32','8','16','2^5'],answer:3,explain:'2^3×2^2 = 2^(3+2) = 2^5 = 32'},
+      {id:5,q:'Em uma urna com 5 bolas vermelhas e 3 bolas azuis, qual a probabilidade de retirar uma bola vermelha?',choices:['5/8','3/8','1/2','1/8'],answer:0,explain:'Probabilidade = nº de casos favoráveis / nº de casos possíveis = 5/8'},
+      {id:6,q:'A média dos números 2, 4, 6, 8 e 10 é:',choices:['5','6','7','8'],answer:1,explain:'Média = (2+4+6+8+10)/5 = 30/5 = 6'},
+      {id:7,q:'A mediana dos números 1, 3, 5, 7, 9 é:',choices:['1','3','5','7'],answer:2,explain:'Mediana = número central = 5'}
+    ],
+    portugues:[
+      {id:4,q:'Qual é a forma correta?','choices':['A gente vamos','Nós vamos','A gente vamos nós','Nós vai'],answer:1,explain:'"Nós vamos" é a forma culta.'}
+    ]
+  },
+  enem: {
+    logica:[
+      {id:101,q:'Uma proposição é verdadeira somente quando...',choices:['sempre verdadeira','pelo menos uma vez verdadeira','não houver contradição','for falsa'],answer:2,explain:'Definição de satisfatibilidade.'},
+      {id:102,q:'Complete: todo X que é Y será Z. Se "João é X" e "todo X é Y", então...',choices:['João é Z','João não é Z','Não dá para saber','João é Y e Z'],answer:3,explain:'Não dá para concluir Z sem Y→Z.'}
+    ],
+    matematica:[
+      {id:103,q:'Se x+2=5 então x=?',choices:['2','3','-3','7'],answer:1,explain:'x = 3'},
+      {id:105,q:'Em uma pesquisa, 20% das pessoas gostam de chocolate. Se a amostra tem 50 pessoas, quantas gostam de chocolate?',choices:['5','10','15','20'],answer:1,explain:'20% de 50 = 0,2 × 50 = 10'},
+      {id:106,q:'Qual a probabilidade de obter cara ao lançar uma moeda justa?',choices:['0,25','0,5','0,75','1'],answer:1,explain:'Probabilidade = 1/2 = 0,5'},
+      {id:107,q:'O desvio padrão da sequência 2,4,6,8,10 é aproximadamente:',choices:['2,83','3','2,5','4'],answer:0,explain:'Desvio padrão = √(Σ(xi-μ)²/n) ≈ 2,83'}
+    ],
+    portugues:[
+      {id:104,q:'Indique o sujeito: "Choveu ontem"',choices:['Sujeito indeterminado','Sujeito oculto','Sujeito inexistente','Sujeito simples'],answer:2,explain:'Sujeito inexistente.'}
+    ]
+  }
+};
+
+const LS_USER = 'quiz_user';
+const LS_BOARD = 'quiz_board_v1';
+
+function loadUser(){const raw=localStorage.getItem(LS_USER);return raw?JSON.parse(raw):null;}
+function saveUser(user){localStorage.setItem(LS_USER,JSON.stringify(user));}
+function loadBoard(){const raw=localStorage.getItem(LS_BOARD);return raw?JSON.parse(raw):{};}
+function saveBoard(board){localStorage.setItem(LS_BOARD,JSON.stringify(board));}
+
+const nicknameInput = document.getElementById('nickname');
+const saveNickBtn = document.getElementById('saveNick');
+const startBtn = document.getElementById('startQuiz');
+const examTabs = document.getElementById('examTabs');
+const topicSelect = document.getElementById('topic');
+const questionArea = document.getElementById('questionArea');
+const leaderboardEl = document.getElementById('leaderboard');
+const userStatsEl = document.getElementById('userStats');
+const resetBoardBtn = document.getElementById('resetBoard');
+
+let currentExam='pas';
+let currentQuestion=null;
+let selectedChoice=null;
+
+function renderUser(){
+  const u=loadUser();
+  if(!u){userStatsEl.innerHTML='<small>Nenhum jogador salvo.</small>';}
+  else{userStatsEl.innerHTML=`<strong>${u.nick}</strong><div><small>Acertos: ${u.correct||0} / ${u.attempts||0}</small></div>`; nicknameInput.value=u.nick;}
+}
+
+function renderLeaderboard(){
+  const board=loadBoard(); const arr=Object.values(board);
+  arr.sort((a,b)=>(b.correct||0)-(a.correct||0)||((b.correct/(b.attempts||1))-(a.correct/(a.attempts||1))));
+  leaderboardEl.innerHTML='';
+  if(arr.length===0){leaderboardEl.innerHTML='<small>Nenhum registro.</small>';return;}
+  arr.slice(0,20).forEach((p,idx)=>{
+    const el=document.createElement('div');el.className='lb-item';
+    el.innerHTML=`<div><strong>${idx+1}. ${p.nick}</strong><div><small>Acertos: ${p.correct||0} • Tentativas: ${p.attempts||0}</small></div></div><div><small>${Math.round(((p.correct||0)/(p.attempts||1))*100)+'%'}</small></div>`;
+    leaderboardEl.appendChild(el);
+  });
+}
+
+function escapeHtml(s){return String(s).replace(/[&<>"]+/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c));}
+
+// Salvar apelido
+saveNickBtn.addEventListener('click', ()=>{
+  const nick = (nicknameInput.value || '').trim();
+  if(!nick){ alert('Digite um apelido.'); return; }
+
+  let user = loadUser() || {};
+
+  // Se o apelido mudou, reinicia acertos/tentativas
+  if(user.nick !== nick){
+    user.correct = 0;
+    user.attempts = 0;
+  }
+
+  user.nick = nick;
+  saveUser(user);
+
+  // Atualiza ranking local
+  const board = loadBoard();
+  if(!board[nick]) board[nick] = { nick, correct: user.correct, attempts: user.attempts };
+  else board[nick].nick = nick; // mantém acertos se já existia
+  saveBoard(board);
+
+  renderUser();
+  renderLeaderboard();
+});
+
+// Seleção de prova PAS ou ENEM
+examTabs.addEventListener('click',(e)=>{
+  if(!e.target.dataset) return;
+  const ex=e.target.dataset.exam;
+  if(!ex) return;
+  currentExam=ex;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+  questionArea.innerHTML='<p class="question-title">Clique em Iniciar para começar o quiz.</p>';
+});
+
+// Iniciar quiz
+startBtn.addEventListener('click', ()=>{
+  const user = loadUser();
+  if(!user || !user.nick || user.nick.trim()===''){
+    alert('Salve seu apelido antes de iniciar o quiz.');
+    return;
+  }
+
+  const topic = topicSelect.value;
+  const pool = (QUESTIONS[currentExam] && QUESTIONS[currentExam][topic]) || [];
+  if(pool.length===0){
+    questionArea.innerHTML='<p class="question-title">Ainda não há questões para este conjunto.</p>';
+    return;
+  }
+
+  const idx = Math.floor(Math.random()*pool.length);
+  currentQuestion = pool[idx];
+  selectedChoice = null;
+  renderQuestion(currentQuestion);
+});
+
+// Resetar ranking
+resetBoardBtn.addEventListener('click',()=>{
+  if(confirm('Resetar ranking local?')){localStorage.removeItem(LS_BOARD); renderLeaderboard();}
+});
+
+// Renderizar pergunta
+function renderQuestion(q){
+  const html=[];
+  html.push(`<div><p class="question-title" style="color:white;">${escapeHtml(q.q)}</p></div>`);
+  html.push('<div class="answers">');
+  q.choices.forEach((c,i)=>{
+    html.push(`<div class="answer" data-i="${i}" tabindex="0" style="color:white;">${String.fromCharCode(65+i)}. ${escapeHtml(c)}</div>`);
+  });
+  html.push('</div><div style="margin-top:12px;display:flex;gap:8px"><button id="submitAnswer" class="btn">Responder</button><button id="showAnswer" class="btn secondary">Mostrar resposta</button></div>');
+  questionArea.innerHTML=html.join('');
+
+  document.querySelectorAll('.answer').forEach(a=>{
+    a.addEventListener('click',()=>{
+      document.querySelectorAll('.answer').forEach(x=>x.classList.remove('selected'));
+      a.classList.add('selected');
+      selectedChoice=Number(a.dataset.i);
+    });
+  });
+
+  document.getElementById('submitAnswer').addEventListener('click',()=>{
+    if(selectedChoice===null){alert('Selecione uma alternativa.'); return;}
+    handleAnswer(selectedChoice);
+  });
+
+  document.getElementById('showAnswer').addEventListener('click',()=>{revealAnswer(q.answer);});
+}
+
+// Verificar resposta
+function handleAnswer(choiceIdx){
+  const q=currentQuestion;
+  const correct=q.answer;
+  const user=loadUser();
+  if(!user){alert('Salve seu apelido antes de jogar.');return;}
+  user.attempts=(user.attempts||0)+1;
+  if(choiceIdx===correct){user.correct=(user.correct||0)+1; showResult(true,q);}
+  else {showResult(false,q);}
+  saveUser(user);
+  const board=loadBoard();
+  board[user.nick]={...board[user.nick]||{}, nick:user.nick, attempts:user.attempts, correct:user.correct};
+  saveBoard(board);
+  renderUser(); renderLeaderboard();
+}
+
+// Mostrar resposta
+function revealAnswer(correctIdx){
+  const q=currentQuestion;if(!q)return;
+  const chosen=selectedChoice;const container=document.createElement('div');
+  if(chosen===correctIdx){container.className='result correct'; container.innerHTML=`Resposta correta: ${String.fromCharCode(65+correctIdx)}. ${escapeHtml(q.choices[correctIdx])} <div><small>${escapeHtml(q.explain||'')}</small></div>`;}
+  else{container.className='result wrong'; container.innerHTML=`Resposta: ${String.fromCharCode(65+correctIdx)}. ${escapeHtml(q.choices[correctIdx])} <div><small>${escapeHtml(q.explain||'')}</small></div>`;}
+  const old=questionArea.querySelector('.result'); if(old) old.remove(); questionArea.appendChild(container);
+}
+
+// Feedback de acerto/erro
+function showResult(isCorrect,q){revealAnswer(q.answer); if(isCorrect){alert('Acertou! +1 ponto.');} else {alert('Errado. A resposta correta foi mostrada.');}}
+
+// Inicialização
+(function init(){renderUser(); renderLeaderboard(); const u=loadUser(); if(u)nicknameInput.value=u.nick;})();
+</script>
+
+</body>
+
+</html>
