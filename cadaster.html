@@ -68,7 +68,8 @@
     <section>
       <div class="container">
         <h2>CADASTRE-SE</h2>
-        <form id="cadastroForm" onsubmit="return validarForm()">
+        <form id="cadastroForm" action="cadastro.php" method="POST" onsubmit="return validarForm()">
+
           <input type="text" id="nome" placeholder="   Nome" required><br>
           <input type="email" id="email" placeholder="   E-mail" required><br>
           <input type="password" id="senha" placeholder="   Senha" required><br>
@@ -88,29 +89,18 @@
 
   <script>
     function validarForm() {
-      var email = document.getElementById("email").value;
-      var senha = document.getElementById("senha").value;
-      var confirmarSenha = document.getElementById("confirmarSenha").value;
+  var email = document.getElementById("email").value;
+  var senha = document.getElementById("senha").value;
+  var confirmarSenha = document.getElementById("confirmarSenha").value;
+  var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        alert("Por favor, insira um e-mail válido.");
-        return false;
-      }
+  if (!emailPattern.test(email)) { alert("Por favor, insira um e-mail válido."); return false; }
+  if (senha.length < 5) { alert("A senha deve ter pelo menos 5 caracteres."); return false; }
+  if (senha !== confirmarSenha) { alert("As senhas não coincidem."); return false; }
 
-      if (senha.length < 5) {
-        alert("A senha deve ter pelo menos 5 caracteres.");
-        return false;
-      }
+  return true;
+}
 
-      if (senha !== confirmarSenha) {
-        alert("As senhas não coincidem.");
-        return false;
-      }
-
-      window.location.href = "page.html";
-      return false;
-    }
 
     function loginGoogle() {
       alert("Login com Google ainda em desenvolvimento.");

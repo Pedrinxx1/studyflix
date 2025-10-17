@@ -27,7 +27,8 @@
   <div id="login">
     <center>
       <section>
-        <form id="loginForm" onsubmit="return validarLogin()">
+        <form id="loginForm" action="login.php" method="POST">
+
           <br />
           <h2 id="jh">ENTRAR</h2>
           <input type="text" id="email" placeholder="   Nome de usuário ou e-mail" required>
@@ -46,51 +47,38 @@
     </center>
   </div>
 
-  <script>
-    function validarLogin() {
-      var usuarioEmail = document.getElementById("email").value;
-      var senha = document.getElementById("senha").value;
+ <script>
+function validarLogin(event) {
+  event.preventDefault(); // Impede o envio padrão do formulário
 
-      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (emailPattern.test(usuarioEmail)) {
-        if (senha.length < 5) {
-          alert("A senha deve ter pelo menos 5 caracteres.");
-          return false;
-        }
-      } else {
-        if (usuarioEmail.length < 3) {
-          alert("O nome de usuário deve ter pelo menos 3 caracteres.");
-          return false;
-        }
-        if (senha.length < 5) {
-          alert("A senha deve ter pelo menos 5 caracteres.");
-          return false;
-        }
-      }
+  var email = document.getElementById("email").value;
+  var senha = document.getElementById("senha").value;
 
+  // Envia pro PHP
+  fetch("login.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "email=" + encodeURIComponent(email) + "&senha=" + encodeURIComponent(senha)
+  })
+  .then(response => response.text())
+  .then(data => {
+    if (data.includes("sucesso")) {
+      alert("Login realizado com sucesso!");
       window.location.href = "page.html";
-      return false;
+    } else {
+      alert(data); // Mostra o erro retornado pelo PHP
     }
+  })
+  .catch(error => {
+    console.error("Erro ao fazer login:", error);
+    alert("Erro no servidor. Tente novamente mais tarde.");
+  });
 
-    // Login com Google
-    window.onload = function () {
-      google.accounts.id.initialize({
-        client_id: "SEU_CLIENT_ID_DO_GOOGLE.apps.googleusercontent.com",
-        callback: handleCredentialResponse
-      });
+  return false;
+}
+</script>
 
-      google.accounts.id.renderButton(
-        document.getElementById("googleLogin"),
-        { theme: "outline", size: "large", text: "continue_with", shape: "pill", width: 250 }
-      );
-    };
-
-    function handleCredentialResponse(response) {
-      const jwt = response.credential;
-      console.log("Token Google:", jwt);
-      alert("Login com Google realizado!");
-      window.location.href = "page.html";
-    }
-  </script>
 </body>
 </html>
