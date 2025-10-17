@@ -2,72 +2,120 @@
 <html lang="pt">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Studyflix</title>
-    <link href="estilo.css" rel="stylesheet" type="text/css" />
-    <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Studyflix</title>
+  <link href="estilo.css" rel="stylesheet" type="text/css" />
+  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
+  <style>
+    #googleBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px auto 10px auto;
+      padding: 12px 25px;
+      background-color: #ffffff;
+      color: #444;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      width: 85%;
+      max-width: 300px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: 0.25s;
+    }
+
+    #googleBtn:hover {
+      background-color: #f1f1f1;
+      transform: scale(1.02);
+    }
+
+    #googleBtn img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .container {
+      padding: 25px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      display: inline-block;
+    }
+
+    input,
+    button {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 
 <body>
-    <img id="imagem" src="https://i.ibb.co/mFqwpnsZ/photo-1618044619888-009e412ff12a.jpg">
+  <img id="imagem" src="https://i.ibb.co/mFqwpnsZ/photo-1618044619888-009e412ff12a.jpg">
 
-    <table class="shadow">
-        <tr>
-            <td><img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png"></td>
-            <td>
-                <p id="name">tudyflix</p>
-            </td>
-        </tr>
-    </table>
+  <table class="shadow">
+    <tr>
+      <td><img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png"></td>
+      <td>
+        <p id="name">tudyflix</p>
+      </td>
+    </tr>
+  </table>
 
-    <center>
-        <section>
-            <div class="container">
-                <h2>CADASTRE-SE</h2>
-                <form id="cadastroForm" onsubmit="return validarForm()">
-                    
-                    <input type="text" id="nome" placeholder="   Nome" required><br>
-                    <input type="email" id="email" placeholder="   E-mail" required><br>
-                    <input type="password" id="senha" placeholder="   Senha" required><br>
-                    <input type="password" id="confirmarSenha" placeholder="   Confirmar Senha" required><br>
-                    <button id="pip" type="submit">Cadastrar</button><br>
-                </form>
-                <p id="cadaster">Tem uma conta? <a href="index.html">Acesse aqui</a></p>
-            </div>
-        </section>
-    </center>
+  <center>
+    <section>
+      <div class="container">
+        <h2>CADASTRE-SE</h2>
+        <form id="cadastroForm" onsubmit="return validarForm()">
+          <input type="text" id="nome" placeholder="   Nome" required><br>
+          <input type="email" id="email" placeholder="   E-mail" required><br>
+          <input type="password" id="senha" placeholder="   Senha" required><br>
+          <input type="password" id="confirmarSenha" placeholder="   Confirmar Senha" required><br>
+          <button id="pip" type="submit">Cadastrar</button><br>
+        </form>
 
-    <script>
-        function validarForm() {
-            var email = document.getElementById("email").value;
-            var senha = document.getElementById("senha").value;
-            var confirmarSenha = document.getElementById("confirmarSenha").value;
+        <button id="googleBtn" type="button" onclick="loginGoogle()">
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
+          Entrar com o Google
+        </button>
 
-            // Verifica se o e-mail é válido
-            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                alert("Por favor, insira um e-mail válido.");
-                return false;
-            }
+        <p id="cadaster">Tem uma conta? <a href="index.html">Acesse aqui</a></p>
+      </div>
+    </section>
+  </center>
 
-            // Verifica se a senha tem pelo menos 5 caracteres
-            if (senha.length < 5) {
-                alert("A senha deve ter pelo menos 5 caracteres.");
-                return false;
-            }
+  <script>
+    function validarForm() {
+      var email = document.getElementById("email").value;
+      var senha = document.getElementById("senha").value;
+      var confirmarSenha = document.getElementById("confirmarSenha").value;
 
-            // Verifica se a senha e a confirmação da senha são iguais
-            if (senha !== confirmarSenha) {
-                alert("As senhas não coincidem.");
-                return false;
-            }
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        alert("Por favor, insira um e-mail válido.");
+        return false;
+      }
 
-            // Se todas as validações passarem, redireciona para a página desejada
-            window.location.href = "page.html";
-            return false; // Impede o envio do formulário
-        }
-    </script>
+      if (senha.length < 5) {
+        alert("A senha deve ter pelo menos 5 caracteres.");
+        return false;
+      }
+
+      if (senha !== confirmarSenha) {
+        alert("As senhas não coincidem.");
+        return false;
+      }
+
+      window.location.href = "page.html";
+      return false;
+    }
+
+    function loginGoogle() {
+      alert("Login com Google ainda em desenvolvimento.");
+    }
+  </script>
 </body>
 
 </html>

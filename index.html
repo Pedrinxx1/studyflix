@@ -7,6 +7,7 @@
   <title>Studyflix</title>
   <link href="style.css" rel="stylesheet" type="text/css" />
   <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
@@ -35,6 +36,10 @@
           <br />
           <button type="submit">Entrar</button>
         </form>
+
+        <!-- Botão Google centralizado -->
+        <div id="googleLogin" style="display: flex; justify-content: center; margin-top: 10px;"></div>
+
         <br>
         <p id="cadaster">Novo por aqui? <a href="cadaster.html">Assine agora</a></p>
       </section>
@@ -46,16 +51,13 @@
       var usuarioEmail = document.getElementById("email").value;
       var senha = document.getElementById("senha").value;
 
-      // Verifica se o e-mail é válido
       var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (emailPattern.test(usuarioEmail)) {
-        // Se for um e-mail, valida a senha
         if (senha.length < 5) {
           alert("A senha deve ter pelo menos 5 caracteres.");
           return false;
         }
       } else {
-        // Se não for um e-mail, assume que é um nome de usuário
         if (usuarioEmail.length < 3) {
           alert("O nome de usuário deve ter pelo menos 3 caracteres.");
           return false;
@@ -66,11 +68,29 @@
         }
       }
 
-      // Se todas as validações passarem, redireciona para a página desejada
       window.location.href = "page.html";
-      return false; // Impede o envio do formulário
+      return false;
+    }
+
+    // Login com Google
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: "SEU_CLIENT_ID_DO_GOOGLE.apps.googleusercontent.com",
+        callback: handleCredentialResponse
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById("googleLogin"),
+        { theme: "outline", size: "large", text: "continue_with", shape: "pill", width: 250 }
+      );
+    };
+
+    function handleCredentialResponse(response) {
+      const jwt = response.credential;
+      console.log("Token Google:", jwt);
+      alert("Login com Google realizado!");
+      window.location.href = "page.html";
     }
   </script>
 </body>
-
 </html>
