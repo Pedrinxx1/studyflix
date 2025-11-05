@@ -1,18 +1,17 @@
 <?php
-include 'conexao.php'; // Arquivo de conexão com o banco
+include 'conexao.php';
 
-// Verifica se o método é POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = $_POST["email"];
     $senha = $_POST["senha"];
 
-    // Prepara e executa a consulta
-    $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = :email AND senha = :senha");
+    $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = :email");
     $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':senha', $senha);
     $stmt->execute();
 
-    if ($stmt->rowCount() > 0) {
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($usuario && password_verify($senha, $usuario['senha'])) {
         echo "sucesso";
     } else {
         echo "❌ E-mail ou senha incorretos!";

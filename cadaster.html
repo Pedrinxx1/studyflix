@@ -1,111 +1,228 @@
 <!DOCTYPE html>
 <html lang="pt">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Studyflix</title>
-  <link href="estilo.css" rel="stylesheet" type="text/css" />
-  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Studyflix - Cadastro</title>
+  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
   <style>
-    #googleBtn {
+    body {
+      margin: 0;
+      padding:-10;
+      font-family: 'Poppins', sans-serif;
+      background: #000 url('https://encurtador.com.br/XGTi') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 10vh;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      position: fixed;
+      top: 15px;
+      left: 20px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 15px auto 10px auto;
-      padding: 12px 25px;
-      background-color: #ffffff;
-      color: #444;
-      border: 1px solid #ccc;
+      gap: 5px;
+      z-index: 100;
+      user-select: none;
+    }
+    .logo {
+      width: 468px;
+      height: 70px;
+      display: block;
+    }
+    #name {
+      font-size: 2.7rem;
+      font-weight: 900;
+      color: #5a15e3;
+      letter-spacing: 0.5px;
+      margin-left: 0;
+      margin-top: 3px;
+      user-select: none;
+      line-height: 1;
+      transition: color 0.3s;
+      text-shadow: 0 2px 18px #5a15e3b3, 0 0px 2px #fff6ee10;
+    }
+    .container-cadastro {
+      background: rgba(0,0,0,0.85);
+      border: 4px solid #5a15e3;
+      border-radius: 14px;
+      padding: 38px 32px 26px 32px;
+      box-shadow: 0 4px 50px 0 #5a15e393, 0 2px 16px 0 #fff1;
+      max-width: 340px;
+      margin: 120px auto 80px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .input-container {
+      position: relative;
+      width: 100%;
+      max-width: 275px;
+      margin: 18px auto 0 auto;
+    }
+    .input-container input {
+      width: 100%;
+      background: #1a1a1a;
+      color: #fff;
+      border: 2px solid #5a15e3;
+      border-radius: 8px;
+      font-size: 1rem;
+      padding: 14px 15px;
+      outline: none;
+      box-sizing: border-box;
+      letter-spacing: 1px;
+      transition: border 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 0 0 #5a15e399;
+      margin-bottom: 2px;
+    }
+    .input-container input:focus {
+      border-color: #a981fa;
+      box-shadow: 0 0 8px #a981facc;
+    }
+    #btnCadastro {
+      background: linear-gradient(90deg,#5a15e3 60%,#a981fa 100%);
+      border: none;
+      color: white;
+      font-weight: 700;
+      padding: 12px;
       border-radius: 8px;
       cursor: pointer;
+      width: 100%;
+      margin: 25px 0 0 0;
+      font-size: 1.07rem;
+      box-shadow: 0 0 18px #a981fa99;
+      transition: 0.3s;
+    }
+    #btnCadastro:hover {
+      filter: brightness(1.07);
+      box-shadow: 0 0 38px #a981fa80;
+      letter-spacing: 0.5px;
+    }
+    #notificacao {
+      margin: 0 auto 18px auto;
+      padding: 10px;
+      width: 90%;
+      max-width: 320px;
+      border-radius: 8px;
       font-weight: 600;
-      font-size: 15px;
-      width: 85%;
-      max-width: 300px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      transition: 0.25s;
+      text-align: center;
+      display: none;
+      font-size: 1rem;
+      box-shadow: 0 2px 18px #a981fa20;
     }
-
-    #googleBtn:hover {
-      background-color: #f1f1f1;
-      transform: scale(1.02);
+    #notificacao.sucesso {
+      background-color: #5a15e3cc;
+      color: white;
+      box-shadow: 0 0 18px #a981fa80;
     }
-
-    #googleBtn img {
-      width: 20px;
-      height: 20px;
+    #notificacao.erro {
+      background-color: #bb33cccc;
+      color: white;
+      box-shadow: 0 0 15px #bb33cccc;
     }
-
-    .container {
-      padding: 25px;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.7);
-      display: inline-block;
+    #loginlink {
+      margin-top: 25px;
+      font-size: .93em;
+      color: #ccc;
+      user-select: none;
     }
-
-    input,
-    button {
-      margin-bottom: 10px;
+    #loginlink a { color: #5a15e3; text-decoration: underline; }
+    @media (max-width: 500px) {
+      .container-cadastro { padding: 25px 7vw 25px 7vw; }
+      .input-container { max-width:100%; }
+      .header { top: 10px; left: 10px; }
+      .logo { width: 50px; }
+      #name { font-size:2rem;}
     }
   </style>
 </head>
-
 <body>
-  <img id="imagem" src="https://i.ibb.co/mFqwpnsZ/photo-1618044619888-009e412ff12a.jpg">
-
-  <table class="shadow">
-    <tr>
-      <td><img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png"></td>
-      <td>
-        <p id="name">tudyflix</p>
-      </td>
-    </tr>
-  </table>
-
-  <center>
-    <section>
-      <div class="container">
-        <h2>CADASTRE-SE</h2>
-        <form id="cadastroForm" action="cadastro.php" method="POST" onsubmit="return validarForm()">
-
-          <input type="text" id="nome" placeholder="   Nome" required><br>
-          <input type="email" id="email" placeholder="   E-mail" required><br>
-          <input type="password" id="senha" placeholder="   Senha" required><br>
-          <input type="password" id="confirmarSenha" placeholder="   Confirmar Senha" required><br>
-          <button id="pip" type="submit">Cadastrar</button><br>
-        </form>
-
-        <button id="googleBtn" type="button" onclick="loginGoogle()">
-          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
-          Entrar com o Google
-        </button>
-
-        <p id="cadaster">Tem uma conta? <a href="index.html">Acesse aqui</a></p>
-      </div>
-    </section>
-  </center>
-
+  <header class="header">
+    <img class="logo" src="https://encurtador.com.br/tUmb" alt="Logo Studyflix" />
+    <span id="name"></span>
+  </header>
+  <div id="notificacao"></div>
+  <form id="cadastroForm" class="container-cadastro" autocomplete="on">
+    <h2 style="color:#fff;margin-bottom:32px;">CADASTRAR</h2>
+    <div class="input-container">
+      <input type="text" name="nome" placeholder="Nome" required autocomplete="name" />
+    </div>
+    <div class="input-container">
+      <input type="email" name="email" placeholder="E-mail" required autocomplete="email" />
+    </div>
+    <div class="input-container">
+      <input type="password" name="senha" placeholder="Senha" required autocomplete="new-password" />
+    </div>
+    <div class="input-container">
+      <input type="password" name="confirmarSenha" placeholder="Confirmar Senha" required autocomplete="new-password" />
+    </div>
+    <button type="submit" id="btnCadastro">Cadastrar</button>
+    <p id="loginlink">Já tem conta? <a href="index.html">Entrar agora</a></p>
+  </form>
   <script>
-    function validarForm() {
-  var email = document.getElementById("email").value;
-  var senha = document.getElementById("senha").value;
-  var confirmarSenha = document.getElementById("confirmarSenha").value;
-  var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-  if (!emailPattern.test(email)) { alert("Por favor, insira um e-mail válido."); return false; }
-  if (senha.length < 5) { alert("A senha deve ter pelo menos 5 caracteres."); return false; }
-  if (senha !== confirmarSenha) { alert("As senhas não coincidem."); return false; }
+      const form = e.target;
+      const nome = form.nome.value.trim();
+      const email = form.email.value.trim();
+      const senha = form.senha.value;
+      const confirmarSenha = form.confirmarSenha.value;
+      const notificacao = document.getElementById('notificacao');
 
-  return true;
-}
+      notificacao.style.display = 'none';
+      notificacao.textContent = '';
+      notificacao.className = '';
 
+      if (senha !== confirmarSenha) {
+        notificacao.textContent = 'As senhas não coincidem.';
+        notificacao.className = 'notificacao erro';
+        notificacao.style.display = 'block';
+        return;
+      }
 
-    function loginGoogle() {
-      alert("Login com Google ainda em desenvolvimento.");
-    }
+      const formData = new FormData(form);
+
+      document.getElementById('btnCadastro').disabled = true;
+      document.getElementById('btnCadastro').textContent = 'Enviando...';
+
+      fetch('cadastro.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('btnCadastro').disabled = false;
+        document.getElementById('btnCadastro').textContent = 'Cadastrar';
+        notificacao.style.display = 'block';
+
+        if (data.includes('sucesso')) {
+          notificacao.textContent = '✅ Cadastro realizado com sucesso!';
+          notificacao.className = 'sucesso';
+          setTimeout(() => {
+            window.location.href = 'page.html';
+          }, 1200);
+        } else if (
+          data.toLowerCase().includes('email') && 
+          (data.toLowerCase().includes('existe') || data.toLowerCase().includes('cadastrado'))
+        ) {
+          notificacao.textContent = 'Este e-mail já está cadastrado. Use outro ou entre pelo login.';
+          notificacao.className = 'erro';
+        } else {
+          notificacao.textContent = data;
+          notificacao.className = 'erro';
+        }
+      })
+      .catch(() => {
+        document.getElementById('btnCadastro').disabled = false;
+        document.getElementById('btnCadastro').textContent = 'Cadastrar';
+        notificacao.style.display = 'block';
+        notificacao.textContent = 'Erro no servidor. Tente novamente mais tarde.';
+        notificacao.className = 'erro';
+      });
+    });
   </script>
 </body>
-
 </html>
