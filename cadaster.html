@@ -2,20 +2,22 @@
 <html lang="pt">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Studyflix - Cadastro</title>
   <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
   <style>
     body {
       margin: 0;
-      padding:-10;
+      padding: 0;
       font-family: 'Poppins', sans-serif;
       background: #000 url('https://encurtador.com.br/XGTi') no-repeat center center fixed;
       background-size: cover;
-      min-height: 10vh;
+      min-height: 100vh;
       color: #fff;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
     }
     .header {
       position: fixed;
@@ -28,8 +30,9 @@
       user-select: none;
     }
     .logo {
-      width: 468px;
-      height: 70px;
+      width: 100%;
+      max-width: 468px;
+      height: auto;
       display: block;
     }
     #name {
@@ -51,10 +54,12 @@
       padding: 38px 32px 26px 32px;
       box-shadow: 0 4px 50px 0 #5a15e393, 0 2px 16px 0 #fff1;
       max-width: 340px;
+      width: 90vw;
       margin: 120px auto 80px auto;
       display: flex;
       flex-direction: column;
       align-items: center;
+      box-sizing: border-box;
     }
     .input-container {
       position: relative;
@@ -129,12 +134,35 @@
       user-select: none;
     }
     #loginlink a { color: #5a15e3; text-decoration: underline; }
+    
+    /* Media Queries para celular */
     @media (max-width: 500px) {
-      .container-cadastro { padding: 25px 7vw 25px 7vw; }
-      .input-container { max-width:100%; }
-      .header { top: 10px; left: 10px; }
-      .logo { width: 50px; }
-      #name { font-size:2rem;}
+      .container-cadastro {
+        padding: 25px 7vw 25px 7vw;
+        max-width: 90vw;
+        width: 100%;
+        margin: 90px auto 40px auto;
+      }
+      .input-container {
+        max-width: 100%;
+        margin: 14px auto 0 auto;
+      }
+      .logo {
+        max-width: 280px;
+        width: 80vw;
+        height: auto;
+      }
+      .header {
+        top: 10px;
+        left: 10px;
+      }
+      #name {
+        font-size: 2rem;
+      }
+      #btnCadastro {
+        font-size: 1rem;
+        padding: 10px;
+      }
     }
   </style>
 </head>
@@ -205,7 +233,7 @@
             window.location.href = 'page.html';
           }, 1200);
         } else if (
-          data.toLowerCase().includes('email') && 
+          data.toLowerCase().includes('email') &&
           (data.toLowerCase().includes('existe') || data.toLowerCase().includes('cadastrado'))
         ) {
           notificacao.textContent = 'Este e-mail já está cadastrado. Use outro ou entre pelo login.';
