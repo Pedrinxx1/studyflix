@@ -1,14 +1,15 @@
 <?php
-$host = 'localhost';
-$db = 'studyflix_db';
-$user = 'postgres';
-$pass = 'AnnaLuisa12_';
-$port = "5433";
-$dsn = "pgsql:host=$host;port=$port;dbname=$db;";
+$host = "aws-1-us-east-1.pooler.supabase.com";
+$dbname = "postgres";
+$user = "postgres.hmaqoyajkalregfmdhdo";
+$password = "AnnaLuisa12";
+$port = "5432";
+
 try {
-    $conn = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "✅ Conexão bem-sucedida com o Supabase!";
 } catch (PDOException $e) {
-    echo "Erro de conexão: " . $e->getMessage();
-    exit;
+    echo "❌ Erro na conexão: " . $e->getMessage();
 }
 ?>
