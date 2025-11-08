@@ -1,16 +1,17 @@
 <?php
-// Dados da conexão Render PostgreSQL
-$host = 'dpg-d46m637gi27c73au64t0-a';  // servidor
-$port = '5432';                        // porta padrão do PostgreSQL
-$dbname = 'studyflix_db';              // nome do banco
-$user = 'studyflix_db_user';           // usuário
-$password = 'jAvxXoAmej1Zz1mlgUmLWbs4Sg9lAj1Z'; // senha
+// Lê as variáveis de ambiente configuradas no Render
+$host = getenv('dpg-d47ph0k9c44c73cbi1dg-a');
+$port = getenv('5432');
+$dbname = getenv('studyflix_db_qurq');
+$user = getenv('studyflix_user');
+$password = getenv('C7RDk7jynwGOQqr78NGhBDB7a2QCapvo');
 
 try {
     $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "✅ Conexão bem-sucedida com o Render PostgreSQL!";
+    echo "✅ Conexão bem-sucedida!";
 } catch (PDOException $e) {
     echo "❌ Erro na conexão: " . $e->getMessage();
+    exit;
 }
 ?>
