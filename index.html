@@ -24,7 +24,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 60px;
+      padding: 15px 40px;
       background: rgba(0, 0, 0, 0.85);
       border-bottom: 2px solid #9b59b6;
       position: fixed;
@@ -35,7 +35,7 @@
     }
 
     .logo {
-      height: 65px;
+      height: 60px;
       cursor: pointer;
       animation: glow 3s ease-in-out infinite alternate;
     }
@@ -51,7 +51,7 @@
 
     .buttons {
       display: flex;
-      gap: 20px;
+      gap: 15px;
     }
 
     .btn {
@@ -59,7 +59,7 @@
       color: white;
       padding: 10px 25px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       font-weight: 700;
       cursor: pointer;
       transition: 0.3s;
@@ -74,24 +74,25 @@
 
     .hero {
       text-align: center;
-      padding-top: 200px;
-      padding-bottom: 130px;
+      padding-top: 180px;
+      padding-bottom: 120px;
       background: radial-gradient(circle at center, rgba(45, 0, 65, 0.6), rgba(0, 0, 0, 0.95) 70%);
     }
 
     .hero h1 {
-      font-size: 3.5rem;
+      font-size: 3.2rem;
       font-weight: 900;
       text-shadow: 0 0 20px #9b59b6;
       margin-bottom: 25px;
     }
 
     .hero p {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       color: #ccc;
-      max-width: 750px;
+      max-width: 700px;
       margin: 0 auto 40px;
       line-height: 1.6;
+      padding: 0 15px;
     }
 
     .hero .cta {
@@ -119,7 +120,7 @@
 
     .section h2 {
       text-align: center;
-      font-size: 2.6rem;
+      font-size: 2.4rem;
       color: #fff;
       margin-bottom: 45px;
       text-shadow: 0 0 12px #9b59b6;
@@ -253,16 +254,9 @@
       transform: scale(1.15);
     }
 
-    /* Animação de entrada */
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .hero h1, .hero p, .hero .cta {
@@ -272,6 +266,98 @@
     .hero h1 { animation-delay: 0.3s; }
     .hero p { animation-delay: 0.6s; }
     .hero .cta { animation-delay: 0.9s; }
+
+    /* === Responsividade === */
+    @media (max-width: 1024px) {
+      .hero h1 {
+        font-size: 2.6rem;
+      }
+      .hero p {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 25px;
+      }
+      .buttons {
+        gap: 10px;
+      }
+      .btn {
+        padding: 8px 18px;
+        font-size: 0.9rem;
+      }
+      .hero {
+        padding-top: 160px;
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      .section {
+        padding: 70px 8%;
+      }
+      .cards {
+        gap: 20px;
+      }
+      .card {
+        width: 180px;
+      }
+      .why {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        flex-direction: column;
+        gap: 12px;
+        padding: 15px;
+      }
+      .logo {
+        height: 55px;
+      }
+      .buttons {
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+      }
+      .btn {
+        width: 85%;
+        text-align: center;
+        font-size: 1rem;
+      }
+      .hero {
+        padding-top: 150px;
+        padding-bottom: 100px;
+      }
+      .hero h1 {
+        font-size: 1.9rem;
+      }
+      .hero p {
+        font-size: 0.95rem;
+        padding: 0 20px;
+      }
+      .section h2 {
+        font-size: 2rem;
+      }
+      .cards {
+        flex-direction: column;
+        align-items: center;
+      }
+      .card {
+        width: 90%;
+      }
+      .why {
+        grid-template-columns: 1fr;
+      }
+      footer {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -285,8 +371,8 @@
 
   <section class="hero">
     <h1>Studyflix — O conhecimento no seu ritmo</h1>
-    <p>Mais do que uma plataforma de estudos, o Studyflix é uma revolução na forma de aprender.  
-      Aqui, você encontra conteúdos organizados, um design envolvente e recursos pensados para transformar o aprendizado em uma experiência prazerosa e intuitiva.</p>
+    <p>O Studyflix é mais do que uma plataforma de estudos — é uma nova forma de aprender.  
+       Organizado, visual e envolvente, ele transforma o aprendizado em uma experiência moderna e acessível.</p>
     <a href="cadaster.html" class="cta">Começar agora</a>
   </section>
 
@@ -303,43 +389,18 @@
   <section class="section">
     <h2>Por que escolher o Studyflix?</h2>
     <div class="why">
-      <div>
-        <h3>Aprendizado dinâmico</h3>
-        <p>Conteúdos diretos, organizados e visuais para facilitar a compreensão e fixação do conhecimento.</p>
-      </div>
-      <div>
-        <h3>Acesso 100% online</h3>
-        <p>Estude em qualquer lugar e a qualquer hora, sem limitações. A plataforma é leve, rápida e compatível com qualquer dispositivo.</p>
-      </div>
-      <div>
-        <h3>Progresso personalizado</h3>
-        <p>Acompanhe seu desenvolvimento com recursos que mostram seu avanço em cada disciplina.</p>
-      </div>
-      <div>
-        <h3>Comunidade de estudantes</h3>
-        <p>Conecte-se com outros alunos, compartilhe experiências e aprenda junto com quem tem o mesmo objetivo que você.</p>
-      </div>
+      <div><h3>Aprendizado dinâmico</h3><p>Conteúdos curtos e visuais para facilitar a compreensão e fixação.</p></div>
+      <div><h3>Acesso 100% online</h3><p>Estude onde quiser, quando quiser — tudo na nuvem.</p></div>
+      <div><h3>Progresso personalizado</h3><p>Acompanhe sua evolução e conquiste novas metas.</p></div>
+      <div><h3>Comunidade de estudantes</h3><p>Aprenda com outros alunos e cresça junto.</p></div>
     </div>
   </section>
 
   <section class="faq">
     <h2>Perguntas Frequentes</h2>
-    <div class="faq-item">
-      <div class="faq-question">O que é o Studyflix?</div>
-      <div class="faq-answer">É uma plataforma de aprendizado digital inspirada em serviços de streaming, criada para tornar o estudo acessível, prático e visualmente atraente.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-question">Preciso pagar para usar?</div>
-      <div class="faq-answer">Não! O Studyflix oferece conteúdos gratuitos para todos os usuários, e em breve contará com planos adicionais para quem quiser expandir a experiência.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-question">Como posso começar?</div>
-      <div class="faq-answer">Clique em “Começar agora”, crie sua conta e tenha acesso imediato aos conteúdos disponíveis.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-question">O Studyflix é confiável?</div>
-      <div class="faq-answer">Sim! Todos os conteúdos são revisados e a plataforma é desenvolvida com foco em segurança, desempenho e qualidade educacional.</div>
-    </div>
+    <div class="faq-item"><div class="faq-question">O que é o Studyflix?</div><div class="faq-answer">É uma plataforma digital inspirada em serviços de streaming, criada para tornar o estudo acessível e prazeroso.</div></div>
+    <div class="faq-item"><div class="faq-question">Preciso pagar para usar?</div><div class="faq-answer">Não! O Studyflix oferece conteúdos gratuitos e, futuramente, planos premium opcionais.</div></div>
+    <div class="faq-item"><div class="faq-question">Como posso começar?</div><div class="faq-answer">Clique em “Começar agora”, crie sua conta e comece a aprender.</div></div>
   </section>
 
   <footer>
