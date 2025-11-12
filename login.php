@@ -1,20 +1,25 @@
 <?php
-include 'conexao.php';
+$conn = pg_connect("host=dpg-d47ph0k9c44c73cbi1dg-a 
+                    dbname=studyflix_db_qurq 
+                    user=studyflix_user 
+                    password=C7RDk7jynwGOQqr78NGhBDB7a2QCapvo 
+                    port=5432");
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = $_POST["email"];
-    $senha = $_POST["senha"];
+$email = $_POST['email'];
+$senha = $_POST['senha'];
 
-    $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = :email");
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
+$query = "SELECT * FROM usuarios WHERE email = $1";
+$result = pg_query_params($conn, $query, array($email));
 
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($usuario && password_verify($senha, $usuario['senha'])) {
-        echo "sucesso";
+if ($row = pg_fetch_assoc($result)) {
+    if (password_verify($senha, $row['senha'])) {
+        echo "Login bem-sucedido! Bem-vindo, " . $row['nome'];
     } else {
-        echo "❌ E-mail ou senha incorretos!";
+        echo "Senha incorreta.";
     }
+} else {
+    echo "Usuário não encontrado.";
 }
+
+pg_close($conn);
 ?>
