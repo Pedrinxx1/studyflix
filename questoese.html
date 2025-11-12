@@ -1,310 +1,707 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width" />
-  <title>Studyflix — Questões & Ranking</title>
-  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png">
-  <style>
-    body {
-      margin: 0;
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(180deg, #07070f 0%, #0a0a18 70%);
-      color: #fff;
-      overflow-x: hidden;
-    }
-
-    /* Header estilo Netflix */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 24px;
-      background: #0a0a1b;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .header-left img {
-      height: 40px;
-    }
-
-    .header-left h1 {
-      color: #a855f7;
-      font-size: 1.6rem;
-      font-weight: bold;
-      margin: 0;
-    }
-
-    .header-right {
-      display: flex;
-      gap: 12px;
-    }
-
-    .header-right button {
-      background: #a855f7;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .header-right button:hover {
-      background: #9333ea;
-    }
-
-    /* Container principal */
-    .container {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-      padding: 24px;
-      max-width: 1100px;
-      margin: auto;
-    }
-
-    @media (max-width: 850px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Área de perguntas */
-    .quiz-card {
-      background: #0c0c16;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    .quiz-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .quiz-header h2 {
-      font-size: 1.3rem;
-      margin: 0;
-      color: #fff;
-    }
-
-    .progress {
-      font-size: 0.9rem;
-      color: #a855f7;
-    }
-
-    .question {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .answers {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .answer {
-      background: #0a0a16;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 12px 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .answer:hover {
-      background: rgba(168, 85, 247, 0.1);
-    }
-
-    .answer.correct {
-      background: rgba(22, 163, 74, 0.25);
-      border-color: #16a34a;
-    }
-
-    .answer.wrong {
-      background: rgba(239, 68, 68, 0.25);
-      border-color: #ef4444;
-    }
-
-    .next-btn {
-      margin-top: 20px;
-      display: none;
-      background: #a855f7;
-      color: #fff;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-
-    .next-btn:hover {
-      background: #9333ea;
-    }
-
-    /* Ranking */
-    .ranking-card {
-      background: #0c0c16;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-    }
-
-    .ranking-card h3 {
-      margin-top: 0;
-      color: #a855f7;
-    }
-
-    .ranking-placeholder {
-      text-align: center;
-      color: #ccc;
-      font-style: italic;
-      padding: 40px 0;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Studyflix — Questões & Filtros</title>
+<link rel="shortcut icon" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" type="image/png">
+<style>
+  :root{
+    --bg:#000;
+    --panel:#0b0b14;
+    --card:#141418;
+    --accent:#9b59b6;
+    --accent-2:#a855f7;
+    --muted:#bdb2e6;
+    --success:#16a34a;
+    --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Arial; background:linear-gradient(180deg,#07070f 0%,#0a0a18 70%);color:#fff;-webkit-font-smoothing:antialiased}
+  /* header */
+  header{position:fixed;top:0;left:0;right:0;height:68px;display:flex;align-items:center;justify-content:space-between;padding:12px 22px;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:220;border-bottom:1px solid rgba(155,89,182,0.06)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{height:44px}
+  .brand h1{margin:0;color:var(--accent-2);font-size:18px}
+  .header-actions{display:flex;gap:8px;align-items:center}
+  .small-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:#fff;cursor:pointer}
+  .primary-btn{background:var(--accent-2);border:none;padding:8px 12px;border-radius:8px;color:#fff;cursor:pointer;font-weight:700}
+  .primary-btn:hover{background:#9333ea}
+  /* page container */
+  .page{max-width:1200px;margin:90px auto;padding:18px;display:grid;grid-template-columns: 1fr 360px;gap:20px}
+  @media(max-width:1000px){.page{grid-template-columns:1fr}}
+  /* controls / filters */
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+  .filter-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:999px;color:#fff;cursor:pointer}
+  .filter-btn.active{background:var(--accent);border-color:var(--accent);box-shadow:0 6px 20px rgba(155,89,182,0.12)}
+  .search{flex:1;display:flex;gap:8px}
+  .search input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:#06060a;color:#fff}
+  .count-badge{background:rgba(255,255,255,0.05);padding:6px 10px;border-radius:999px;font-weight:700;color:var(--accent-2)}
+  /* left column: question bank & quiz area */
+  .left {display:flex;flex-direction:column;gap:12px}
+  .bank {background:var(--panel);padding:16px;border-radius:14px;box-shadow:0 12px 36px rgba(0,0,0,0.55)}
+  .bank h2{margin:0 0 12px 0;color:var(--accent-2)}
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .q-card{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px}
+  .q-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .q-title{font-weight:700;font-size:14px;color:#fff}
+  .q-meta{font-size:12px;color:var(--muted)}
+  .include-toggle{display:flex;gap:8px;align-items:center}
+  .include-toggle input{width:16px;height:16px}
+  .card-actions{display:flex;gap:8px;justify-content:flex-end}
+  .card-actions button{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px;color:#fff;cursor:pointer;font-size:13px}
+  /* quiz panel */
+  .quiz {background:var(--panel);padding:18px;border-radius:14px;box-shadow:0 12px 36px rgba(0,0,0,0.55)}
+  .quiz .head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+  .quiz .head h2{margin:0;color:var(--accent-2)}
+  .progress{font-size:13px;color:var(--muted)}
+  .question-box{background:var(--card);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+  .q-text{font-weight:700;font-size:1.05rem;margin-bottom:12px}
+  .answers{display:flex;flex-direction:column;gap:10px}
+  .answer-btn{background:#0a0a16;border:1px solid rgba(255,255,255,0.04);padding:12px;border-radius:10px;cursor:pointer;text-align:left;display:flex;gap:12px;align-items:center;transition:all .16s}
+  .answer-btn:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(168,85,247,0.06)}
+  .answer-btn.disabled{opacity:0.7;cursor:not-allowed;transform:none}
+  .answer-btn.correct{background:rgba(22,163,74,0.18);border-color:rgba(22,163,74,0.5)}
+  .answer-btn.wrong{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.4)}
+  .ctrls{display:flex;gap:8px;align-items:center;margin-top:12px}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:#fff;cursor:pointer}
+  .accent{background:var(--accent-2);border:none;padding:10px 12px;border-radius:10px;color:#fff;cursor:pointer;font-weight:700}
+  .accent:hover{background:#9333ea}
+  .summary{margin-top:12px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+  /* right column: ranking & controls */
+  .right{display:flex;flex-direction:column;gap:12px}
+  .panel{background:var(--panel);padding:14px;border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,0.55)}
+  .panel h3{margin:0 0 8px 0;color:var(--accent-2)}
+  .ranking-placeholder{text-align:center;color:#cfc7f7;font-style:italic;padding:26px 10px}
+  .selected-count{font-weight:700;color:var(--accent-2)}
+  /* footer small */
+  footer{max-width:1200px;margin:18px auto 60px auto;color:#aaa;font-size:13px;text-align:center}
+  /* small screens */
+  @media(max-width:640px){
+    .cards-grid{grid-template-columns:repeat(2,1fr)}
+    .q-title{font-size:13px}
+    .answer-btn{font-size:14px}
+  }
+  @media(max-width:420px){
+    .cards-grid{grid-template-columns:1fr}
+  }
+</style>
 </head>
 <body>
-  <header>
-    <div class="header-left">
-      <img src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo">
-      <h1>Studyflix</h1>
-    </div>
-    <div class="header-right">
-      <button>Início</button>
-      <button>Ranking</button>
-      <button>Perfil</button>
-    </div>
-  </header>
 
-  <div class="container">
-    <div class="quiz-card" id="quizArea">
-      <div class="quiz-header">
-        <h2>Questões</h2>
-        <span class="progress" id="progressText">Questão 1 de 5</span>
+<header>
+  <div class="brand">
+    <img src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="logo">
+    <h1>Studyflix</h1>
+  </div>
+  <div class="header-actions">
+    <button class="small-btn" id="btnShowAll">Todas</button>
+    <button class="small-btn" id="btnHelp">Ajuda</button>
+    <button class="primary-btn" id="btnStart">Iniciar Quiz</button>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- LEFT COLUMN -->
+  <div class="left">
+
+    <!-- Controls -->
+    <div class="bank">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <h2>Banco de Questões</h2>
+        <div class="count-badge" id="selectedCount">0 selecionadas</div>
       </div>
 
-      <div id="questionContainer">
-        <p class="question" id="questionText"></p>
-        <div class="answers" id="answersList"></div>
+      <div class="controls" style="margin-top:10px">
+        <div style="display:flex;gap:8px">
+          <button class="filter-btn active" data-filter="all">Todas</button>
+          <button class="filter-btn" data-filter="Matemática">Matemática</button>
+          <button class="filter-btn" data-filter="Português">Português</button>
+          <button class="filter-btn" data-filter="Física">Física</button>
+          <button class="filter-btn" data-filter="Química">Química</button>
+          <button class="filter-btn" data-filter="Biologia">Biologia</button>
+        </div>
+
+        <div class="search" style="margin-left:auto">
+          <input id="searchInput" placeholder="Buscar por palavra..." />
+          <button class="ghost" id="btnClearSearch">Limpar</button>
+        </div>
       </div>
 
-      <button class="next-btn" id="nextBtn">Próxima</button>
+      <div style="height:12px"></div>
+
+      <div class="cards-grid" id="cardsGrid">
+        <!-- populated by JS -->
+      </div>
     </div>
 
-    <div class="ranking-card">
+    <!-- Quiz panel -->
+    <div class="quiz" style="margin-top:12px">
+      <div class="head">
+        <h2>Modo Quiz</h2>
+        <div class="progress" id="progress">Questão 0 / 0</div>
+      </div>
+
+      <div class="question-box" id="quizBox">
+        <div id="questionArea">
+          <div class="q-text" id="qText">Selecione as questões no banco e clique em "Iniciar Quiz".</div>
+          <div class="answers" id="answers"></div>
+        </div>
+
+        <div class="ctrls" style="margin-top:12px">
+          <button class="ghost" id="btnSkip">Pular</button>
+          <button class="ghost" id="btnMark">Escolher/Desmarcar (lista)</button>
+          <button class="accent" id="btnNext" disabled>Próxima</button>
+        </div>
+
+        <div class="summary" id="summaryArea" style="display:none">
+          <div id="summaryText"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right">
+    <div class="panel">
+      <h3>Controles do Quiz</h3>
+      <p style="margin:8px 0 12px 0">Você pode marcar individualmente quais questões quer incluir (checkbox). Se nenhuma marcada, o quiz usará <strong>todas</strong> as questões filtradas.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="ghost" id="btnSelectAll">Selecionar Todas Visíveis</button>
+        <button class="ghost" id="btnDeselectAll">Desmarcar Todas</button>
+        <button class="ghost" id="btnInvert">Invert. seleção</button>
+      </div>
+      <div style="height:10px"></div>
+      <div><strong>Selecionadas:</strong> <span class="selected-count" id="selectedCount2">0</span></div>
+    </div>
+
+    <div class="panel">
       <h3>Ranking Global</h3>
       <div class="ranking-placeholder">Sem informações — em manutenção</div>
     </div>
+
+    <div class="panel">
+      <h3>Export / Import (JSON)</h3>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-direction:column">
+        <button class="ghost" id="exportBtn">Exportar questões (JSON)</button>
+        <input type="file" id="importFile" accept=".json" />
+        <small style="color:#aaa">Importe um JSON com formato igual ao atual para adicionar questões.</small>
+      </div>
+    </div>
+
   </div>
+</main>
 
-  <script>
-    const questions = [
-      {
-        q: "Se todo A é B e todo B é C, então...",
-        choices: ["Algum C é A", "Todo A é C", "Todo C é A", "Nenhuma das anteriores"],
-        correct: 1
-      },
-      {
-        q: "Qual o valor de 2³ × 2²?",
-        choices: ["8", "32", "16", "64"],
-        correct: 1
-      },
-      {
-        q: "A média dos números 2, 4, 6, 8 e 10 é:",
-        choices: ["5", "6", "7", "8"],
-        correct: 1
-      },
-      {
-        q: "Qual é a forma correta?",
-        choices: ["A gente vamos", "Nós vamos", "Nós vai", "A gente vamos nós"],
-        correct: 1
-      },
-      {
-        q: "O desvio padrão da sequência 2, 4, 6, 8, 10 é aproximadamente:",
-        choices: ["2,83", "3", "2,5", "4"],
-        correct: 0
-      }
-    ];
+<footer>Studyflix — seu quiz personalizado. Ranking global em manutenção.</footer>
 
-    let currentIndex = 0;
-    let answered = false;
+<script>
+/* ============================
+   DATA: 50 questões (5 matérias)
+   ============================ */
+const ALL_QUESTIONS = [
+  /* Matemática (10) */
+  { id: 1001, topic: "Matemática", q: "Calcule 2^5.", choices: ["16","32","10","8"], correct:1 },
+  { id: 1002, topic: "Matemática", q: "Qual é o valor de √81?", choices: ["8","9","7","6"], correct:1 },
+  { id: 1003, topic: "Matemática", q: "2x + 3 = 11. Qual x?", choices: ["4","3","5","2"], correct:0 },
+  { id: 1004, topic: "Matemática", q: "Qual o resultado de 7 × 8?", choices: ["48","54","56","49"], correct:2 },
+  { id: 1005, topic: "Matemática", q: "Qual é a média de 2,4,6,8?", choices: ["4","5","6","20"], correct:1 },
+  { id: 1006, topic: "Matemática", q: "Se f(x)=2x, f(3)= ?", choices: ["5","6","7","3"], correct:1 },
+  { id: 1007, topic: "Matemática", q: "Quantos graus tem um ângulo reto?", choices: ["45","60","90","180"], correct:2 },
+  { id: 1008, topic: "Matemática", q: "2/3 + 1/6 = ?", choices: ["3/4","5/6","1","1/2"], correct:1 },
+  { id: 1009, topic: "Matemática", q: "Qual é o menor número primo?", choices: ["0","1","2","3"], correct:2 },
+  { id: 1010, topic: "Matemática", q: "Qual o resultado de 10 - 7 × 1?", choices: ["3","30","17","-3"], correct:0 },
 
-    const questionText = document.getElementById("questionText");
-    const answersList = document.getElementById("answersList");
-    const nextBtn = document.getElementById("nextBtn");
-    const progressText = document.getElementById("progressText");
+  /* Português (10) */
+  { id: 2001, topic: "Português", q: "Qual é a forma correta: 'Nós ____ ao cinema'?", choices: ["vamos","vamosmos","vai","vamosn"], correct:0 },
+  { id: 2002, topic: "Português", q: "Assinale a opção com sujeito inexistente: 'Choveu ontem.'", choices: ["Sujeito indeterminado","Sujeito oculto","Sujeito inexistente","Sujeito simples"], correct:2 },
+  { id: 2003, topic: "Português", q: "Plural de 'órgão' é:", choices: ["órgaos","órgãos","orgaos","órgaõs"], correct:1 },
+  { id: 2004, topic: "Português", q: "Qual é o verbo da frase: 'Ela canta bem'?", choices: ["Ela","canta","bem","não há"], correct:1 },
+  { id: 2005, topic: "Português", q: "A palavra 'porém' é classificada como:", choices: ["conjunção coordenativa","preposição","advérbio","pronome"], correct:0 },
+  { id: 2006, topic: "Português", q: "Assinale a alternativa com erro de concordância: 'Houveram problemas.'", choices: ["Correta","Erro (Deveria ser 'Houve problemas')","Ambas corretas","Nenhuma"], correct:1 },
+  { id: 2007, topic: "Português", q: "Qual a forma correta no nível culto: 'A gente' ou 'Nós'?", choices: ["A gente","Nós","Ambas","Nenhuma"], correct:1 },
+  { id: 2008, topic: "Português", q: "O plural de 'lápis' é:", choices: ["lápises","lápis","lapis","lápis's"], correct:1 },
+  { id: 2009, topic: "Português", q: "Qual a função de 'rapidamente' na frase 'Ele correu rapidamente'?", choices: ["verbo","advérbio","adjetivo","substantivo"], correct:1 },
+  { id: 2010, topic: "Português", q: "Complete: 'Eu ___ visto' (pretérito perfeito)", choices: ["tinha","tenho","tive","tinha tido"], correct:2 },
 
-    function loadQuestion() {
-      const q = questions[currentIndex];
-      questionText.textContent = q.q;
-      answersList.innerHTML = "";
-      progressText.textContent = `Questão ${currentIndex + 1} de ${questions.length}`;
-      answered = false;
+  /* Física (10) */
+  { id: 3001, topic: "Física", q: "Unidade SI de força é:", choices: ["Newton","Joule","Watt","Pascal"], correct:0 },
+  { id: 3002, topic: "Física", q: "A velocidade média é distância/tempo. Se d=100m e t=20s, v=?", choices: ["2 m/s","5 m/s","0.2 m/s","20 m/s"], correct:0 },
+  { id: 3003, topic: "Física", q: "Qual fenômeno é responsável pelo arco-íris?", choices: ["difração","refração","condutividade","convecção"], correct:1 },
+  { id: 3004, topic: "Física", q: "A aceleração da gravidade na Terra ≈", choices: ["9,8 m/s²","10 km/h","1 m/s²","98 m/s²"], correct:0 },
+  { id: 3005, topic: "Física", q: "Lei de Newton: F = m · a. O que é 'm'?", choices: ["massa","movimento","momento","modulo"], correct:0 },
+  { id: 3006, topic: "Física", q: "Lentes convergentes formam imagens:", choices: ["reais ou virtuais","só virtuais","só reais","não formam"], correct:0 },
+  { id: 3007, topic: "Física", q: "Qual a unidade de pressão no SI?", choices: ["Pascal","Newton","Joule","Tesla"], correct:0 },
+  { id: 3008, topic: "Física", q: "O que é energia cinética?", choices: ["energia de movimento","energia armazenada","energia térmica","energia elétrica"], correct:0 },
+  { id: 3009, topic: "Física", q: "Qual a principal fonte de energia para a Terra?", choices: ["Lua","Vento","Sol","Maré"], correct:2 },
+  { id: 3010, topic: "Física", q: "Som no vácuo se propaga: ", choices: ["sim","não","somente a baixa frequência","dependendo da temperatura"], correct:1 },
 
-      q.choices.forEach((choice, i) => {
-        const div = document.createElement("div");
-        div.className = "answer";
-        div.textContent = choice;
-        div.addEventListener("click", () => selectAnswer(div, i));
-        answersList.appendChild(div);
-      });
+  /* Química (10) */
+  { id: 4001, topic: "Química", q: "Água é composta por quais elementos?", choices: ["H e O","C e O","N e O","H e N"], correct:0 },
+  { id: 4002, topic: "Química", q: "pH < 7 indica solução:", choices: ["ácida","básica","neutra","salina"], correct:0 },
+  { id: 4003, topic: "Química", q: "Ligação iônica ocorre entre:", choices: ["metal + não metal","dois metais","dois não metais","gases nobres"], correct:0 },
+  { id: 4004, topic: "Química", q: "Qual é a fórmula da molécula de dióxido de carbono?", choices: ["CO2","CO","C2O","O2C2"], correct:0 },
+  { id: 4005, topic: "Química", q: "Aqueous solution é solução em que solvente é:", choices: ["água","etanol","acetona","éter"], correct:0 },
+  { id: 4006, topic: "Química", q: "Qual elemento tem símbolo 'Na'?", choices: ["Sódio","Níquel","Nitrogênio","Neônio"], correct:0 },
+  { id: 4007, topic: "Química", q: "Reação que libera calor é chamada de:", choices: ["exotérmica","endotérmica","isotérmica","adiabática"], correct:0 },
+  { id: 4008, topic: "Química", q: "Qual estado da matéria tem forma definida e volume definido?", choices: ["sólido","líquido","gasoso","plasma"], correct:0 },
+  { id: 4009, topic: "Química", q: "Ácidos doam _____ em solução aquosa.", choices: ["prótons (H⁺)","elétrons","hidroxilas","nêutrons"], correct:0 },
+  { id: 4010, topic: "Química", q: "Qual o número atômico do carbono (C)?", choices: ["6","12","14","8"], correct:0 },
 
-      nextBtn.style.display = "none";
-    }
+  /* Biologia (10) */
+  { id: 5001, topic: "Biologia", q: "Qual organela é responsável pela respiração celular?", choices: ["Mitocôndria","Ribossomo","Cloroplasto","Núcleo"], correct:0 },
+  { id: 5002, topic: "Biologia", q: "DNA armazena:", choices: ["informação genética","energia","proteínas","lipídios"], correct:0 },
+  { id: 5003, topic: "Biologia", q: "Fotossíntese ocorre em quais organelas?", choices: ["Cloroplastos","Mitocôndrias","Lisossomos","Ribossomos"], correct:0 },
+  { id: 5004, topic: "Biologia", q: "O sistema circulatório transporta:", choices: ["sangue","ar","luz","produtos químicos apenas"], correct:0 },
+  { id: 5005, topic: "Biologia", q: "Bactérias são:", choices: ["unicelulares","multicelulares","sem vida","fungos"], correct:0 },
+  { id: 5006, topic: "Biologia", q: "Qual o principal pigmento fotossintético?", choices: ["clorofila","hemoglobina","melanina","caroteno"], correct:0 },
+  { id: 5007, topic: "Biologia", q: "O que são enzimas?", choices: ["proteínas catalisadoras","lípidos","açúcares","vitaminas"], correct:0 },
+  { id: 5008, topic: "Biologia", q: "Células-tronco são importantes porque:", choices: ["podem gerar diferentes tipos celulares","são mais fortes","produzem mais energia","não têm função"], correct:0 },
+  { id: 5009, topic: "Biologia", q: "Qual é o maior órgão do corpo humano?", choices: ["pele","fígado","coração","pulmão"], correct:0 },
+  { id: 5010, topic: "Biologia", q: "O ciclo da água envolve:", choices: ["evaporação, condensação e precipitação","só evaporação","só precipitação","só condensação"], correct:0 }
+];
 
-    function selectAnswer(element, index) {
-      if (answered) return;
-      answered = true;
+/* ============================
+   STATE
+   ============================ */
+let visibleFilter = "all"; // "all" or topic
+let selectedIds = new Set(); // ids user marked to include
+let filteredList = []; // current filtered list of questions (objects)
+let quizList = []; // actual list used in quiz (order)
+let quizIndex = 0;
+let answeredSet = new Set(); // question ids answered in this quiz (block re-answer)
+let currentSelection = null; // index in quizList selected answer
+let stats = { correct: 0, wrong: 0, skipped: 0 };
 
-      const correctIndex = questions[currentIndex].correct;
-      const answers = document.querySelectorAll(".answer");
+/* ============================
+   DOM refs
+   ============================ */
+const cardsGrid = document.getElementById('cardsGrid');
+const filterBtns = Array.from(document.querySelectorAll('.filter-btn'));
+const searchInput = document.getElementById('searchInput');
+const btnClearSearch = document.getElementById('btnClearSearch');
+const selectedCount = document.getElementById('selectedCount');
+const selectedCount2 = document.getElementById('selectedCount2');
+const btnStart = document.getElementById('btnStart');
+const btnSelectAll = document.getElementById('btnSelectAll');
+const btnDeselectAll = document.getElementById('btnDeselectAll');
+const btnInvert = document.getElementById('btnInvert');
+const qText = document.getElementById('qText');
+const answersEl = document.getElementById('answers');
+const progressEl = document.getElementById('progress');
+const btnSkip = document.getElementById('btnSkip');
+const btnNext = document.getElementById('btnNext');
+const summaryArea = document.getElementById('summaryArea');
+const summaryText = document.getElementById('summaryText');
+const btnShowAll = document.getElementById('btnShowAll');
+const exportBtn = document.getElementById('exportBtn');
+const importFile = document.getElementById('importFile');
+const btnHelp = document.getElementById('btnHelp');
+const btnMark = document.getElementById('btnMark');
 
-      answers.forEach((a, i) => {
-        a.classList.add(i === correctIndex ? "correct" : (i === index ? "wrong" : ""));
-      });
+/* ============================
+   INIT
+   ============================ */
+function init(){
+  renderCards(ALL_QUESTIONS);
+  attachEvents();
+  updateSelectedCount();
+  filteredList = ALL_QUESTIONS.slice();
+}
+init();
 
-      nextBtn.style.display = "block";
-    }
+/* ============================
+   RENDER cards (bank)
+   ============================ */
+function renderCards(list){
+  cardsGrid.innerHTML = '';
+  list.forEach(q=>{
+    const el = document.createElement('div');
+    el.className = 'q-card';
+    el.dataset.id = q.id;
+    el.innerHTML = `
+      <div class="q-top">
+        <div>
+          <div class="q-title">${escapeHtml(q.q)}</div>
+          <div class="q-meta">${q.topic}</div>
+        </div>
+        <div class="include-toggle">
+          <label style="font-size:12px;color:var(--muted);margin-right:6px">Incluir</label>
+          <input type="checkbox" ${selectedIds.has(q.id)?'checked':''} data-id="${q.id}" class="include-chk" />
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <div style="font-size:12px;color:var(--muted)">${q.choices.length} alternativas</div>
+        <div class="card-actions">
+          <button class="ghost view-btn" data-id="${q.id}">Visualizar</button>
+        </div>
+      </div>
+    `;
+    cardsGrid.appendChild(el);
+  });
 
-    nextBtn.addEventListener("click", () => {
-      currentIndex++;
-      if (currentIndex < questions.length) {
-        loadQuestion();
-      } else {
-        showEndScreen();
-      }
+  // attach checkbox handlers
+  Array.from(document.querySelectorAll('.include-chk')).forEach(chk=>{
+    chk.addEventListener('change', e=>{
+      const id = Number(e.target.dataset.id);
+      if(e.target.checked) selectedIds.add(id); else selectedIds.delete(id);
+      updateSelectedCount();
     });
+  });
 
-    function showEndScreen() {
-      questionText.textContent = "Você completou todas as questões!";
-      answersList.innerHTML = "";
-      progressText.textContent = "Fim do quiz 🎉";
-      nextBtn.style.display = "none";
+  // attach view btns
+  Array.from(document.querySelectorAll('.view-btn')).forEach(b=>{
+    b.addEventListener('click', e=>{
+      const id = Number(e.target.dataset.id);
+      const q = ALL_QUESTIONS.find(x=>x.id===id);
+      if(q) showPreviewModal(q);
+    });
+  });
+}
+
+/* ============================
+   FILTERING
+   ============================ */
+filterBtns.forEach(b=>{
+  b.addEventListener('click', ()=>{
+    filterBtns.forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    visibleFilter = b.dataset.filter;
+    applyFilters();
+  });
+});
+
+searchInput.addEventListener('input', ()=>applyFilters());
+btnClearSearch.addEventListener('click', ()=>{searchInput.value='';applyFilters();});
+
+function applyFilters(){
+  const term = (searchInput.value||'').trim().toLowerCase();
+  filteredList = ALL_QUESTIONS.filter(q=>{
+    const matchTopic = visibleFilter === 'all' ? true : q.topic === visibleFilter;
+    const matchTerm = term === '' ? true : (q.q.toLowerCase().includes(term) || q.choices.join(' ').toLowerCase().includes(term));
+    return matchTopic && matchTerm;
+  });
+  renderCards(filteredList);
+  updateSelectedCount();
+}
+
+/* ============================
+   Selection helpers
+   ============================ */
+function updateSelectedCount(){
+  const c = selectedIds.size;
+  selectedCount.textContent = `${c} selecionadas`;
+  selectedCount2.textContent = c;
+}
+
+/* select visible / deselect / invert */
+btnSelectAll.addEventListener('click', ()=>{
+  filteredList.forEach(q=>selectedIds.add(q.id));
+  renderCards(filteredList);
+  updateSelectedCount();
+});
+btnDeselectAll.addEventListener('click', ()=>{
+  filteredList.forEach(q=>selectedIds.delete(q.id));
+  renderCards(filteredList);
+  updateSelectedCount();
+});
+btnInvert.addEventListener('click', ()=>{
+  filteredList.forEach(q=>{
+    if(selectedIds.has(q.id)) selectedIds.delete(q.id);
+    else selectedIds.add(q.id);
+  });
+  renderCards(filteredList);
+  updateSelectedCount();
+});
+
+/* ============================
+   Quiz logic
+   ============================ */
+btnStart.addEventListener('click', ()=>{
+  // build quizList
+  const visible = filteredList.length>0 ? filteredList : ALL_QUESTIONS.slice();
+  // if user selected some -> use selected ones (within visible), else use visible all
+  const selectedArray = visible.filter(q=>selectedIds.has(q.id));
+  quizList = (selectedArray.length>0 ? selectedArray : visible).slice();
+  if(quizList.length===0){ alert('Nenhuma questão disponível para o quiz.'); return; }
+  // shuffle for randomness
+  shuffleArray(quizList);
+  quizIndex = 0;
+  answeredSet.clear();
+  stats = { correct:0, wrong:0, skipped:0 };
+  summaryArea.style.display = 'none';
+  loadQuizQuestion();
+});
+
+function loadQuizQuestion(){
+  if(quizIndex >= quizList.length){
+    showQuizSummary();
+    return;
+  }
+  const q = quizList[quizIndex];
+  progressEl.textContent = `Questão ${quizIndex+1} / ${quizList.length}`;
+  qText.textContent = q.q;
+  answersEl.innerHTML = '';
+  currentSelection = null;
+  // build answer buttons
+  q.choices.forEach((c, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.innerHTML = `<div style="width:28px;font-weight:800">${String.fromCharCode(65+idx)}</div><div style="flex:1;text-align:left">${escapeHtml(c)}</div>`;
+    // disable if already answered
+    const answeredThis = answeredSet.has(q.id);
+    if(answeredThis){ btn.classList.add('disabled'); btn.disabled = true; }
+    btn.addEventListener('click', ()=>{
+      if(answeredSet.has(q.id)) return;
+      // mark answered
+      answeredSet.add(q.id);
+      const correctIdx = q.correct;
+      // add styles to show correct/wrong
+      const buttons = Array.from(document.querySelectorAll('.answer-btn'));
+      buttons.forEach((b,i)=>{
+        b.classList.add('disabled');
+        b.disabled = true;
+        if(i === correctIdx) b.classList.add('correct');
+        if(i !== correctIdx && i === idx) b.classList.add('wrong');
+      });
+      // update stats
+      if(idx === correctIdx) stats.correct += 1; else stats.wrong += 1;
+      btnNext.disabled = false;
+      // optional: record answer to localStorage history (for future export)
+      recordAttempt(q.id, idx === correctIdx);
+    });
+    answersEl.appendChild(btn);
+  });
+
+  // If already answered, enable next button
+  btnNext.disabled = !answeredSet.has(q.id);
+}
+
+/* skip */
+btnSkip.addEventListener('click', ()=>{
+  if(quizList.length===0) return;
+  // mark skipped but not answerable again (if you want to allow skip+come-back, remove answeredSet add)
+  const q = quizList[quizIndex];
+  if(!answeredSet.has(q.id)){
+    answeredSet.add(q.id);
+    stats.skipped += 1;
+  }
+  // move next
+  quizIndex++;
+  if(quizIndex < quizList.length) loadQuizQuestion(); else showQuizSummary();
+});
+
+/* next */
+btnNext.addEventListener('click', ()=>{
+  quizIndex++;
+  if(quizIndex < quizList.length) loadQuizQuestion(); else showQuizSummary();
+});
+
+/* show summary */
+function showQuizSummary(){
+  progressEl.textContent = `Fim - ${quizList.length} questões`;
+  qText.textContent = `Resumo do Quiz`;
+  answersEl.innerHTML = '';
+  btnNext.disabled = true;
+  summaryArea.style.display = 'block';
+  summaryText.innerHTML = `
+    <div><strong>Acertos:</strong> ${stats.correct}</div>
+    <div><strong>Erros:</strong> ${stats.wrong}</div>
+    <div><strong>Pulos:</strong> ${stats.skipped}</div>
+    <div style="margin-top:8px"><strong>Porcentagem:</strong> ${calcPct(stats.correct, quizList.length)}%</div>
+  `;
+  // scroll to summary
+  summaryArea.scrollIntoView({behavior:'smooth'});
+}
+
+/* ============================
+   Utility: preview modal (simple)
+   ============================ */
+function showPreviewModal(q){
+  // create light modal (simple)
+  const modal = document.createElement('div');
+  modal.style.position='fixed';modal.style.inset=0;modal.style.background='rgba(0,0,0,0.6)';modal.style.display='flex';modal.style.alignItems='center';modal.style.justifyContent='center';modal.style.zIndex=9999;
+  const box = document.createElement('div');
+  box.style.width='min(800px,92%)';box.style.background='var(--panel)';box.style.padding='18px';box.style.borderRadius='12px';
+  box.innerHTML = `<h3 style="margin:0 0 10px 0;color:var(--accent-2)">${q.topic}</h3>
+                   <p style="font-weight:700">${escapeHtml(q.q)}</p>
+                   <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+                     ${q.choices.map((c,i)=>`<div style="padding:8px;border-radius:8px;background:#0a0a16;border:1px solid rgba(255,255,255,0.04)">${String.fromCharCode(65+i)}. ${escapeHtml(c)}</div>`).join('')}
+                   </div>
+                   <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
+                     <button id="closeModal" class="small-btn">Fechar</button>
+                   </div>`;
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+  document.getElementById('closeModal').addEventListener('click', ()=> modal.remove());
+}
+
+/* ============================
+   Helpers: shuffle, pct, escape
+   ============================ */
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
+function calcPct(correct,total){ return total===0?0:Math.round((correct/total)*100); }
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c)); }
+
+/* ============================
+   Record attempts locally (history)
+   Saves to localStorage 'sf_attempts' as array of { qid, correct, at}
+   ============================ */
+function recordAttempt(qid, correct){
+  try{
+    const key = 'sf_attempts';
+    const raw = localStorage.getItem(key);
+    const arr = raw ? JSON.parse(raw) : [];
+    arr.push({ qid, correct: !!correct, at: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(arr));
+  }catch(e){ console.warn('record attempt err',e); }
+}
+
+/* ============================
+   Export / Import JSON
+   ============================ */
+exportBtn.addEventListener('click', ()=>{
+  const data = JSON.stringify(ALL_QUESTIONS, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'questoes_studyflix.json'; a.click();
+  URL.revokeObjectURL(url);
+});
+importFile.addEventListener('change', (ev)=>{
+  const f = ev.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const arr = JSON.parse(e.target.result);
+      if(!Array.isArray(arr)) throw new Error('Formato inválido');
+      // basic validation: each item must have id/topic/q/choices/correct
+      let added = 0;
+      arr.forEach(it=>{
+        if(it && it.id && it.topic && it.q && Array.isArray(it.choices) && typeof it.correct === 'number'){
+          // avoid duplicate id
+          if(!ALL_QUESTIONS.find(x=>x.id===it.id)){ ALL_QUESTIONS.push(it); added++; }
+        }
+      });
+      alert(`Import concluído: ${added} novas questões adicionadas (ignora duplicadas).`);
+      applyFilters();
+    }catch(err){ alert('Erro ao importar JSON: ' + err.message); }
+  };
+  reader.readAsText(f);
+});
+
+/* ============================
+   Small helpers: help modal, show all
+   ============================ */
+btnHelp.addEventListener('click', ()=>{
+  alert('Como usar:\n\n1. Filtre por matéria no topo.\n2. (Opcional) marque as questões que quer incluir.\n3. Clique "Iniciar Quiz".\n4. Cada questão só pode ser respondida uma vez. Use "Pular" para marcar como pulada.\n\nVocê pode exportar/importar o banco de questões em JSON.');
+});
+btnShowAll.addEventListener('click', ()=>{
+  visibleFilter = 'all';
+  filterBtns.forEach(b=>b.classList.toggle('active', b.dataset.filter==='all'));
+  searchInput.value=''; applyFilters();
+});
+
+/* quick mark: toggle include of visible selected card if any selected in UI */
+btnMark.addEventListener('click', ()=>{
+  // toggles include for currently visible quiz question (if in bank)
+  if(quizList && quizList[quizIndex]){
+    const q = quizList[quizIndex];
+    if(selectedIds.has(q.id)) selectedIds.delete(q.id); else selectedIds.add(q.id);
+    renderCards(filteredList.length?filteredList:ALL_QUESTIONS);
+    updateSelectedCount();
+  } else alert('Nenhuma questão do quiz ativa pra marcar.');
+});
+
+/* allow click on card title to load question into preview */
+cardsGrid.addEventListener('click', (e)=>{
+  const card = e.target.closest('.q-card');
+  if(!card) return;
+  const id = Number(card.dataset.id);
+  const q = ALL_QUESTIONS.find(x=>x.id===id);
+  if(q){
+    // scroll to quiz and set as next question to answer
+    window.scrollTo({ top: 80, behavior: 'smooth' });
+    // insert q into quizList at current index+1 so it becomes next if quiz started
+    // if quiz not started, just show it in preview modal
+    if(quizList && quizList.length>0){
+      // find index in quizList
+      const pos = quizList.findIndex(x=>x.id===id);
+      if(pos>=0){
+        // jump to that question
+        quizIndex = pos;
+        loadQuizQuestion();
+      } else {
+        // insert after current
+        quizList.splice(quizIndex+1, 0, q);
+        alert('Questão adicionada ao quiz (será exibida em seguida).');
+      }
+    } else {
+      showPreviewModal(q);
     }
+  }
+});
 
-    loadQuestion();
-  </script>
+/* auto apply filters initially */
+applyFilters();
+
+/* ============================
+   Helper: loadQuizQuestion used earlier (exposed)
+   ============================ */
+function loadQuizQuestion(){
+  if(!quizList || quizList.length===0){ qText.textContent = 'Nenhuma questão no quiz. Selecione e inicie.'; answersEl.innerHTML=''; progressEl.textContent = 'Questão 0 / 0'; return; }
+  if(quizIndex >= quizList.length){ showQuizSummary(); return; }
+  const q = quizList[quizIndex];
+  progressEl.textContent = `Questão ${quizIndex+1} / ${quizList.length}`;
+  qText.textContent = q.q;
+  answersEl.innerHTML = '';
+  btnNext.disabled = true;
+  // show answers; if already answered -> disabled
+  q.choices.forEach((c, idx)=>{
+    const b = document.createElement('button');
+    b.className = 'answer-btn';
+    b.innerHTML = `<div style="width:28px;font-weight:800">${String.fromCharCode(65+idx)}</div><div style="flex:1;text-align:left">${escapeHtml(c)}</div>`;
+    if(answeredSet.has(q.id)){
+      b.disabled = true; b.classList.add('disabled');
+      // show correct/wrong based on earlier attempts recorded in localStorage
+      const hist = JSON.parse(localStorage.getItem('sf_attempts') || '[]');
+      const attempt = hist.find(a=>a.qid===q.id);
+      if(attempt){
+        // show correct button
+        const correctIdx = q.correct;
+        if(idx === correctIdx) b.classList.add('correct');
+        // if user answered wrong previously, show wrong on the chosen index (we don't store chosen index in current record; could be extended)
+      }
+    } else {
+      b.addEventListener('click', ()=>{
+        if(answeredSet.has(q.id)) return;
+        answeredSet.add(q.id);
+        // mark correct/wrong
+        const correctIdx = q.correct;
+        const all = Array.from(document.querySelectorAll('.answer-btn'));
+        all.forEach((btn,i)=>{
+          btn.disabled = true; btn.classList.add('disabled');
+          if(i === correctIdx) btn.classList.add('correct');
+          if(i !== correctIdx && i === idx) btn.classList.add('wrong');
+        });
+        // update stats & local record
+        if(idx === correctIdx) stats.correct++; else stats.wrong++;
+        recordAttempt(q.id, idx === correctIdx);
+        btnNext.disabled = false;
+      });
+    }
+    answersEl.appendChild(b);
+  });
+}
+
+/* ============================
+   Utility: escapeHtml shared (redeclared for scope)
+   ============================ */
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c)); }
+
+</script>
+
 </body>
 </html>
