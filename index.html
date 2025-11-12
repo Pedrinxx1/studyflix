@@ -1,275 +1,361 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Studyflix</title>
-  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studyflix | Aprenda de forma dinâmica</title>
+  <link rel="shortcut icon" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" type="image/png">
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
-      font-family: 'Poppins', sans-serif;
-      background: #000 url('https://encurtador.com.br/XGTi') no-repeat center center fixed;
-      background-size: cover;
-      min-height: 100vh;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
+      box-sizing: border-box;
     }
-    .header {
+
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px;
+      background: rgba(0, 0, 0, 0.85);
+      border-bottom: 2px solid #9b59b6;
       position: fixed;
-      top: 15px;
-      left: 20px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      z-index: 100;
-      user-select: none;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      backdrop-filter: blur(10px);
     }
+
     .logo {
-      width: 100%;
-      max-width: 468px;
-      height: auto;
-      display: block;
-    }
-    #name {
-      font-size: 2.7rem;
-      font-weight: 900;
-      color: #5a15e3;
-      letter-spacing: 0.5px;
-      margin-left: 0;
-      margin-top: 3px;
-      user-select: none;
-      line-height: 1;
-      transition: color 0.3s;
-      text-shadow: 0 2px 18px #5a15e3b3, 0 0px 2px #fff6ee10;
-    }
-    .container-login {
-      background: rgba(0,0,0,0.85);
-      border-radius: 14px;
-      padding: 38px 32px 26px 32px;
-      box-shadow: 0 4px 50px 0 #5a15e393, 0 2px 16px 0 #fff1;
-      max-width: 340px;
-      width: 90vw;
-      margin: 120px auto 80px auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-sizing: border-box;
-    }
-    .input-container {
-      position: relative;
-      width: 100%;
-      max-width: 275px;
-      margin: 18px auto 0 auto;
-    }
-    .input-container input {
-      width: 100%;
-      background: #1a1a1a;
-      color: #fff;
-      border: 2px solid #5a15e3;
-      border-radius: 8px;
-      font-size: 1rem;
-      padding: 14px 45px 14px 15px;
-      outline: none;
-      box-sizing: border-box;
-      letter-spacing: 1px;
-      transition: border 0.3s, box-shadow 0.3s;
-      box-shadow: 0 0 0 0 #5a15e399;
-    }
-    .input-container input:focus {
-      border-color: #a981fa;
-      box-shadow: 0 0 8px #a981facc;
-    }
-    .input-senha-container button {
-      position: absolute;
-      top: 50%;
-      right: 15px;
-      transform: translateY(-50%);
-      background: transparent;
-      border: none;
+      height: 65px;
       cursor: pointer;
-      font-size: 22px;
-      color: #a18ff2;
-      padding: 0;
-      z-index: 2;
-      user-select: none;
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        filter: drop-shadow(0 0 6px #9b59b6);
+      }
+      to {
+        filter: drop-shadow(0 0 20px #b87bff);
+      }
+    }
+
+    .buttons {
       display: flex;
-      align-items: center;
-      transition: color 0.2s;
+      gap: 20px;
     }
-    .input-senha-container button svg {
-      display: block;
-      pointer-events: none;
-      transition: stroke 0.3s;
-      stroke: #a981fa;
-    }
-    .input-senha-container input:focus + button svg,
-    .input-senha-container input:not(:placeholder-shown) + button svg {
-      stroke: #5a15e3;
-    }
-    #btnLogin {
-      background: linear-gradient(90deg,#5a15e3 60%,#a981fa 100%);
-      border: none;
+
+    .btn {
+      background-color: #9b59b6;
       color: white;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 5px;
       font-weight: 700;
-      padding: 12px;
-      border-radius: 8px;
       cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #8e44ad;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #9b59b6;
+    }
+
+    .hero {
+      text-align: center;
+      padding-top: 200px;
+      padding-bottom: 130px;
+      background: radial-gradient(circle at center, rgba(45, 0, 65, 0.6), rgba(0, 0, 0, 0.95) 70%);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      text-shadow: 0 0 20px #9b59b6;
+      margin-bottom: 25px;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: #ccc;
+      max-width: 750px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .hero .cta {
+      background-color: #9b59b6;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+      color: white;
+    }
+
+    .hero .cta:hover {
+      background-color: #8e44ad;
+      box-shadow: 0 0 25px #9b59b6;
+      transform: translateY(-3px);
+    }
+
+    .section {
+      padding: 90px 10%;
+    }
+
+    .section h2 {
+      text-align: center;
+      font-size: 2.6rem;
+      color: #fff;
+      margin-bottom: 45px;
+      text-shadow: 0 0 12px #9b59b6;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .card {
+      background: #181818;
+      border-radius: 8px;
+      width: 240px;
+      text-align: center;
+      overflow: hidden;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 20px #9b59b6;
+    }
+
+    .card img {
       width: 100%;
-      margin: 25px 0 0 0;
-      font-size: 1.07rem;
-      box-shadow: 0 0 18px #a981fa99;
+      height: 140px;
+      object-fit: cover;
+      border-bottom: 3px solid #9b59b6;
+    }
+
+    .card h3 {
+      padding: 15px;
+      color: white;
+    }
+
+    .why {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .why div {
+      background: #141414;
+      padding: 30px;
+      border-radius: 8px;
+      transition: 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .why div:hover {
+      border-color: #9b59b6;
+      box-shadow: 0 0 20px #9b59b6;
+      transform: translateY(-5px);
+    }
+
+    .why h3 {
+      color: #b87bff;
+      margin-bottom: 10px;
+    }
+
+    .why p {
+      color: #ccc;
+    }
+
+    .faq {
+      background-color: #111;
+      padding: 70px 10%;
+    }
+
+    .faq h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #9b59b6;
+    }
+
+    .faq-item {
+      background: #181818;
+      margin-bottom: 10px;
+      padding: 20px;
+      border-radius: 5px;
+      cursor: pointer;
       transition: 0.3s;
     }
-    #btnLogin:hover {
-      filter: brightness(1.07);
-      box-shadow: 0 0 38px #a981fa80;
-      letter-spacing: 0.5px;
-    }
-    #notificacao {
-      margin: 0 auto 18px auto;
-      padding: 10px;
-      width: 90%;
-      max-width: 320px;
-      border-radius: 8px;
-      font-weight: 600;
-      text-align: center;
-      display: none;
-      font-size: 1rem;
-      box-shadow: 0 2px 18px #a981fa20;
-    }
-    #notificacao.sucesso {
-      background-color: #5a15e3cc;
-      color: white;
-      box-shadow: 0 0 18px #a981fa80;
-    }
-    #notificacao.erro {
-      background-color: #bb33cccc;
-      color: white;
-      box-shadow: 0 0 15px #bb33cccc;
-    }
-    #cadaster {
-      margin-top: 25px;
-      font-size: .93em;
-      color: #ccc;
-      user-select: none;
-    }
-    #cadaster a { color: #5a15e3; text-decoration: underline; }
 
-    /* Media Queries para celular */
-    @media (max-width: 500px) {
-      /* Ajusta container login para ocupar mais espaço em telas pequenas */
-      .container-login {
-        padding: 25px 7vw 25px 7vw;
-        max-width: 90vw;
-        width: 100%;
-        margin: 90px auto 40px auto;
+    .faq-item:hover {
+      background: #222;
+    }
+
+    .faq-question {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .faq-answer {
+      display: none;
+      margin-top: 10px;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    footer {
+      background-color: #141414;
+      text-align: center;
+      padding: 40px;
+      border-top: 2px solid #9b59b6;
+      color: #ccc;
+      font-size: 0.95rem;
+    }
+
+    .social {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+
+    .social img {
+      width: 42px;
+      filter: invert(1);
+      transition: 0.3s;
+    }
+
+    .social img:hover {
+      filter: invert(61%) sepia(78%) saturate(396%) hue-rotate(233deg) brightness(101%) contrast(95%);
+      transform: scale(1.15);
+    }
+
+    /* Animação de entrada */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
       }
-      /* Ajusta input para largura total com margem reduzida */
-      .input-container {
-        max-width: 100%;
-        margin: 14px auto 0 auto;
-      }
-      /* Logo fica responsiva, ocupando grande parte da largura */
-      .logo {
-        max-width: 280px;
-        width: 80vw;
-        height: auto;
-      }
-      /* Ajusta header para menor espaçamento */
-      .header {
-        top: 10px;
-        left: 10px;
-      }
-      /* Ajusta fonte do nome para caber melhor */
-      #name {
-        font-size: 2rem;
-      }
-      /* Ajusta botão para fonte um pouco menor */
-      #btnLogin {
-        font-size: 1rem;
-        padding: 10px;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
+
+    .hero h1, .hero p, .hero .cta {
+      animation: fadeInUp 1.5s ease forwards;
+    }
+
+    .hero h1 { animation-delay: 0.3s; }
+    .hero p { animation-delay: 0.6s; }
+    .hero .cta { animation-delay: 0.9s; }
   </style>
 </head>
 <body>
-  <header class="header">
-    <img class="logo" src="https://encurtador.com.br/tUmb" alt="Logo Studyflix" />
-    <span id="name"></span>
+  <header>
+    <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Studyflix Logo">
+    <div class="buttons">
+      <a href="login.html" class="btn">Entrar</a>
+      <a href="cadaster.html" class="btn">Começar agora</a>
+    </div>
   </header>
-  <div id="notificacao"></div>
-  <form id="loginForm" class="container-login" autocomplete="on" onsubmit="validarLogin(event)">
-    <h2 style="color:#fff;margin-bottom:32px;">ENTRAR</h2>
-    <div class="input-container">
-      <input type="text" id="email" name="email" placeholder="Nome de usuário ou e-mail" required autocomplete="username" />
+
+  <section class="hero">
+    <h1>Studyflix — O conhecimento no seu ritmo</h1>
+    <p>Mais do que uma plataforma de estudos, o Studyflix é uma revolução na forma de aprender.  
+      Aqui, você encontra conteúdos organizados, um design envolvente e recursos pensados para transformar o aprendizado em uma experiência prazerosa e intuitiva.</p>
+    <a href="cadaster.html" class="cta">Começar agora</a>
+  </section>
+
+  <section class="section">
+    <h2>Em Alta</h2>
+    <div class="cards">
+      <div class="card"><img src="https://i.ibb.co/1YJBLpsW/Whats-App-Image-2025-02-27-at-19-58-54.jpg"><h3>Biologia</h3></div>
+      <div class="card"><img src="https://i.ibb.co/vCCktjL9/Whats-App-Image-2025-02-27-at-20-06-41.jpg"><h3>Física</h3></div>
+      <div class="card"><img src="https://i.ibb.co/gZsn7cpW/Whats-App-Image-2025-02-27-at-20-41-39.jpg"><h3>Química</h3></div>
+      <div class="card"><img src="https://i.ibb.co/b5VTFyBM/Whats-App-Image-2025-02-28-at-21-57-35.jpg"><h3>Matemática</h3></div>
     </div>
-    <div class="input-container input-senha-container">
-      <input type="password" id="senha" name="senha" placeholder="Senha" required autocomplete="current-password" />
-      <button type="button" id="toggleSenha" aria-label="Mostrar/Ocultar senha" tabindex="-1">
-        <svg width="28" height="28" fill="none" stroke="#a981fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <ellipse cx="14" cy="14" rx="11" ry="6"/>
-          <circle cx="14" cy="14" r="2"/>
-        </svg>
-      </button>
+  </section>
+
+  <section class="section">
+    <h2>Por que escolher o Studyflix?</h2>
+    <div class="why">
+      <div>
+        <h3>Aprendizado dinâmico</h3>
+        <p>Conteúdos diretos, organizados e visuais para facilitar a compreensão e fixação do conhecimento.</p>
+      </div>
+      <div>
+        <h3>Acesso 100% online</h3>
+        <p>Estude em qualquer lugar e a qualquer hora, sem limitações. A plataforma é leve, rápida e compatível com qualquer dispositivo.</p>
+      </div>
+      <div>
+        <h3>Progresso personalizado</h3>
+        <p>Acompanhe seu desenvolvimento com recursos que mostram seu avanço em cada disciplina.</p>
+      </div>
+      <div>
+        <h3>Comunidade de estudantes</h3>
+        <p>Conecte-se com outros alunos, compartilhe experiências e aprenda junto com quem tem o mesmo objetivo que você.</p>
+      </div>
     </div>
-    <button type="submit" id="btnLogin">Entrar</button>
-    <p id="cadaster">Novo por aqui? <a href="cadaster.html">Assine agora</a></p>
-  </form>
+  </section>
+
+  <section class="faq">
+    <h2>Perguntas Frequentes</h2>
+    <div class="faq-item">
+      <div class="faq-question">O que é o Studyflix?</div>
+      <div class="faq-answer">É uma plataforma de aprendizado digital inspirada em serviços de streaming, criada para tornar o estudo acessível, prático e visualmente atraente.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">Preciso pagar para usar?</div>
+      <div class="faq-answer">Não! O Studyflix oferece conteúdos gratuitos para todos os usuários, e em breve contará com planos adicionais para quem quiser expandir a experiência.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">Como posso começar?</div>
+      <div class="faq-answer">Clique em “Começar agora”, crie sua conta e tenha acesso imediato aos conteúdos disponíveis.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">O Studyflix é confiável?</div>
+      <div class="faq-answer">Sim! Todos os conteúdos são revisados e a plataforma é desenvolvida com foco em segurança, desempenho e qualidade educacional.</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="social">
+      <a href="https://www.instagram.com/study.flixx" target="_blank"><img src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png" alt="Instagram"></a>
+      <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank"><img src="https://i.ibb.co/N6W8q1KF/Whats-App-256.png" alt="WhatsApp"></a>
+    </div>
+    <p>© 2025 Studyflix — Transformando o aprendizado em uma experiência. Todos os direitos reservados.</p>
+  </footer>
+
   <script>
-    function validarLogin(event) {
-      event.preventDefault();
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-      const btnLogin = document.getElementById("btnLogin");
-      const notificacao = document.getElementById("notificacao");
-      btnLogin.disabled = true;
-      btnLogin.textContent = "Verificando...";
-      notificacao.style.display = "none";
-      notificacao.textContent = "";
-      notificacao.className = "";
-      fetch("login.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "email=" + encodeURIComponent(email) + "&senha=" + encodeURIComponent(senha)
-      })
-      .then(response => response.text())
-      .then(data => {
-        btnLogin.disabled = false;
-        btnLogin.textContent = "Entrar";
-        if (data.includes("sucesso")) {
-          notificacao.style.display = "block";
-          notificacao.textContent = "✅ Login realizado com sucesso!";
-          notificacao.className = "sucesso";
-          setTimeout(() => { window.location.href = "page.html"; }, 1200);
-        } else {
-          notificacao.style.display = "block";
-          notificacao.textContent = data;
-          notificacao.className = "erro";
-        }
-      })
-      .catch(() => {
-        btnLogin.disabled = false;
-        btnLogin.textContent = "Entrar";
-        notificacao.style.display = "block";
-        notificacao.textContent = "⚠️ Erro no servidor. Tente novamente mais tarde.";
-        notificacao.className = "erro";
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const answer = item.querySelector('.faq-answer');
+        answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
       });
-    }
-    const senhaInput = document.getElementById('senha');
-    const toggleSenha = document.getElementById('toggleSenha');
-    let mostrando = false;
-    toggleSenha.addEventListener('click', function () {
-      mostrando = !mostrando;
-      senhaInput.type = mostrando ? 'text' : 'password';
-      this.innerHTML = mostrando
-        ? `<svg width="28" height="28" fill="none" stroke="#5a15e3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="14" cy="14" rx="11" ry="6"/><circle cx="14" cy="14" r="2"/><line x1="6" y1="6" x2="22" y2="22" stroke="#5a15e3"/></svg>`
-        : `<svg width="28" height="28" fill="none" stroke="#a981fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="14" cy="14" rx="11" ry="6"/><circle cx="14" cy="14" r="2"/></svg>`;
-      senhaInput.focus();
     });
   </script>
 </body>
