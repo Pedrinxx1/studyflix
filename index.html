@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studyflix | Aprenda de forma dinâmica</title>
-  <link rel="shortcut icon" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" type="image/png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studyflix - Aprenda do seu jeito</title>
+
   <style>
+    /* ---------- Reset ---------- */
     * {
       margin: 0;
       padding: 0;
@@ -13,411 +14,233 @@
     }
 
     body {
-      background-color: #000;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top left, #0a0012, #120020, #1a002d);
       color: #fff;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       overflow-x: hidden;
-      scroll-behavior: smooth;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
     }
 
     header {
+      width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 40px;
-      background: rgba(0, 0, 0, 0.85);
-      border-bottom: 2px solid #9b59b6;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 10;
-      backdrop-filter: blur(10px);
+      padding: 25px 6%;
     }
 
+    /* ---------- Logo ---------- */
     .logo {
-      height: 60px;
-      cursor: pointer;
-      animation: glow 3s ease-in-out infinite alternate;
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: #a55bff;
+      text-shadow: 0 0 10px #a55bff, 0 0 25px #6c00ff;
+      letter-spacing: 2px;
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
     }
 
-    @keyframes glow {
-      from {
-        filter: drop-shadow(0 0 6px #9b59b6);
-      }
-      to {
-        filter: drop-shadow(0 0 20px #b87bff);
-      }
+    .logo:hover {
+      transform: scale(1.08);
+      text-shadow: 0 0 20px #c17bff, 0 0 40px #8a2be2;
     }
 
-    .buttons {
+    /* ---------- Botões ---------- */
+    .btns {
       display: flex;
-      gap: 15px;
+      gap: 1rem;
     }
 
     .btn {
-      background-color: #9b59b6;
-      color: white;
-      padding: 10px 25px;
-      border: none;
+      padding: 10px 24px;
       border-radius: 6px;
-      font-weight: 700;
+      font-weight: 600;
+      transition: 0.3s ease;
+      border: 2px solid transparent;
       cursor: pointer;
-      transition: 0.3s;
-      text-decoration: none;
     }
 
-    .btn:hover {
-      background-color: #8e44ad;
-      transform: scale(1.05);
-      box-shadow: 0 0 10px #9b59b6;
+    .btn-login {
+      background: transparent;
+      color: #a55bff;
+      border-color: #a55bff;
     }
 
+    .btn-login:hover {
+      background: #a55bff;
+      color: #fff;
+    }
+
+    .btn-cadaster {
+      background: #a55bff;
+      color: #fff;
+    }
+
+    .btn-cadaster:hover {
+      background: #8a2be2;
+      box-shadow: 0 0 15px #a55bff;
+    }
+
+    /* ---------- Hero Section ---------- */
     .hero {
       text-align: center;
-      padding-top: 180px;
-      padding-bottom: 120px;
-      background: radial-gradient(circle at center, rgba(45, 0, 65, 0.6), rgba(0, 0, 0, 0.95) 70%);
+      margin-top: 10vh;
+      padding: 0 6%;
+      animation: fadeIn 1s ease forwards;
     }
 
     .hero h1 {
-      font-size: 3.2rem;
-      font-weight: 900;
-      text-shadow: 0 0 20px #9b59b6;
-      margin-bottom: 25px;
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #fff;
+      text-shadow: 0 0 25px rgba(165, 91, 255, 0.6);
     }
 
     .hero p {
+      margin-top: 1.2rem;
       font-size: 1.2rem;
-      color: #ccc;
-      max-width: 700px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
-      padding: 0 15px;
+      color: #d5c9ff;
+      max-width: 800px;
+      margin-inline: auto;
     }
 
-    .hero .cta {
-      background-color: #9b59b6;
-      padding: 15px 40px;
-      border: none;
-      border-radius: 6px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      text-decoration: none;
-      color: white;
-    }
-
-    .hero .cta:hover {
-      background-color: #8e44ad;
-      box-shadow: 0 0 25px #9b59b6;
-      transform: translateY(-3px);
-    }
-
-    .section {
-      padding: 90px 10%;
-    }
-
-    .section h2 {
-      text-align: center;
-      font-size: 2.4rem;
-      color: #fff;
-      margin-bottom: 45px;
-      text-shadow: 0 0 12px #9b59b6;
-    }
-
-    .cards {
+    /* ---------- Sobre ---------- */
+    .about {
+      margin-top: 12vh;
+      padding: 0 6% 10vh;
       display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 3rem;
       flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
     }
 
-    .card {
-      background: #181818;
-      border-radius: 8px;
-      width: 240px;
-      text-align: center;
-      overflow: hidden;
-      transition: 0.3s;
-      cursor: pointer;
+    .about-text {
+      flex: 1 1 400px;
+      background: rgba(30, 0, 50, 0.4);
+      border-radius: 14px;
+      padding: 2rem;
+      box-shadow: 0 0 25px rgba(165, 91, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .card:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 20px #9b59b6;
-    }
-
-    .card img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-bottom: 3px solid #9b59b6;
-    }
-
-    .card h3 {
-      padding: 15px;
-      color: white;
-    }
-
-    .why {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      text-align: center;
-      margin-top: 40px;
-    }
-
-    .why div {
-      background: #141414;
-      padding: 30px;
-      border-radius: 8px;
-      transition: 0.3s;
-      border: 1px solid transparent;
-    }
-
-    .why div:hover {
-      border-color: #9b59b6;
-      box-shadow: 0 0 20px #9b59b6;
+    .about-text:hover {
       transform: translateY(-5px);
+      box-shadow: 0 0 40px rgba(165, 91, 255, 0.4);
     }
 
-    .why h3 {
-      color: #b87bff;
-      margin-bottom: 10px;
+    .about-text h2 {
+      color: #c07bff;
+      margin-bottom: 1rem;
     }
 
-    .why p {
-      color: #ccc;
+    .about-text p {
+      color: #dcd3ff;
+      line-height: 1.7;
     }
 
-    .faq {
-      background-color: #111;
-      padding: 70px 10%;
-    }
-
-    .faq h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      text-shadow: 0 0 10px #9b59b6;
-    }
-
-    .faq-item {
-      background: #181818;
-      margin-bottom: 10px;
-      padding: 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .faq-item:hover {
-      background: #222;
-    }
-
-    .faq-question {
-      font-weight: bold;
-      font-size: 1.1rem;
-    }
-
-    .faq-answer {
-      display: none;
-      margin-top: 10px;
-      color: #ccc;
-      line-height: 1.6;
-    }
-
+    /* ---------- Footer ---------- */
     footer {
-      background-color: #141414;
+      background: #0a0012;
+      color: #888;
       text-align: center;
-      padding: 40px;
-      border-top: 2px solid #9b59b6;
-      color: #ccc;
-      font-size: 0.95rem;
+      padding: 25px 0;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(165, 91, 255, 0.2);
     }
 
-    .social {
-      display: flex;
-      justify-content: center;
-      gap: 25px;
-      margin-bottom: 20px;
+    footer a {
+      color: #a55bff;
     }
 
-    .social img {
-      width: 42px;
-      filter: invert(1);
-      transition: 0.3s;
-    }
-
-    .social img:hover {
-      filter: invert(61%) sepia(78%) saturate(396%) hue-rotate(233deg) brightness(101%) contrast(95%);
-      transform: scale(1.15);
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero h1, .hero p, .hero .cta {
-      animation: fadeInUp 1.5s ease forwards;
-    }
-
-    .hero h1 { animation-delay: 0.3s; }
-    .hero p { animation-delay: 0.6s; }
-    .hero .cta { animation-delay: 0.9s; }
-
-    /* === Responsividade === */
-    @media (max-width: 1024px) {
-      .hero h1 {
-        font-size: 2.6rem;
-      }
-      .hero p {
-        font-size: 1.1rem;
-      }
-    }
-
+    /* ---------- Responsividade ---------- */
     @media (max-width: 768px) {
       header {
-        padding: 15px 25px;
+        flex-direction: column;
+        gap: 1rem;
       }
-      .buttons {
-        gap: 10px;
+
+      .logo {
+        font-size: 1.8rem;
       }
-      .btn {
-        padding: 8px 18px;
-        font-size: 0.9rem;
-      }
-      .hero {
-        padding-top: 160px;
-      }
+
       .hero h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
       }
+
       .hero p {
         font-size: 1rem;
       }
-      .section {
-        padding: 70px 8%;
+
+      .about {
+        flex-direction: column;
+        align-items: center;
       }
-      .cards {
-        gap: 20px;
+
+      .about-text {
+        width: 90%;
       }
-      .card {
-        width: 180px;
-      }
-      .why {
-        grid-template-columns: 1fr 1fr;
+
+      .btn {
+        width: 100%;
+        text-align: center;
       }
     }
 
-    @media (max-width: 480px) {
-      header {
-        flex-direction: column;
-        gap: 12px;
-        padding: 15px;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
       }
-      .logo {
-        height: 55px;
-      }
-      .buttons {
-        flex-direction: column;
-        width: 100%;
-        align-items: center;
-      }
-      .btn {
-        width: 85%;
-        text-align: center;
-        font-size: 1rem;
-      }
-      .hero {
-        padding-top: 150px;
-        padding-bottom: 100px;
-      }
-      .hero h1 {
-        font-size: 1.9rem;
-      }
-      .hero p {
-        font-size: 0.95rem;
-        padding: 0 20px;
-      }
-      .section h2 {
-        font-size: 2rem;
-      }
-      .cards {
-        flex-direction: column;
-        align-items: center;
-      }
-      .card {
-        width: 90%;
-      }
-      .why {
-        grid-template-columns: 1fr;
-      }
-      footer {
-        font-size: 0.9rem;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   </style>
 </head>
 <body>
+
   <header>
-    <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Studyflix Logo">
-    <div class="buttons">
-      <a href="login.html" class="btn">Entrar</a>
-      <a href="cadaster.html" class="btn">Começar agora</a>
+    <div class="logo">Study<span style="color:#fff;">flix</span></div>
+    <div class="btns">
+      <a href="login.html" class="btn btn-login">Entrar</a>
+      <a href="cadaster.html" class="btn btn-cadaster">Cadastrar</a>
     </div>
   </header>
 
   <section class="hero">
-    <h1>Studyflix — O conhecimento no seu ritmo</h1>
-    <p>O Studyflix é mais do que uma plataforma de estudos — é uma nova forma de aprender.  
-       Organizado, visual e envolvente, ele transforma o aprendizado em uma experiência moderna e acessível.</p>
-    <a href="cadaster.html" class="cta">Começar agora</a>
+    <h1>Aprenda do seu jeito, no seu ritmo.</h1>
+    <p>O <strong>Studyflix</strong> é a sua plataforma de aprendizado dinâmico e acessível — feita para quem busca evoluir com foco, praticidade e estilo.</p>
   </section>
 
-  <section class="section">
-    <h2>Em Alta</h2>
-    <div class="cards">
-      <div class="card"><img src="https://i.ibb.co/1YJBLpsW/Whats-App-Image-2025-02-27-at-19-58-54.jpg"><h3>Biologia</h3></div>
-      <div class="card"><img src="https://i.ibb.co/vCCktjL9/Whats-App-Image-2025-02-27-at-20-06-41.jpg"><h3>Física</h3></div>
-      <div class="card"><img src="https://i.ibb.co/gZsn7cpW/Whats-App-Image-2025-02-27-at-20-41-39.jpg"><h3>Química</h3></div>
-      <div class="card"><img src="https://i.ibb.co/b5VTFyBM/Whats-App-Image-2025-02-28-at-21-57-35.jpg"><h3>Matemática</h3></div>
+  <section class="about">
+    <div class="about-text">
+      <h2>📚 Simples, intuitivo e eficiente</h2>
+      <p>Reunimos conteúdos organizados em uma interface pensada para o estudante moderno. 
+      Encontre materiais, acompanhe seu progresso e explore novas áreas com facilidade.</p>
     </div>
-  </section>
 
-  <section class="section">
-    <h2>Por que escolher o Studyflix?</h2>
-    <div class="why">
-      <div><h3>Aprendizado dinâmico</h3><p>Conteúdos curtos e visuais para facilitar a compreensão e fixação.</p></div>
-      <div><h3>Acesso 100% online</h3><p>Estude onde quiser, quando quiser — tudo na nuvem.</p></div>
-      <div><h3>Progresso personalizado</h3><p>Acompanhe sua evolução e conquiste novas metas.</p></div>
-      <div><h3>Comunidade de estudantes</h3><p>Aprenda com outros alunos e cresça junto.</p></div>
+    <div class="about-text">
+      <h2>💡 Tecnologia a favor do aprendizado</h2>
+      <p>Com design funcional e visual agradável, o Studyflix une tecnologia e educação 
+      para promover autonomia e eficiência em cada etapa do aprendizado.</p>
     </div>
-  </section>
 
-  <section class="faq">
-    <h2>Perguntas Frequentes</h2>
-    <div class="faq-item"><div class="faq-question">O que é o Studyflix?</div><div class="faq-answer">É uma plataforma digital inspirada em serviços de streaming, criada para tornar o estudo acessível e prazeroso.</div></div>
-    <div class="faq-item"><div class="faq-question">Preciso pagar para usar?</div><div class="faq-answer">Não! O Studyflix oferece conteúdos gratuitos e, futuramente, planos premium opcionais.</div></div>
-    <div class="faq-item"><div class="faq-question">Como posso começar?</div><div class="faq-answer">Clique em “Começar agora”, crie sua conta e comece a aprender.</div></div>
+    <div class="about-text">
+      <h2>🚀 Experiência personalizada</h2>
+      <p>Ao criar sua conta, você terá acesso a um espaço próprio para estudar, revisar e evoluir. 
+      O conhecimento é seu — a plataforma é feita para te acompanhar em cada conquista.</p>
+    </div>
   </section>
 
   <footer>
-    <div class="social">
-      <a href="https://www.instagram.com/study.flixx" target="_blank"><img src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png" alt="Instagram"></a>
-      <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank"><img src="https://i.ibb.co/N6W8q1KF/Whats-App-256.png" alt="WhatsApp"></a>
-    </div>
-    <p>© 2025 Studyflix — Transformando o aprendizado em uma experiência. Todos os direitos reservados.</p>
+    © 2025 Studyflix. Todos os direitos reservados. | <a href="#">Contato</a> | <a href="#">Termos de uso</a>
   </footer>
 
-  <script>
-    document.querySelectorAll('.faq-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const answer = item.querySelector('.faq-answer');
-        answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
-      });
-    });
-  </script>
 </body>
 </html>
