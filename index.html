@@ -32,7 +32,6 @@
       width: 100%;
       z-index: 10;
       backdrop-filter: blur(10px);
-      flex-wrap: wrap;
       transition: 0.4s ease;
     }
 
@@ -50,8 +49,8 @@
     .buttons {
       display: flex;
       gap: 15px;
-      flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-end;
+      align-items: center;
     }
 
     .btn {
@@ -160,73 +159,6 @@
       color: white;
     }
 
-    .why {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      text-align: center;
-      margin-top: 40px;
-    }
-
-    .why div {
-      background: #141414;
-      padding: 30px;
-      border-radius: 8px;
-      transition: 0.3s;
-      border: 1px solid transparent;
-    }
-
-    .why div:hover {
-      border-color: #9b59b6;
-      box-shadow: 0 0 20px #9b59b6;
-      transform: translateY(-5px);
-    }
-
-    .why h3 {
-      color: #b87bff;
-      margin-bottom: 10px;
-    }
-
-    .why p {
-      color: #ccc;
-    }
-
-    .faq {
-      background-color: #111;
-      padding: 70px 10%;
-    }
-
-    .faq h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      text-shadow: 0 0 10px #9b59b6;
-    }
-
-    .faq-item {
-      background: #181818;
-      margin-bottom: 10px;
-      padding: 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .faq-item:hover {
-      background: #222;
-    }
-
-    .faq-question {
-      font-weight: bold;
-      font-size: 1.1rem;
-    }
-
-    .faq-answer {
-      display: none;
-      margin-top: 10px;
-      color: #ccc;
-      line-height: 1.6;
-    }
-
     footer {
       background-color: #141414;
       text-align: center;
@@ -255,33 +187,29 @@
       transform: scale(1.15);
     }
 
-    /* ===== RESPONSIVIDADE MOBILE AJUSTADA (botões no canto) ===== */
+    /* ===== RESPONSIVO MOBILE ===== */
     @media (max-width: 480px) {
       header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
+        padding: 8px 14px;
       }
 
       .logo {
-        height: 50px;
+        height: 42px;
       }
 
       .buttons {
-        flex-direction: row;
-        gap: 8px;
+        gap: 6px;
       }
 
       .btn {
-        padding: 6px 12px;
-        font-size: 0.85rem;
+        padding: 5px 10px;
+        font-size: 0.8rem;
         border-radius: 5px;
       }
 
       .hero {
-        padding-top: 140px;
-        padding-bottom: 90px;
+        padding-top: 120px;
+        padding-bottom: 80px;
       }
 
       .hero h1 {
@@ -291,24 +219,6 @@
       .hero p {
         font-size: 1rem;
         padding: 0 15px;
-      }
-
-      .cards {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .card {
-        width: 90%;
-      }
-
-      .why {
-        grid-template-columns: 1fr;
-      }
-
-      footer {
-        font-size: 0.9rem;
-        padding: 40px 20px;
       }
     }
   </style>
