@@ -1,5 +1,5 @@
 <?php
-session_start(); // Inicia a sessão
+session_start();
 
 $conn = pg_connect("host=dpg-d47ph0k9c44c73cbi1dg-a 
                     dbname=studyflix_db_qurq 
@@ -19,7 +19,6 @@ $result = pg_query_params($conn, $query, array($email));
 
 if ($result && $row = pg_fetch_assoc($result)) {
     if (password_verify($senha, $row['senha'])) {
-        // Guarda o login na sessão
         $_SESSION['usuario_id'] = $row['id'];
         $_SESSION['usuario_nome'] = $row['nome'];
 
@@ -27,10 +26,10 @@ if ($result && $row = pg_fetch_assoc($result)) {
         header("Location: page.html");
         exit();
     } else {
-        echo "❌ Senha incorreta.";
+        echo "<script>alert('❌ Senha incorreta.'); window.location.href='index.html';</script>";
     }
 } else {
-    echo "❌ Usuário não encontrado.";
+    echo "<script>alert('❌ Usuário não encontrado.'); window.location.href='index.html';</script>";
 }
 
 pg_close($conn);
