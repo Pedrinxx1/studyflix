@@ -20,6 +20,7 @@
       scroll-behavior: smooth;
     }
 
+    /* ===== HEADER / NAVBAR ===== */
     header {
       display: flex;
       justify-content: space-between;
@@ -30,22 +31,28 @@
       position: fixed;
       top: 0;
       width: 100%;
-      z-index: 10;
+      z-index: 1000;
       backdrop-filter: blur(10px);
       transition: 0.4s ease;
     }
 
+    /* logo wrapper (mantive como img com classe logo) */
     .logo {
+      display: flex;
+      align-items: center;
       height: 60px;
       cursor: pointer;
       animation: glow 3s ease-in-out infinite alternate;
     }
+
+    .logo img { height: 100%; width: auto; display: block; }
 
     @keyframes glow {
       from { filter: drop-shadow(0 0 6px #9b59b6); }
       to { filter: drop-shadow(0 0 20px #b87bff); }
     }
 
+    /* botões no canto direito (desktop e mobile) */
     .buttons {
       display: flex;
       gap: 15px;
@@ -56,24 +63,45 @@
     .btn {
       background-color: #9b59b6;
       color: white;
-      padding: 10px 25px;
+      padding: 10px 22px;
       border: none;
       border-radius: 6px;
       font-weight: 700;
       cursor: pointer;
-      transition: 0.3s;
+      transition: 0.22s ease;
       text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn:hover {
       background-color: #8e44ad;
-      transform: scale(1.05);
-      box-shadow: 0 0 10px #9b59b6;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(155,89,182,0.12);
     }
 
+    /* CTA principal dentro da hero (mantive .cta) */
+    .cta {
+      background-color: #9b59b6;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+      color: white;
+      display: inline-block;
+    }
+    .cta:hover { background-color: #8e44ad; transform: translateY(-3px); }
+
+    /* ===== HERO ===== */
     .hero {
       text-align: center;
-      padding-top: 180px;
+      /* espaço suficiente para não ficar coberto pela navbar fixa */
+      padding-top: calc(180px + 10px); /* desktop */
       padding-bottom: 120px;
       background: radial-gradient(circle at center, rgba(45, 0, 65, 0.6), rgba(0, 0, 0, 0.95) 70%);
     }
@@ -94,25 +122,7 @@
       padding: 0 15px;
     }
 
-    .hero .cta {
-      background-color: #9b59b6;
-      padding: 15px 40px;
-      border: none;
-      border-radius: 6px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      text-decoration: none;
-      color: white;
-    }
-
-    .hero .cta:hover {
-      background-color: #8e44ad;
-      box-shadow: 0 0 25px #9b59b6;
-      transform: translateY(-3px);
-    }
-
+    /* ===== SECTIONS ===== */
     .section {
       padding: 90px 10%;
     }
@@ -159,6 +169,64 @@
       color: white;
     }
 
+    /* ===== WHY / BENEFÍCIOS ===== */
+    .why {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .why div {
+      background: #141414;
+      padding: 30px;
+      border-radius: 8px;
+      transition: 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .why div:hover {
+      border-color: #9b59b6;
+      box-shadow: 0 0 20px #9b59b6;
+      transform: translateY(-5px);
+    }
+
+    .why h3 { color: #b87bff; margin-bottom: 10px; }
+    .why p { color: #ccc; }
+
+    /* ===== FAQ ===== */
+    .faq {
+      background-color: #111;
+      padding: 70px 10%;
+    }
+
+    .faq h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #9b59b6;
+    }
+
+    .faq-item {
+      background: #181818;
+      margin-bottom: 10px;
+      padding: 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .faq-item:hover { background: #222; }
+
+    .faq-question { font-weight: bold; font-size: 1.1rem; }
+    .faq-answer {
+      display: none;
+      margin-top: 10px;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    /* ===== FOOTER ===== */
     footer {
       background-color: #141414;
       text-align: center;
@@ -187,51 +255,72 @@
       transform: scale(1.15);
     }
 
-    /* ===== RESPONSIVO MOBILE ===== */
+    /* animações simples */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .hero h1, .hero p, .hero .cta { animation: fadeInUp 1.2s ease forwards; }
+    .hero h1 { animation-delay: 0.2s; } .hero p { animation-delay: 0.45s; } .hero .cta { animation-delay: 0.7s; }
+
+    /* ===== RESPONSIVIDADE MOBILE (até 480px) ===== */
     @media (max-width: 480px) {
       header {
-        padding: 8px 14px;
+        padding: 8px 12px;
       }
 
-      .logo {
-        height: 42px;
-      }
+      .logo { height: 42px; } /* logo menor */
+      .logo img { height: 100%; }
 
+      /* botões menores e com largura reduzida pra não ocupar tanto */
       .buttons {
-        gap: 6px;
+        gap: 8px;
+      }
+      .buttons .btn {
+        padding: 6px 10px;       /* menor */
+        font-size: 0.8rem;       /* fonte menor */
+        border-radius: 6px;
+        min-width: 72px;         /* largura mínima para alinhamento */
+        max-width: 110px;        /* limita largura pra caber no canto */
       }
 
-      .btn {
-        padding: 5px 10px;
-        font-size: 0.8rem;
-        border-radius: 5px;
-      }
-
+      /* CTA grande dentro da hero continua, mas ajustei espaçamento pra não ser coberto */
       .hero {
-        padding-top: 120px;
-        padding-bottom: 80px;
+        padding-top: calc(120px + 10px); /* espaço menor no mobile, porém suficiente */
+        padding-bottom: 90px;
       }
+      .hero h1 { font-size: 1.9rem; line-height: 1.2; }
+      .hero p { font-size: 1rem; padding: 0 16px; }
 
-      .hero h1 {
-        font-size: 1.9rem;
-      }
+      /* cards e why empilhados verticalmente pra mobile */
+      .cards { flex-direction: column; align-items: center; gap: 20px; }
+      .card { width: 90%; border-radius: 10px; }
 
-      .hero p {
-        font-size: 1rem;
-        padding: 0 15px;
-      }
+      .why { grid-template-columns: 1fr; gap: 18px; }
+
+      /* footer ajuste */
+      footer { font-size: 0.9rem; padding: 30px 14px; }
+    }
+
+    /* reforço para tablets médios */
+    @media (max-width: 768px) {
+      .hero { padding-top: 150px; }
+      .hero h1 { font-size: 2.4rem; }
+      .cards .card { width: 45%; }
     }
   </style>
 </head>
 <body>
+  <!-- HEADER: logo (esquerda) + botões (direita) -->
   <header>
-    <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Studyflix Logo">
+    <div class="logo">
+      <img src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Studyflix Logo">
+    </div>
+
     <div class="buttons">
       <a href="login.html" class="btn">Entrar</a>
       <a href="cadaster.html" class="btn">Cadastrar</a>
     </div>
   </header>
 
+  <!-- HERO -->
   <section class="hero">
     <h1>Studyflix — O conhecimento no seu ritmo</h1>
     <p>O Studyflix é mais do que uma plataforma de estudos — é uma nova forma de aprender.  
@@ -239,16 +328,73 @@
     <a href="cadaster.html" class="cta">Começar agora</a>
   </section>
 
+  <!-- EM ALTA -->
   <section class="section">
     <h2>Em Alta</h2>
     <div class="cards">
-      <div class="card"><img src="https://i.ibb.co/1YJBLpsW/Whats-App-Image-2025-02-27-at-19-58-54.jpg"><h3>Biologia</h3></div>
-      <div class="card"><img src="https://i.ibb.co/vCCktjL9/Whats-App-Image-2025-02-27-at-20-06-41.jpg"><h3>Física</h3></div>
-      <div class="card"><img src="https://i.ibb.co/gZsn7cpW/Whats-App-Image-2025-02-27-at-20-41-39.jpg"><h3>Química</h3></div>
-      <div class="card"><img src="https://i.ibb.co/b5VTFyBM/Whats-App-Image-2025-02-28-at-21-57-35.jpg"><h3>Matemática</h3></div>
+      <div class="card">
+        <img src="https://i.ibb.co/1YJBLpsW/Whats-App-Image-2025-02-27-at-19-58-54.jpg" alt="Biologia">
+        <h3>Biologia</h3>
+      </div>
+      <div class="card">
+        <img src="https://i.ibb.co/vCCktjL9/Whats-App-Image-2025-02-27-at-20-06-41.jpg" alt="Física">
+        <h3>Física</h3>
+      </div>
+      <div class="card">
+        <img src="https://i.ibb.co/gZsn7cpW/Whats-App-Image-2025-02-27-at-20-41-39.jpg" alt="Química">
+        <h3>Química</h3>
+      </div>
+      <div class="card">
+        <img src="https://i.ibb.co/b5VTFyBM/Whats-App-Image-2025-02-28-at-21-57-35.jpg" alt="Matemática">
+        <h3>Matemática</h3>
+      </div>
     </div>
   </section>
 
+  <!-- POR QUE ESCOLHER -->
+  <section class="section">
+    <h2>Por que escolher o Studyflix?</h2>
+    <div class="why">
+      <div>
+        <h3>Aprendizado dinâmico</h3>
+        <p>Conteúdos curtos e visuais para facilitar a compreensão e fixação.</p>
+      </div>
+      <div>
+        <h3>Acesso 100% online</h3>
+        <p>Estude onde quiser, quando quiser — tudo na nuvem.</p>
+      </div>
+      <div>
+        <h3>Progresso personalizado</h3>
+        <p>Acompanhe sua evolução e conquiste novas metas.</p>
+      </div>
+      <div>
+        <h3>Comunidade de estudantes</h3>
+        <p>Aprenda com outros alunos e cresça junto.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Perguntas Frequentes</h2>
+
+    <div class="faq-item">
+      <div class="faq-question">O que é o Studyflix?</div>
+      <div class="faq-answer">É uma plataforma digital inspirada em serviços de streaming, criada para tornar o estudo acessível e prazeroso.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">Preciso pagar para usar?</div>
+      <div class="faq-answer">Não! O Studyflix oferece conteúdos gratuitos e, futuramente, planos premium opcionais.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">Como posso começar?</div>
+      <div class="faq-answer">Clique em “Começar agora”, crie sua conta e comece a aprender.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
   <footer>
     <div class="social">
       <a href="https://www.instagram.com/study.flixx" target="_blank"><img src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png" alt="Instagram"></a>
@@ -256,5 +402,25 @@
     </div>
     <p>© 2025 Studyflix — Transformando o aprendizado em uma experiência. Todos os direitos reservados.</p>
   </footer>
+
+  <script>
+    // Toggle FAQ answers
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const answer = item.querySelector('.faq-answer');
+        answer.style.display = (answer.style.display === 'block') ? 'none' : 'block';
+      });
+    });
+
+    // Optional: close any opened FAQ when clicking another (descomente se quiser comportamento exclusivo)
+    /*
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.faq-answer').forEach(a => a.style.display = 'none');
+        item.querySelector('.faq-answer').style.display = 'block';
+      });
+    });
+    */
+  </script>
 </body>
 </html>
