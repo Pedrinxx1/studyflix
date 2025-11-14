@@ -1,414 +1,630 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Studyflix</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" />
-  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
-  <style>
-    /* Reset básico */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background-color: #000000;
-      color: #fff;
-      line-height: 1.5;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-
-    /* Imagem de fundo */
-    #imagem {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      object-fit: cover;
-      opacity: 0.1;
-      z-index: -1;
-      filter: brightness(0.3);
-      border-bottom-left-radius: 15px;
-      border-bottom-right-radius: 15px;
-    }
-
-    /* Cabeçalho estilo Netflix */
-    header {
-      background-color: #141414;
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-    }
-
-    .logo {
-      height: 45px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    nav {
-      display: flex;
-      gap: 30px;
-    }
-
-    .nav-link {
-      color: #fff;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      user-select: none;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      transition: color 0.3s ease;
-      padding: 8px 0;
-      border-bottom: 3px solid transparent;
-    }
-
-    .nav-link:hover,
-    .nav-link.active {
-      color: #9b59b6;
-      /* Roxo */
-      border-bottom: 3px solid #9b59b6;
-    }
-
-    /* Espaço para o conteúdo abaixo do header fixo */
-    main {
-      margin-top: 90px;
-      max-width: 1100px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 20px 40px;
-    }
-
-    /* Introdução */
-    .intro {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    #nameimg {
-      font-weight: 900;
-      font-size: 3rem;
-      color: #fff;
-      margin-bottom: 30px;
-      letter-spacing: 2px;
-      text-shadow: 0 0 10px rgba(155, 89, 182, 0.8);
-      line-height: 1.2;
-    }
-
-    /* Botões estilo Netflix roxo */
-    .button-container {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-      margin-bottom: 60px;
-    }
-
-    .button {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      padding: 14px 32px;
-      background-color: #9b59b6;
-      color: white;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      text-decoration: none;
-      box-shadow: 0 2px 8px rgba(155, 89, 182, 0.7);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      user-select: none;
-      border: none;
-    }
-
-    .button img {
-      width: 22px;
-      height: 22px;
-      filter: invert(1);
-    }
-
-    .button:hover {
-      background-color: #8e44ad;
-      box-shadow: 0 4px 15px rgba(142, 68, 173, 0.9);
-    }
-
-    /* Seções de conteúdo */
-    .content-section {
-      margin-bottom: 50px;
-    }
-
-    .section-title {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: 900;
-      font-size: 2.8rem;
-      color: #fff;
-      margin-bottom: 25px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(155, 89, 182, 0.8);
-    }
-
-    /* Grade estilo Netflix */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: #181818;
-      border-radius: 6px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      color: #ddd;
-      user-select: none;
-    }
-
-    .card:hover {
-      transform: scale(1.08);
-      box-shadow: 0 8px 20px rgba(155, 89, 182, 0.9);
-      z-index: 5;
-    }
-
-    .card img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-bottom: 4px solid #9b59b6;
-      transition: transform 0.3s ease;
-    }
-
-    .card:hover img {
-      transform: scale(1.1);
-    }
-
-    .card-title {
-      padding: 14px 10px 20px;
-      font-weight: 700;
-      font-size: 1.15rem;
-      color: #fff;
-      text-shadow: 0 0 6px rgba(155, 89, 182, 0.9);
-    }
-
-    /* Rodapé */
-    footer {
-      background: #141414;
-      padding: 1.5rem 20px;
-      text-align: center;
-      border-top: 2px solid #9b59b6;
-      margin-top: auto;
-      color: #bbb;
-      font-size: 0.9rem;
-      user-select: none;
-    }
-
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .pp,
-    .ppp {
-      width: 48px;
-      height: 48px;
-      opacity: 0.85;
-      transition: opacity 0.3s ease;
-      cursor: pointer;
-    }
-
-    .ppp {
-      width: 52px;
-      height: 52px;
-    }
-
-    .pp:hover,
-    .ppp:hover {
-      opacity: 1;
-      filter: drop-shadow(0 0 5px #9b59b6);
-    }
-
-    /* Responsividade */
-    @media (max-width: 768px) {
-      #nameimg {
-        font-size: 2.2rem;
-      }
-
-      .button-container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      header {
-        padding: 0 20px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .section-title {
-        font-size: 2rem;
-      }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Studyflix — Questões (Estilo ENEM/PAS)</title>
+<link rel="shortcut icon" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" type="image/png">
+<style>
+/* ====== Base visual (mesmo estilo do seu index: Netflix / Studyflix) ====== */
+:root{
+  --bg:#000;
+  --panel:#0b0b14;
+  --card:#141418;
+  --accent:#9b59b6;
+  --accent-2:#a855f7;
+  --muted:#cfc7f7;
+  --success:#16a34a;
+  --danger:#ef4444;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Helvetica Neue',Arial,system-ui;background:linear-gradient(180deg,#07070f 0%,#0a0a18 70%);color:#fff;min-height:100vh}
+header{background:#141414;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:fixed;top:0;width:100%;z-index:1000;box-shadow:0 2px 10px rgba(0,0,0,0.7)}
+.logo{height:45px;cursor:pointer}
+nav{display:flex;gap:30px}
+.nav-link{color:#fff;font-weight:700;font-size:1.05rem;cursor:pointer;text-transform:uppercase;letter-spacing:1.5px;padding:8px 0;border-bottom:3px solid transparent}
+.nav-link:hover,.nav-link.active{color:var(--accent-2);border-bottom:3px solid var(--accent-2)}
+main{margin-top:90px;max-width:1200px;margin-left:auto;margin-right:auto;padding:20px}
+.container{display:grid;grid-template-columns:1fr 360px;gap:20px}
+@media(max-width:1000px){.container{grid-template-columns:1fr}}
+.panel{background:var(--panel);border-radius:12px;padding:14px;box-shadow:0 12px 36px rgba(0,0,0,0.55)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.filter-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:999px;color:#fff;cursor:pointer}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);box-shadow:0 6px 20px rgba(155,89,182,0.12)}
+.search{flex:1;display:flex;gap:8px}
+.search input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:#06060a;color:#fff}
+.count-badge{background:rgba(255,255,255,0.05);padding:6px 10px;border-radius:999px;font-weight:700;color:var(--accent-2)}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.q-card{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px}
+.q-top{display:flex;justify-content:space-between;align-items:center}
+.q-title{font-weight:700;font-size:14px;color:#fff}
+.q-meta{font-size:12px;color:var(--muted)}
+.include-toggle input{width:16px;height:16px}
+.card-actions button{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px;color:#fff;cursor:pointer;font-size:13px}
+.quiz{background:var(--panel);padding:18px;border-radius:14px}
+.quiz .head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.quiz .head h2{margin:0;color:var(--accent-2)}
+.progress{font-size:13px;color:var(--muted)}
+.question-box{background:var(--card);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.q-text{font-weight:700;font-size:1.05rem;margin-bottom:12px}
+.answers{display:flex;flex-direction:column;gap:10px}
+.answer-btn{background:#0a0a16;border:1px solid rgba(255,255,255,0.04);padding:12px;border-radius:10px;cursor:pointer;text-align:left;display:flex;gap:12px;align-items:center;transition:all .16s}
+.answer-btn:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(168,85,247,0.06)}
+.answer-btn.disabled{opacity:0.7;cursor:not-allowed;transform:none}
+.answer-btn.correct{background:rgba(22,163,74,0.18);border-color:rgba(22,163,74,0.5)}
+.answer-btn.wrong{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.4)}
+.ctrls{display:flex;gap:8px;align-items:center;margin-top:12px}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:#fff;cursor:pointer}
+.accent{background:var(--accent-2);border:none;padding:10px 12px;border-radius:10px;color:#fff;cursor:pointer;font-weight:700}
+.accent:hover{background:#9333ea}
+.summary{margin-top:12px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+.ranking-placeholder{text-align:center;color:#cfc7f7;font-style:italic;padding:26px 10px}
+.footer{max-width:1200px;margin:20px auto 60px auto;color:#aaa;font-size:13px;text-align:center}
+</style>
 </head>
-
 <body>
-  <header>
-    <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo Studyflix" />
-    <nav>
-      <h3 id="iten" class="nav-link">PAS</h3>
-      <h3 id="itens" class="nav-link">ENEM</h3>
-    </nav>
-  </header>
 
-  <img id="imagem" src="https://i.ibb.co/nqG7kvKS/Whats-App-Image-2025-04-10-at-19-33-18.jpg" alt="Sua Imagem" />
+<header>
+  <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo">
+  <nav>
+    <div class="nav-link" onclick="location.href='index.html'">Início</div>
+    <div class="nav-link active">Questões</div>
+    <div class="nav-link" onclick="location.href='index.html#section'">Aulas</div>
+  </nav>
+</header>
 
-  <main>
-    <section class="intro">
-      <h1 id="nameimg">COMO FUNCIONA O STUDYFLIX E<br />PARA QUE SERVE</h1>
-      <div class="button-container">
-        <a href="flix.html" class="button" aria-label="Assistir">
-          <img src="https://icons.iconarchive.com/icons/steve/zondicons/256/Play-icon.png" alt="Ícone Play" />
-          <span>ASSISTIR</span>
-        </a>
-        <a href="study.html" class="button" aria-label="Mais informações">
-          <img src="https://img.icons8.com/?size=100&id=77&format=png&color=FFFFFF" alt="Ícone Informação" />
-          <span>MAIS INFORMAÇÕES</span>
-        </a>
+<main>
+  <div class="panel" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <h2 style="margin:0;color:var(--accent-2)">Banco de Questões — Estilo ENEM/PAS</h2>
+      <div style="margin-left:auto;color:var(--muted)"><strong>180 questões</strong> • Originais (inspiradas em provas)</div>
+    </div>
+    <p style="margin-top:8px;color:#cfc7f7">As questões são originais, escritas no estilo de provas como ENEM e PAS. Cada questão indica qual estilo inspirou seu formato.</p>
+  </div>
+
+  <div class="container">
+    <!-- LEFT: banco + quiz -->
+    <div>
+      <div class="panel">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="controls">
+            <button class="filter-btn active" data-filter="all">Todas</button>
+            <button class="filter-btn" data-filter="Matemática">Matemática</button>
+            <button class="filter-btn" data-filter="Português">Português</button>
+            <button class="filter-btn" data-filter="Física">Física</button>
+            <button class="filter-btn" data-filter="Química">Química</button>
+            <button class="filter-btn" data-filter="Biologia">Biologia</button>
+            <button class="filter-btn" data-filter="História">História</button>
+          </div>
+
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <div class="count-badge" id="selectedCount">0 selecionadas</div>
+            <div style="width:12px"></div>
+            <div style="display:flex;gap:8px">
+              <input id="searchInput" style="padding:8px;border-radius:8px;background:#06060a;border:1px solid rgba(255,255,255,0.06);color:#fff" placeholder="Buscar...">
+              <button class="ghost" id="btnClear">Limpar</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="cards-grid" id="cardsGrid"></div>
       </div>
-    </section>
 
-    <section class="content-section">
-      <h2 class="section-title">CIÊNCIAS DA NATUREZA</h2>
-      <div class="grid-container">
-        <div class="card" onclick="window.location.href='a.html'" role="button" tabindex="0" aria-label="Biologia" onkeypress="if(event.key==='Enter'){window.location.href='a.html'}">
-          <img src="https://i.ibb.co/1YJBLpsW/Whats-App-Image-2025-02-27-at-19-58-54.jpg" alt="Biologia" />
-          <div class="card-title">Biologia</div>
+      <div class="quiz" style="margin-top:12px">
+        <div class="head">
+          <h2>Modo Quiz</h2>
+          <div class="progress" id="progress">Questão 0 / 0</div>
         </div>
-        <div class="card" onclick="window.location.href='b.html'" role="button" tabindex="0" aria-label="Física" onkeypress="if(event.key==='Enter'){window.location.href='b.html'}">
-          <img src="https://i.ibb.co/vCCktjL9/Whats-App-Image-2025-02-27-at-20-06-41.jpg" alt="Física" />
-          <div class="card-title">Física</div>
-        </div>
-        <div class="card" onclick="window.location.href='c.html'" role="button" tabindex="0" aria-label="Química" onkeypress="if(event.key==='Enter'){window.location.href='c.html'}">
-          <img src="https://i.ibb.co/gZsn7cpW/Whats-App-Image-2025-02-27-at-20-41-39.jpg" alt="Química" />
-          <div class="card-title">Química</div>
-        </div>
-      </div>
-    </section>
 
-    <section class="content-section">
-      <h2 class="section-title">CIÊNCIAS HUMANAS</h2>
-      <div class="grid-container">
-        <div class="card" onclick="window.location.href='e.html'" role="button" tabindex="0" aria-label="História Geral" onkeypress="if(event.key==='Enter'){window.location.href='e.html'}">
-          <img src="https://i.ibb.co/vxkpd9PD/Whats-App-Image-2025-02-28-at-14-57-59.jpg" alt="História Geral" />
-          <div class="card-title">História Geral</div>
-        </div>
-        <div class="card" onclick="window.location.href='f.html'" role="button" tabindex="0" aria-label="Geografia" onkeypress="if(event.key==='Enter'){window.location.href='f.html'}">
-          <img src="https://i.ibb.co/Kj1q9YG6/Whats-App-Image-2025-02-28-at-15-08-38.jpg" alt="Geografia" />
-          <div class="card-title">Geografia</div>
-        </div>
-        <div class="card" onclick="window.location.href='g.html'" role="button" tabindex="0" aria-label="Sociologia" onkeypress="if(event.key==='Enter'){window.location.href='g.html'}">
-          <img src="https://i.ibb.co/HL79L3w8/Whats-App-Image-2025-02-28-at-16-14-29.jpg" alt="Sociologia" />
-          <div class="card-title">Sociologia</div>
-        </div>
-        <div class="card" onclick="window.location.href='h.html'" role="button" tabindex="0" aria-label="Filosofia" onkeypress="if(event.key==='Enter'){window.location.href='h.html'}">
-          <img src="https://i.ibb.co/G4rJS2fr/Whats-App-Image-2025-02-28-at-16-19-39.jpg" alt="Filosofia" />
-          <div class="card-title">Filosofia</div>
-        </div>
-      </div>
-    </section>
+        <div class="question-box">
+          <div id="questionArea">
+            <div class="q-text" id="qText">Selecione questões e clique em <strong>Iniciar Quiz</strong> ou marque nenhuma para usar todas as questões filtradas.</div>
+            <div class="answers" id="answers"></div>
+          </div>
 
-    <section class="content-section">
-      <h2 class="section-title">MATEMÁTICA</h2>
-      <div class="grid-container">
-        <div class="card" onclick="window.location.href='i.html'" role="button" tabindex="0" aria-label="Matemática Básica" onkeypress="if(event.key==='Enter'){window.location.href='i.html'}">
-          <img src="https://i.ibb.co/DHVtkXbR/Whats-App-Image-2025-02-28-at-21-48-52.jpg" alt="Matemática Básica" />
-          <div class="card-title">Matemática Básica</div>
-        </div>
-        <div class="card" onclick="window.location.href='j.html'" role="button" tabindex="0" aria-label="Álgebra" onkeypress="if(event.key==='Enter'){window.location.href='j.html'}">
-          <img src="https://i.ibb.co/b5VTFyBM/Whats-App-Image-2025-02-28-at-21-57-35.jpg" alt="Álgebra" />
-          <div class="card-title">Álgebra</div>
-        </div>
-        <div class="card" onclick="window.location.href='k.html'" role="button" tabindex="0" aria-label="Estatística e Probabilidade" onkeypress="if(event.key==='Enter'){window.location.href='k.html'}">
-          <img src="https://i.ibb.co/2Yn8gbTD/Whats-App-Image-2025-02-28-at-22-09-28.jpg" alt="Estatística e Probabilidade" />
-          <div class="card-title">Estatística e Probabilidade</div>
-        </div>
-        <div class="card" onclick="window.location.href='l.html'" role="button" tabindex="0" aria-label="Geometria" onkeypress="if(event.key==='Enter'){window.location.href='l.html'}">
-          <img src="https://i.ibb.co/WNZ4rzSW/Whats-App-Image-2025-02-28-at-22-19-44.jpg" alt="Geometria" />
-          <div class="card-title">Geometria</div>
+          <div class="ctrls" style="margin-top:12px">
+            <button class="ghost" id="btnSkip">Pular</button>
+            <button class="ghost" id="btnSelectVisible">Selecionar visíveis</button>
+            <button class="accent" id="btnStart">Iniciar Quiz</button>
+            <button class="accent" id="btnNext" disabled>Próxima</button>
+          </div>
+
+          <div class="summary" id="summaryArea" style="display:none"></div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="content-section">
-      <h2 class="section-title">LINGUAGENS</h2>
-      <div class="grid-container">
-        <div class="card" onclick="window.location.href='m.html'" role="button" tabindex="0" aria-label="Linguagem 1" onkeypress="if(event.key==='Enter'){window.location.href='m.html'}">
-          <img src="https://i.ibb.co/Y4b7kjRw/Whats-App-Image-2025-03-03-at-16-46-53.jpg" alt="Linguagem 1" />
-          <div class="card-title">Literatura</div>
+    <!-- RIGHT: controls + ranking -->
+    <div>
+      <div class="panel">
+        <h3>Controles</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button class="ghost" id="btnSelectAll">Selecionar Todas</button>
+          <button class="ghost" id="btnDeselectAll">Desmarcar Todas</button>
+          <button class="ghost" id="btnInvert">Inverter Seleção</button>
         </div>
-        <div class="card" onclick="window.location.href='n.html'" role="button" tabindex="0" aria-label="Linguagem 2" onkeypress="if(event.key==='Enter'){window.location.href='n.html'}">
-          <img src="https://i.ibb.co/RpLjKf2z/Whats-App-Image-2025-03-03-at-16-54-27.jpg" alt="Linguagem 2" />
-          <div class="card-title">Artes</div>
-        </div>
-        <div class="card" onclick="window.location.href='o.html'" role="button" tabindex="0" aria-label="Linguagem 3" onkeypress="if(event.key==='Enter'){window.location.href='o.html'}">
-          <img src="https://i.ibb.co/qzWfLmW/Whats-App-Image-2025-03-03-at-17-05-21.jpg" alt="Linguagem 3" />
-          <div class="card-title">Gramática</div>
-        </div>
-        <div class="card" onclick="window.location.href='p.html'" role="button" tabindex="0" aria-label="Linguagem 4" onkeypress="if(event.key==='Enter'){window.location.href='p.html'}">
-          <img src="https://i.ibb.co/z95XYZr/Whats-App-Image-2025-03-03-at-17-36-12.jpg" alt="Linguagem 4" />
-          <div class="card-title">Língua Estrangeira</div>
+        <div style="margin-top:12px"><strong>Selecionadas:</strong> <span id="selectedCount2" style="color:var(--accent-2)">0</span></div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <h3>Ranking Global</h3>
+        <div class="ranking-placeholder">Sem informações — em manutenção</div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <h3>Export / Import</h3>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="ghost" id="exportBtn">Exportar (JSON)</button>
+          <small style="color:#cfc7f7">Import não permitido nesta versão (para manter integridade).</small>
         </div>
       </div>
-    </section>
-    
-    <footer>
-      <div class="social-links">
-        <a href="https://www.instagram.com/study.flixx?igsh=MW9jOXE0aTBhbGFxeg==" target="_blank" rel="noopener" aria-label="Instagram">
-          <img class="pp" src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png" alt="Instagram" />
-        </a>
-        <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank" rel="noopener" aria-label="WhatsApp">
-          <img class="ppp" src="https://i.ibb.co/N6W8q1KF/Whats-App-256.png" alt="WhatsApp" />
-        </a>
+    </div>
+  </div>
+
+  <div class="footer">Studyflix — questões originais em estilo de provas (ENEM/PAS). Projeto de estudo.</div>
+</main>
+
+<script>
+/* =========================================================
+   QUESTÕES: 180 originais (30 por matéria). Cada item:
+   {id, topic, style, q, choices:[], correct:index}
+   ========================================================= */
+
+/* For brevity when reading this answer: long array below.
+   All questions are original and labeled with a style (e.g. "Estilo ENEM 2019").
+*/
+
+const ALL_QUESTIONS = [
+/* ---------------- MATEMÁTICA (30) ---------------- */
+{ id: 1001, topic: "Matemática", style:"Estilo ENEM 2019", q:"Se 2x + 3 = 11, qual é o valor de x?", choices:["3","4","5","6"], correct:1 },
+{ id: 1002, topic: "Matemática", style:"Estilo PAS 1/2020", q:"Qual é o resultado de 2^5?", choices:["16","32","64","8"], correct:1 },
+{ id: 1003, topic: "Matemática", style:"Estilo ENEM 2018", q:"Qual é a raiz quadrada de 144?", choices:["10","11","12","13"], correct:2 },
+{ id: 1004, topic: "Matemática", style:"Estilo PAS 2/2019", q:"Se a sequência é 2,4,6,8,..., qual é o quinto termo?", choices:["8","9","10","12"], correct:2 },
+{ id: 1005, topic: "Matemática", style:"Estilo ENEM 2020", q:"A média aritmética de 3, 7 e 11 é:", choices:["6","7","8","9"], correct:1 },
+{ id: 1006, topic: "Matemática", style:"Estilo PAS 2021", q:"Se um triângulo tem ângulos 50° e 60°, o terceiro ângulo é:", choices:["60°","70°","80°","70°"], correct:1 },
+{ id: 1007, topic: "Matemática", style:"Estilo ENEM 2017", q:"Qual é o valor de 7×8?", choices:["54","56","58","50"], correct:1 },
+{ id: 1008, topic: "Matemática", style:"Estilo PAS 2019", q:"2/3 + 1/6 é igual a:", choices:["3/4","5/6","1","1/2"], correct:1 },
+{ id: 1009, topic: "Matemática", style:"Estilo ENEM 2016", q:"Qual é o menor número primo?", choices:["0","1","2","3"], correct:2 },
+{ id: 1010, topic: "Matemática", style:"Estilo PAS 2020", q:"Qual é o resto da divisão de 17 por 5?", choices:["1","2","3","4"], correct:2 },
+{ id: 1011, topic: "Matemática", style:"Estilo ENEM 2015", q:"Se f(x)=2x+1, f(3) é:", choices:["5","6","7","8"], correct:2 },
+{ id: 1012, topic: "Matemática", style:"Estilo PAS 2018", q:"Resolvendo 3x = 12, x = ?", choices:["2","3","4","6"], correct:2 },
+{ id: 1013, topic: "Matemática", style:"Estilo ENEM 2021", q:"Qual é o número que soma com 8 e resulta 15?", choices:["6","7","8","9"], correct:1 },
+{ id: 1014, topic: "Matemática", style:"Estilo PAS 2017", q:"Se 5y = 20, y = ?", choices:["2","3","4","5"], correct:2 },
+{ id: 1015, topic: "Matemática", style:"Estilo ENEM 2014", q:"Qual o produto 9×9?", choices:["81","72","99","90"], correct:0 },
+{ id: 1016, topic: "Matemática", style:"Estilo PAS 2016", q:"Se um número é multiplicado por 0, o resultado é:", choices:["0","1","número","indefinido"], correct:0 },
+{ id: 1017, topic: "Matemática", style:"Estilo ENEM 2013", q:"O que representa a expressão 3+4×2 pelo PEMDAS?", choices:["14","11","10","7"], correct:1 },
+{ id: 1018, topic: "Matemática", style:"Estilo PAS 2022", q:"Qual é a área de um quadrado de lado 5?", choices:["10","20","25","30"], correct:2 },
+{ id: 1019, topic: "Matemática", style:"Estilo ENEM 2012", q:"Se x= -2, qual é o valor de x^2?", choices:["-4","0","2","4"], correct:3 },
+{ id: 1020, topic: "Matemática", style:"Estilo PAS 2015", q:"Quantos minutos há em 2 horas e meia?", choices:["120","150","180","200"], correct:1 },
+{ id: 1021, topic: "Matemática", style:"Estilo ENEM 2011", q:"Qual é o dobro de 21?", choices:["42","41","40","44"], correct:0 },
+{ id: 1022, topic: "Matemática", style:"Estilo PAS 2014", q:"Se x+5=12, x=?", choices:["6","7","8","9"], correct:1 },
+{ id: 1023, topic: "Matemática", style:"Estilo ENEM 2009", q:"Qual é a média de 4, 5 e 6?", choices:["4","5","6","15"], correct:1 },
+{ id: 1024, topic: "Matemática", style:"Estilo PAS 2008", q:"2³×2² = ?", choices:["2^5","32","16","64"], correct:1 },
+{ id: 1025, topic: "Matemática", style:"Estilo ENEM 2022", q:"Qual é a porcentagem de 1/4?", choices:["10%","20%","25%","40%"], correct:2 },
+{ id: 1026, topic: "Matemática", style:"Estilo PAS 2013", q:"Se um número aumentado em 10 é 25, o número é:", choices:["10","12","15","17"], correct:2 },
+{ id: 1027, topic: "Matemática", style:"Estilo ENEM 2023", q:"O produto 4×7 é:", choices:["21","24","28","32"], correct:2 },
+{ id: 1028, topic: "Matemática", style:"Estilo PAS 2020", q:"Qual é o valor de 100/4?", choices:["20","25","24","26"], correct:1 },
+{ id: 1029, topic: "Matemática", style:"Estilo ENEM 2010", q:"Qual número completa: 5 + __ = 12?", choices:["6","7","8","9"], correct:1 },
+{ id: 1030, topic: "Matemática", style:"Estilo PAS 2012", q:"Se 3×x = 21, x = ?", choices:["5","6","7","8"], correct:2 },
+
+/* ---------------- PORTUGUÊS / INTERPRETAÇÃO (30) ---------------- */
+{ id: 2001, topic: "Português", style:"Estilo ENEM 2019", q:"Em 'Ele correu rápido', 'rápido' atua como:", choices:["verbo","adjetivo","advérbio","substantivo"], correct:2 },
+{ id: 2002, topic: "Português", style:"Estilo PAS 2020", q:"Plural de 'cidadão' é:", choices:["cidadãos","cidadões","cidadãors","cidadanos"], correct:0 },
+{ id: 2003, topic: "Português", style:"Estilo ENEM 2018", q:"Assinale a forma correta: 'Nós ____' (verbo ir)", choices:["vai","vamos","vaiam","vão"], correct:1 },
+{ id: 2004, topic: "Português", style:"Estilo PAS 2019", q:"Qual a função de 'porque' em 'Não fui porque choveu'?", choices:["causal","final","concessiva","temporal"], correct:0 },
+{ id: 2005, topic: "Português", style:"Estilo ENEM 2017", q:"O contrário de 'fácil' é:", choices:["simples","raro","difícil","óbvio"], correct:2 },
+{ id: 2006, topic: "Português", style:"Estilo PAS 2021", q:"Sujeito da frase 'Choveu ontem' é:", choices:["explícito","oculto","inexistente","indeterminado"], correct:2 },
+{ id: 2007, topic: "Português", style:"Estilo ENEM 2016", q:"'Rapidamente' é um exemplo de:", choices:["substantivo","adjetivo","advérbio","conjunção"], correct:2 },
+{ id: 2008, topic: "Português", style:"Estilo PAS 2015", q:"Qual é sinônimo de 'feliz'?", choices:["triste","contente","nervoso","neutro"], correct:1 },
+{ id: 2009, topic: "Português", style:"Estilo ENEM 2015", q:"Em 'Ele fez o trabalho', o verbo é:", choices:["ele","fez","o","trabalho"], correct:1 },
+{ id: 2010, topic: "Português", style:"Estilo PAS 2014", q:"Pronome relativo em 'o livro que li' é:", choices:["o","que","li","livro"], correct:1 },
+{ id: 2011, topic: "Português", style:"Estilo ENEM 2014", q:"Ortografia correta:", choices:["exceção","excessão","exceçãoo","excessao"], correct:0 },
+{ id: 2012, topic: "Português", style:"Estilo PAS 2013", q:"Assinale a frase com erro:", choices:["Nós fomos ao mercado","A gente fomos ao mercado","Ele foi cedo","Eles chegaram cedo"], correct:1 },
+{ id: 2013, topic: "Português", style:"Estilo ENEM 2013", q:"'Por que' separado é usado em:", choices:["perguntas diretas","conjunções","respostas","interjeições"], correct:0 },
+{ id: 2014, topic: "Português", style:"Estilo PAS 2012", q:"Qual a categoria de 'livro'?", choices:["verbo","substantivo","adjetivo","advérbio"], correct:1 },
+{ id: 2015, topic: "Português", style:"Estilo ENEM 2012", q:"Complete: 'Eu ____ visto' (pretérito perfeito)", choices:["tive","tenho","tinha","tivei"], correct:0 },
+{ id: 2016, topic: "Português", style:"Estilo PAS 2011", q:"A palavra 'porém' é:", choices:["conjunção","preposição","advérbio","pronome"], correct:0 },
+{ id: 2017, topic: "Português", style:"Estilo ENEM 2011", q:"Significado de 'antigo' é:", choices:["recente","velho","novo","moderno"], correct:1 },
+{ id: 2018, topic: "Português", style:"Estilo PAS 2010", q:"O que é 'sinônimo'?", choices:["palavra com sentido oposto","palavra com sentido semelhante","palavra com som igual","tipo de verbo"], correct:1 },
+{ id: 2019, topic: "Português", style:"Estilo ENEM 2020", q:"Concordância: 'Havia muitas pessoas' — 'havia' está correto?", choices:["sim","não","depende","talvez"], correct:0 },
+{ id: 2020, topic: "Português", style:"Estilo PAS 2022", q:"Qual a voz do verbo: 'O livro foi lido'?", choices:["ativa","passiva","reflexiva","intransitiva"], correct:1 },
+{ id: 2021, topic: "Português", style:"Estilo ENEM 2021", q:"'Olá' é classificado como:", choices:["interjeição","substantivo","verbo","adjetivo"], correct:0 },
+{ id: 2022, topic: "Português", style:"Estilo PAS 2019", q:"Acentuação: 'lâmpada' tem acento?", choices:["sim","não","depende","apenas em PT-BR"], correct:0 },
+{ id: 2023, topic: "Português", style:"Estilo ENEM 2019", q:"Qual é o plural de 'lápis'?", choices:["lápises","lápis","lapis","lápis's"], correct:1 },
+{ id: 2024, topic: "Português", style:"Estilo PAS 2018", q:"O advérbio modifica:", choices:["verbo","substantivo","adjetivo e advérbio","todos"], correct:2 },
+{ id: 2025, topic: "Português", style:"Estilo ENEM 2018", q:"'Preconceito' relaciona-se com:", choices:["aceitação","discriminação","alegria","neutralidade"], correct:1 },
+{ id: 2026, topic: "Português", style:"Estilo PAS 2017", q:"Identifique o sujeito: 'Faz calor hoje'", choices:["sujeito simples","sujeito composto","sujeito inexistente","sujeito oculto"], correct:2 },
+{ id: 2027, topic: "Português", style:"Estilo ENEM 2016", q:"A palavra 'cidadão' refere-se a:", choices:["lugar","pessoa","ação","objetivo"], correct:1 },
+{ id: 2028, topic: "Português", style:"Estilo PAS 2015", q:"Qual a função de 'porém' numa frase?", choices:["liga orações com contraste","indica lugar","marca tempo","nenhuma"], correct:0 },
+{ id: 2029, topic: "Português", style:"Estilo ENEM 2015", q:"Classifique: 'Eles chegaram cedo' — 'cedo' é:", choices:["advérbio","adjetivo","verbo","substantivo"], correct:0 },
+{ id: 2030, topic: "Português", style:"Estilo PAS 2014", q:"'Sempre' é um exemplo de:", choices:["adjetivo","advérbio de frequência","conjunção","pronome"], correct:1 },
+
+/* ---------------- FÍSICA (30) ---------------- */
+{ id: 3001, topic: "Física", style:"Estilo ENEM 2019", q:"Unidade SI da força é:", choices:["Joule","Newton","Watt","Pascal"], correct:1 },
+{ id: 3002, topic: "Física", style:"Estilo PAS 2020", q:"A aceleração da gravidade é aproximadamente:", choices:["9,8 m/s²","1 m/s²","98 m/s²","0,98 m/s²"], correct:0 },
+{ id: 3003, topic: "Física", style:"Estilo ENEM 2018", q:"Velocidade média = distância / tempo. Se d=100m e t=20s, v=?", choices:["2 m/s","5 m/s","0.2 m/s","20 m/s"], correct:0 },
+{ id: 3004, topic: "Física", style:"Estilo PAS 2019", q:"Fenômeno que forma arco-íris:", choices:["refração e dispersão","reflexão","condução","convecção"], correct:0 },
+{ id: 3005, topic: "Física", style:"Estilo ENEM 2017", q:"Qual unidade mede energia?", choices:["Newton","Joule","Pascal","Ampère"], correct:1 },
+{ id: 3006, topic: "Física", style:"Estilo PAS 2021", q:"Lente convergente forma imagem:", choices:["virtual","real","não forma","ambas"], correct:3 },
+{ id: 3007, topic: "Física", style:"Estilo ENEM 2016", q:"Velocidade da luz (aprox.) é:", choices:["3×10^8 m/s","3×10^6 m/s","3×10^5 m/s","300 m/s"], correct:0 },
+{ id: 3008, topic: "Física", style:"Estilo PAS 2015", q:"Unidade de pressão no SI:", choices:["Pascal","Newton","Joule","Watt"], correct:0 },
+{ id: 3009, topic: "Física", style:"Estilo ENEM 2015", q:"O que é energia cinética?", choices:["energia armazenada","energia de movimento","energia térmica","energia potencial"], correct:1 },
+{ id: 3010, topic: "Física", style:"Estilo PAS 2014", q:"Lei de Newton: F = m·a. 'm' é:", choices:["massa","movimento","momento","magnetismo"], correct:0 },
+{ id: 3011, topic: "Física", style:"Estilo ENEM 2013", q:"Som não se propaga no:", choices:["ar","vácuo","água","sólidos"], correct:1 },
+{ id: 3012, topic: "Física", style:"Estilo PAS 2012", q:"Um carro a 20 m/s percorre 60 m em quantos segundos?", choices:["1s","2s","3s","4s"], correct:2 },
+{ id: 3013, topic: "Física", style:"Estilo ENEM 2011", q:"Qual a fonte primária de energia da Terra?", choices:["Vento","Sol","Vulcões","Maré"], correct:1 },
+{ id: 3014, topic: "Física", style:"Estilo PAS 2010", q:"Unidade elétrica de corrente é:", choices:["Volt","Ampère","Ohm","Watt"], correct:1 },
+{ id: 3015, topic: "Física", style:"Estilo ENEM 2020", q:"Refração é mudança de:", choices:["frequência","comprimento de onda","direção de propagação","amplitude"], correct:2 },
+{ id: 3016, topic: "Física", style:"Estilo PAS 2018", q:"O trabalho é força ×:", choices:["velocidade","distância","tempo","massa"], correct:1 },
+{ id: 3017, topic: "Física", style:"Estilo ENEM 2021", q:"Fótons são partículas associadas a:", choices:["som","luz","temperatura","força"], correct:1 },
+{ id: 3018, topic: "Física", style:"Estilo PAS 2017", q:"A unidade Tesla mede:", choices:["campo elétrico","campo magnético","energia","potência"], correct:1 },
+{ id: 3019, topic: "Física", style:"Estilo ENEM 2014", q:"O que é inércia?", choices:["resistência à aceleração","força de atrito","energia potencial","velocidade constante"], correct:0 },
+{ id: 3020, topic: "Física", style:"Estilo PAS 2016", q:"Qual instrumento mede temperatura?", choices:["Barômetro","Termômetro","Anemômetro","Voltímetro"], correct:1 },
+{ id: 3021, topic: "Física", style:"Estilo ENEM 2012", q:"Fusão é passagem de sólido para:", choices:["gasoso","líquido","plasma","vapor diretamente"], correct:1 },
+{ id: 3022, topic: "Física", style:"Estilo PAS 2013", q:"Aceleração média = Δv / Δt. Se Δv=10 m/s e Δt=2s, a= ?", choices:["2 m/s²","5 m/s²","10 m/s²","20 m/s²"], correct:1 },
+{ id: 3023, topic: "Física", style:"Estilo ENEM 2010", q:"Qual é a potência em watts de 2 kW?", choices:["200 W","2000 W","20 W","20000 W"], correct:1 },
+{ id: 3024, topic: "Física", style:"Estilo PAS 2009", q:"O que é calor?", choices:["energia térmica em trânsito","temperatura","massa","energia elétrica"], correct:0 },
+{ id: 3025, topic: "Física", style:"Estilo ENEM 2008", q:"Qual fenômeno é responsável pela cor do céu?", choices:["refração","dispersão","espalhamento","absorção"], correct:2 },
+{ id: 3026, topic: "Física", style:"Estilo PAS 2007", q:"Velocidade escalar média: distância total /", choices:["tempo","massa","força","energia"], correct:0 },
+{ id: 3027, topic: "Física", style:"Estilo ENEM 2006", q:"Força de atrito depende de:", choices:["massa e rugosidade","temperatura apenas","cor do objeto","altura"], correct:0 },
+{ id: 3028, topic: "Física", style:"Estilo PAS 2005", q:"Qual grandeza é vetorial?", choices:["massa","tempo","velocidade","temperatura"], correct:2 },
+{ id: 3029, topic: "Física", style:"Estilo ENEM 2004", q:"Unidade de carga elétrica é:", choices:["Coulomb","Ohm","Volt","Tesla"], correct:0 },
+{ id: 3030, topic: "Física", style:"Estilo PAS 2003", q:"O que é frequência?", choices:["repetições por segundo","distância por segundo","energia por segundo","velocidade"], correct:0 },
+
+/* ---------------- QUÍMICA (30) ---------------- */
+{ id: 4001, topic: "Química", style:"Estilo ENEM 2019", q:"H₂O é uma molécula de:", choices:["água","óxido","sal","gás"], correct:0 },
+{ id: 4002, topic: "Química", style:"Estilo PAS 2020", q:"pH < 7 indica solução:", choices:["ácida","básica","neutra","salina"], correct:0 },
+{ id: 4003, topic: "Química", style:"Estilo ENEM 2018", q:"Ligação iônica ocorre entre:", choices:["metal + não metal","dois metais","dois não metais","gases nobres"], correct:0 },
+{ id: 4004, topic: "Química", style:"Estilo PAS 2019", q:"CO₂ é nomeado como:", choices:["dióxido de carbono","monóxido de carbono","oxigênio","carbonato"], correct:0 },
+{ id: 4005, topic: "Química", style:"Estilo ENEM 2017", q:"Na tabela periódica, 'O' representa:", choices:["Oxigênio","Ouro","Osmio","Oganessônio"], correct:0 },
+{ id: 4006, topic: "Química", style:"Estilo PAS 2021", q:"Reação exotérmica libera:", choices:["calor","frio","luz","massa"], correct:0 },
+{ id: 4007, topic: "Química", style:"Estilo ENEM 2016", q:"Ácido forte tem alta capacidade de:", choices:["doar prótons","aceitar elétrons","doar elétrons","reduzir"], correct:0 },
+{ id: 4008, topic: "Química", style:"Estilo PAS 2015", q:"Fórmula da água é:", choices:["H₂O","HO₂","O₂H","H2O2"], correct:0 },
+{ id: 4009, topic: "Química", style:"Estilo ENEM 2015", q:"Sódio (Na) é um elemento:", choices:["metal alcalino","gás nobre","metal de transição","não metal"], correct:0 },
+{ id: 4010, topic: "Química", style:"Estilo PAS 2014", q:"O que é molécula?", choices:["átomo","conjunto de átomos","íons","elétrons"], correct:1 },
+{ id: 4011, topic: "Química", style:"Estilo ENEM 2013", q:"Oxidação envolve perda de:", choices:["elétrons","prótons","nêutrons","átomos"], correct:0 },
+{ id: 4012, topic: "Química", style:"Estilo PAS 2012", q:"Qual é o produto da combustão completa do carbono?", choices:["CO₂","CO","H₂O","CH₄"], correct:0 },
+{ id: 4013, topic: "Química", style:"Estilo ENEM 2011", q:"Soluções aquosas têm como solvente:", choices:["água","etanol","óleo","acetona"], correct:0 },
+{ id: 4014, topic: "Química", style:"Estilo PAS 2010", q:"Qual é o símbolo do ouro?", choices:["Au","Ag","Fe","O"], correct:0 },
+{ id: 4015, topic: "Química", style:"Estilo ENEM 2020", q:"Qual é o número atômico do carbono?", choices:["6","12","14","8"], correct:0 },
+{ id: 4016, topic: "Química", style:"Estilo PAS 2018", q:"Ligação covalente envolve:", choices:["compartilhamento de elétrons","transferência de elétrons","atração iônica","força nuclear"], correct:0 },
+{ id: 4017, topic: "Química", style:"Estilo ENEM 2021", q:"Qual estado da matéria tem forma e volume definidos?", choices:["sólido","líquido","gasoso","plasma"], correct:0 },
+{ id: 4018, topic: "Química", style:"Estilo PAS 2017", q:"pH neutro é:", choices:["7","0","14","1"], correct:0 },
+{ id: 4019, topic: "Química", style:"Estilo ENEM 2014", q:"Elemento essencial em proteínas:", choices:["Nitrogênio","Hélio","Neônio","Argônio"], correct:0 },
+{ id: 4020, topic: "Química", style:"Estilo PAS 2016", q:"Qual a fórmula da glicose (simplificada)?", choices:["C6H12O6","CO2","H2O","C2H5OH"], correct:0 },
+{ id: 4021, topic: "Química", style:"Estilo ENEM 2012", q:"Qual é a função de um catalisador?", choices:["aumenta velocidade sem se consumir","diminui massa","altera produto","esfria reação"], correct:0 },
+{ id: 4022, topic: "Química", style:"Estilo PAS 2013", q:"Qual é o soluto em água salgada?", choices:["sal","água","ar","gelo"], correct:0 },
+{ id: 4023, topic: "Química", style:"Estilo ENEM 2010", q:"Qual gás é liberado na respiração celular?", choices:["CO₂","O₂","N₂","H₂"], correct:0 },
+{ id: 4024, topic: "Química", style:"Estilo PAS 2009", q:"Qual processo transforma sólido em gás sem passar por líquido?", choices:["sublimação","fusão","condensação","vaporização"], correct:0 },
+{ id: 4025, topic: "Química", style:"Estilo ENEM 2008", q:"Qual é o pH do suco de limão (tendência)?", choices:["ácido (≈2)","neutro (7)","básico (≈10)","alkaline"], correct:0 },
+{ id: 4026, topic: "Química", style:"Estilo PAS 2007", q:"Qual elemento tem símbolo 'O'?", choices:["Oxigênio","Ouro","Prata","Ferro"], correct:0 },
+{ id: 4027, topic: "Química", style:"Estilo ENEM 2006", q:"Água é um bom solvente porque é:", choices:["polar","apolar","viscosa","metálica"], correct:0 },
+{ id: 4028, topic: "Química", style:"Estilo PAS 2005", q:"Qual processo libera o oxigênio nas plantas?", choices:["fotossíntese","respiração","fermentação","transpiração"], correct:0 },
+{ id: 4029, topic: "Química", style:"Estilo ENEM 2004", q:"O que é um átomo?", choices:["menor unidade de um elemento","molécula","célula","bond"], correct:0 },
+{ id: 4030, topic: "Química", style:"Estilo PAS 2003", q:"Qual substância é essencial para a vida e é solvente universal?", choices:["água","acetona","etanol","glicerina"], correct:0 },
+
+/* ---------------- BIOLOGIA (30) ---------------- */
+{ id: 5001, topic: "Biologia", style:"Estilo ENEM 2019", q:"Qual estrutura celular realiza a respiração celular?", choices:["Ribossomo","Mitocôndria","Cloroplasto","Núcleo"], correct:1 },
+{ id: 5002, topic: "Biologia", style:"Estilo PAS 2020", q:"Fotossíntese ocorre em:", choices:["Cloroplastos","Mitocôndrias","Núcleos","Lisossomos"], correct:0 },
+{ id: 5003, topic: "Biologia", style:"Estilo ENEM 2018", q:"DNA é responsável por:", choices:["armazenar informação genética","fazer energia","produzir calor","transportar oxigênio"], correct:0 },
+{ id: 5004, topic: "Biologia", style:"Estilo PAS 2019", q:"Bactérias são geralmente:", choices:["procariontes","eucariontes","vírus","fungos"], correct:0 },
+{ id: 5005, topic: "Biologia", style:"Estilo ENEM 2017", q:"Qual é o maior órgão do corpo humano?", choices:["fígado","pele","coração","pulmão"], correct:1 },
+{ id: 5006, topic: "Biologia", style:"Estilo PAS 2021", q:"Hemoglobina transporta:", choices:["oxigênio","glicose","hormônios","vitaminas"], correct:0 },
+{ id: 5007, topic: "Biologia", style:"Estilo ENEM 2016", q:"Células-tronco são importantes porque:", choices:["podem gerar vários tipos celulares","são imunes","produzem ATP","controlam a respiração"], correct:0 },
+{ id: 5008, topic: "Biologia", style:"Estilo PAS 2015", q:"O que é fotossíntese?", choices:["processo que produz alimento em plantas","respiração de animais","divisão celular","digestão"], correct:0 },
+{ id: 5009, topic: "Biologia", style:"Estilo ENEM 2015", q:"Os seres vivos usam DNA para:", choices:["hereditariedade","movimentação","respiração","nutrição"], correct:0 },
+{ id: 5010, topic: "Biologia", style:"Estilo PAS 2014", q:"Qual é a função dos ribossomos?", choices:["síntese proteica","armazenar energia","produzir lipídios","degradar toxinas"], correct:0 },
+{ id: 5011, topic: "Biologia", style:"Estilo ENEM 2013", q:"Qual o papel dos cloroplastos?", choices:["fotossíntese","respiração","reprodução","excreção"], correct:0 },
+{ id: 5012, topic: "Biologia", style:"Estilo PAS 2012", q:"Plantas autótrofas produzem:", choices:["seu próprio alimento","seus predadores","suas proteínas externas","seu oxigênio apenas"], correct:0 },
+{ id: 5013, topic: "Biologia", style:"Estilo ENEM 2011", q:"Qual a principal macromolécula em músculos?", choices:["lipídios","proteínas","carboidratos","ácidos nucleicos"], correct:1 },
+{ id: 5014, topic: "Biologia", style:"Estilo PAS 2010", q:"Qual é o órgão do sistema circulatório central?", choices:["coração","fígado","rins","pulmões"], correct:0 },
+{ id: 5015, topic: "Biologia", style:"Estilo ENEM 2020", q:"Qual elemento é essencial para DNA?", choices:["Carbono","Nitrogênio","Ferro","Cálcio"], correct:1 },
+{ id: 5016, topic: "Biologia", style:"Estilo PAS 2018", q:"Qual grupo realiza fotossíntese?", choices:["plantas e algas","animais","fungos","protistas"], correct:0 },
+{ id: 5017, topic: "Biologia", style:"Estilo ENEM 2021", q:"Bactérias causam doenças mas também:", choices:["auxiliam digestão","não têm função","só poluem","produzem luz"], correct:0 },
+{ id: 5018, topic: "Biologia", style:"Estilo PAS 2017", q:"Qual célula produz anticorpos?", choices:["neutrófilo","linfócito B","eritrócito","plaqueta"], correct:1 },
+{ id: 5019, topic: "Biologia", style:"Estilo ENEM 2014", q:"O que é um ecossistema?", choices:["conjunto de seres vivos e meio","apenas plantas","apenas animais","apenas clima"], correct:0 },
+{ id: 5020, topic: "Biologia", style:"Estilo PAS 2016", q:"Qual processo gera variabilidade genética?", choices:["mutação e recombinação","fotossíntese","fermentação","respiração"], correct:0 },
+{ id: 5021, topic: "Biologia", style:"Estilo ENEM 2012", q:"Qual é a principal função das raízes?", choices:["absorver água e minerais","fotossíntese","reprodução","armazenar glicose"], correct:0 },
+{ id: 5022, topic: "Biologia", style:"Estilo PAS 2013", q:"O que é homeostase?", choices:["manutenção do equilíbrio interno","crescimento celular","produção de energia","movimento"], correct:0 },
+{ id: 5023, topic: "Biologia", style:"Estilo ENEM 2010", q:"Qual organela contém material genético?", choices:["Mitocôndria","Núcleo","Ribossomo","Lisossomo"], correct:1 },
+{ id: 5024, topic: "Biologia", style:"Estilo PAS 2009", q:"Como ocorre a troca gasosa nos pulmões?", choices:["difusão","pressão","condução","convecção"], correct:0 },
+{ id: 5025, topic: "Biologia", style:"Estilo ENEM 2008", q:"Qual é a unidade básica da vida?", choices:["tecido","órgão","célula","sistema"], correct:2 },
+{ id: 5026, topic: "Biologia", style:"Estilo PAS 2007", q:"Qual macronutriente é fonte primária de energia?", choices:["lipídios","proteínas","carboidratos","vitaminas"], correct:2 },
+{ id: 5027, topic: "Biologia", style:"Estilo ENEM 2006", q:"O sangue transporta:", choices:["oxigênio e nutrientes","somente água","somente hormônios","somente anticorpos"], correct:0 },
+{ id: 5028, topic: "Biologia", style:"Estilo PAS 2005", q:"A reprodução sexuada envolve:", choices:["dois indivíduos e mistura genética","um indivíduo","apenas mitose","apenas divisão binária"], correct:0 },
+{ id: 5029, topic: "Biologia", style:"Estilo ENEM 2004", q:"O que são enzimas?", choices:["proteínas que catalisam reações","lipídios","açúcares","vitaminas"], correct:0 },
+{ id: 5030, topic: "Biologia", style:"Estilo PAS 2003", q:"Qual é a função dos estômagos em vertebrados?", choices:["digestão","respiração","circulação","reprodução"], correct:0 },
+
+/* ---------------- HISTÓRIA (30) ---------------- */
+{ id: 6001, topic: "História", style:"Estilo ENEM 2019", q:"Em que ano o Brasil declarou independência (data simbólica)?", choices:["1808","1822","1889","1910"], correct:1 },
+{ id: 6002, topic: "História", style:"Estilo PAS 2020", q:"A Revolução Francesa começou em:", choices:["1789","1804","1815","1776"], correct:0 },
+{ id: 6003, topic: "História", style:"Estilo ENEM 2018", q:"Quem liderou a independência do Brasil (símbolo)?", choices:["Dom João VI","Dom Pedro I","Tiradentes","Getúlio Vargas"], correct:1 },
+{ id: 6004, topic: "História", style:"Estilo PAS 2019", q:"O período medieval é conhecido por:", choices:["feudalismo","colonialismo","renascimento","industrialização"], correct:0 },
+{ id: 6005, topic: "História", style:"Estilo ENEM 2017", q:"Qual evento marcou o fim da monarquia no Brasil?", choices:["Proclamação da República","Independência","Abolição","Revolução Farroupilha"], correct:0 },
+{ id: 6006, topic: "História", style:"Estilo PAS 2021", q:"Primeira Guerra Mundial iniciou em:", choices:["1914","1918","1939","1945"], correct:0 },
+{ id: 6007, topic: "História", style:"Estilo ENEM 2016", q:"Movimento colonial buscava:", choices:["exploração e comércio","independência","industrialização","democracia"], correct:0 },
+{ id: 6008, topic: "História", style:"Estilo PAS 2015", q:"Iluminismo é associado a:", choices:["razão e direitos","religião","feudalismo","monarquia absoluta"], correct:0 },
+{ id: 6009, topic: "História", style:"Estilo ENEM 2015", q:"A Revolução Industrial começou na:", choices:["Inglaterra","França","Alemanha","Estados Unidos"], correct:0 },
+{ id: 6010, topic: "História", style:"Estilo PAS 2014", q:"A escravidão no Brasil foi abolida em:", choices:["1888","1822","1890","1871"], correct:0 },
+{ id: 6011, topic: "História", style:"Estilo ENEM 2014", q:"O que foi o Tratado de Tordesilhas?", choices:["divisão territorial entre Espanha e Portugal","guerra civil","lei econômica","movimento cultural"], correct:0 },
+{ id: 6012, topic: "História", style:"Estilo PAS 2013", q:"Getúlio Vargas foi presidente em qual período (início)?", choices:["1930","1945","1956","1964"], correct:0 },
+{ id: 6013, topic: "História", style:"Estilo ENEM 2013", q:"A Guerra Fria ocorreu entre:", choices:["EUA e URSS","Inglaterra e França","China e Japão","Alemanha e Itália"], correct:0 },
+{ id: 6014, topic: "História", style:"Estilo PAS 2012", q:"Quem foi Tiradentes?", choices:["líder da Inconfidência Mineira","imperador","governador","escritor"], correct:0 },
+{ id: 6015, topic: "História", style:"Estilo ENEM 2012", q:"Renascimento foi período de:", choices:["renovação cultural","feudalismo","guerra","colapso econômico"], correct:0 },
+{ id: 6016, topic: "História", style:"Estilo PAS 2011", q:"Independência dos EUA em:", choices:["1776","1812","1865","1492"], correct:0 },
+{ id: 6017, topic: "História", style:"Estilo ENEM 2011", q:"Qual era o sistema econômico da Idade Média?", choices:["feudalismo","capitalismo","mercantilismo","industrial"], correct:0 },
+{ id: 6018, topic: "História", style:"Estilo PAS 2010", q:"Ilha que serviu de base a grandes descobrimentos: era?", choices:["Madeira","Ilhas Canárias","Bahamas","Cabo Verde"], correct:1 },
+{ id: 6019, topic: "História", style:"Estilo ENEM 2020", q:"A abolição da escravidão no Brasil ficou conhecida como:", choices:["Lei Áurea","Lei do Ventre Livre","Lei Eusébio de Queirós","Lei Saraiva"], correct:0 },
+{ id: 6020, topic: "História", style:"Estilo PAS 2018", q:"Que movimento buscou reformas sociais e políticas no Brasil (1930)?", choices:["Vargas e Era Vargas","Independência","Movimento Tenentista","Diretas Já"], correct:0 },
+{ id: 6021, topic: "História", style:"Estilo ENEM 2021", q:"A queda do Muro de Berlim ocorreu em:", choices:["1989","1991","1975","2000"], correct:0 },
+{ id: 6022, topic: "História", style:"Estilo PAS 2017", q:"A Revolução Inglesa do século XVII envolveu:", choices:["parlamento vs monarquia","colonização","reformas sociais","industrialização"], correct:0 },
+{ id: 6023, topic: "História", style:"Estilo ENEM 2014", q:"O Iluminismo influenciou:", choices:["constituições liberais","feudalismo","monarquias absolutas intactas","colonização europeia"], correct:0 },
+{ id: 6024, topic: "História", style:"Estilo PAS 2016", q:"Qual era a principal mercadoria no ciclo do ouro no Brasil colonial?", choices:["ouro","trigo","algodão","café"], correct:0 },
+{ id: 6025, topic: "História", style:"Estilo ENEM 2013", q:"O movimento das Diretas Já ocorreu em que década?", choices:["1980s","1970s","1990s","1960s"], correct:0 },
+{ id: 6026, topic: "História", style:"Estilo PAS 2015", q:"Quem proclamou a República no Brasil?", choices:["Marechal Deodoro da Fonseca","Dom Pedro II","Getúlio Vargas","Tiradentes"], correct:0 },
+{ id: 6027, topic: "História", style:"Estilo ENEM 2012", q:"A Constituição de 1988 no Brasil ficou conhecida como:", choices:["Constituição Cidadã","Carta Magna","Lei de Ouro","Novo Código"], correct:0 },
+{ id: 6028, topic: "História", style:"Estilo PAS 2014", q:"O Iluminismo valorizava:", choices:["razão e ciência","tradição","mito","autoritarismo"], correct:0 },
+{ id: 6029, topic: "História", style:"Estilo ENEM 2010", q:"Período das grandes navegações marcou:", choices:["expansão marítima","retração comercial","isolamento","queda demográfica"], correct:0 },
+{ id: 6030, topic: "História", style:"Estilo PAS 2009", q:"Movimento renascentista aconteceu principalmente em:", choices:["Itália","Inglaterra","Holanda","Alemanha"], correct:0 },
+
+]; /* END ALL_QUESTIONS */
+
+/* ========== STATE ========== */
+let visibleFilter = "all";
+let selectedIds = new Set();
+let filteredList = ALL_QUESTIONS.slice();
+let quizList = [];
+let quizIndex = 0;
+let answeredSet = new Set();
+let stats = { correct:0, wrong:0, skipped:0 };
+
+/* ========== DOM REFS ========== */
+const cardsGrid = document.getElementById('cardsGrid');
+const filterBtns = Array.from(document.querySelectorAll('.filter-btn'));
+const searchInput = document.getElementById('searchInput');
+const btnClear = document.getElementById('btnClear');
+const selectedCount = document.getElementById('selectedCount');
+const selectedCount2 = document.getElementById('selectedCount2');
+const btnStart = document.getElementById('btnStart');
+const btnSelectAll = document.getElementById('btnSelectAll');
+const btnDeselectAll = document.getElementById('btnDeselectAll');
+const btnInvert = document.getElementById('btnInvert');
+const qText = document.getElementById('qText');
+const answersEl = document.getElementById('answers');
+const progressEl = document.getElementById('progress');
+const btnSkip = document.getElementById('btnSkip');
+const btnNext = document.getElementById('btnNext');
+const summaryArea = document.getElementById('summaryArea');
+const exportBtn = document.getElementById('exportBtn');
+const btnSelectVisible = document.getElementById('btnSelectVisible');
+
+/* ========== INIT ========== */
+function init(){
+  applyFilters();
+  attachEvents();
+  updateSelectedCount();
+}
+init();
+
+/* ========== RENDER CARDS ========== */
+function renderCards(list){
+  cardsGrid.innerHTML = '';
+  list.forEach(q=>{
+    const el = document.createElement('div');
+    el.className = 'q-card';
+    el.dataset.id = q.id;
+    el.innerHTML = `
+      <div class="q-top">
+        <div>
+          <div class="q-title">${escapeHtml(q.q)}</div>
+          <div class="q-meta">${q.topic} • <small style="color:var(--muted)">${q.style}</small></div>
+        </div>
+        <div class="include-toggle">
+          <label style="font-size:12px;color:var(--muted);margin-right:6px">Incluir</label>
+          <input type="checkbox" ${selectedIds.has(q.id)?'checked':''} data-id="${q.id}" class="include-chk" />
+        </div>
       </div>
-      <p>© Studyflix, Inc.</p>
-    </footer>
-    
-    <script>
-      // Navegação dos links do header
-      document.getElementById("iten").addEventListener("click", function (event) {
-        event.preventDefault();
-        window.location.href = "PAS.html";
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <div style="font-size:12px;color:var(--muted)">${q.choices.length} alternativas</div>
+        <div class="card-actions">
+          <button class="ghost view-btn" data-id="${q.id}">Visualizar</button>
+        </div>
+      </div>
+    `;
+    cardsGrid.appendChild(el);
+  });
+
+  // checkbox handlers
+  Array.from(document.querySelectorAll('.include-chk')).forEach(chk=>{
+    chk.addEventListener('change', e=>{
+      const id = Number(e.target.dataset.id);
+      if(e.target.checked) selectedIds.add(id); else selectedIds.delete(id);
+      updateSelectedCount();
+    });
+  });
+
+  // view buttons
+  Array.from(document.querySelectorAll('.view-btn')).forEach(b=>{
+    b.addEventListener('click', e=>{
+      const id = Number(e.target.dataset.id);
+      const q = ALL_QUESTIONS.find(x=>x.id===id);
+      if(q) showPreviewModal(q);
+    });
+  });
+}
+
+/* ========== FILTERS ========== */
+filterBtns.forEach(b=>{
+  b.addEventListener('click', ()=>{
+    filterBtns.forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    visibleFilter = b.dataset.filter;
+    applyFilters();
+  });
+});
+
+searchInput.addEventListener('input', applyFilters);
+btnClear.addEventListener('click', ()=>{ searchInput.value=''; applyFilters(); });
+
+function applyFilters(){
+  const term = (searchInput.value||'').trim().toLowerCase();
+  filteredList = ALL_QUESTIONS.filter(q=>{
+    const matchTopic = visibleFilter === 'all' ? true : q.topic === visibleFilter;
+    const matchTerm = term === '' ? true : (q.q.toLowerCase().includes(term) || q.choices.join(' ').toLowerCase().includes(term) || q.style.toLowerCase().includes(term));
+    return matchTopic && matchTerm;
+  });
+  renderCards(filteredList);
+}
+
+/* ========== Selection helpers ========== */
+function updateSelectedCount(){
+  const c = selectedIds.size;
+  selectedCount.textContent = `${c} selecionadas`;
+  selectedCount2.textContent = `${c}`;
+}
+
+/* select/deselect/invert */
+btnSelectAll.addEventListener('click', ()=>{
+  filteredList.forEach(q=>selectedIds.add(q.id));
+  renderCards(filteredList); updateSelectedCount();
+});
+btnDeselectAll.addEventListener('click', ()=>{ filteredList.forEach(q=>selectedIds.delete(q.id)); renderCards(filteredList); updateSelectedCount(); });
+btnInvert.addEventListener('click', ()=>{ filteredList.forEach(q=>{ if(selectedIds.has(q.id)) selectedIds.delete(q.id); else selectedIds.add(q.id); }); renderCards(filteredList); updateSelectedCount(); });
+
+/* select visible quickly */
+btnSelectVisible.addEventListener('click', ()=>{ filteredList.forEach(q=>selectedIds.add(q.id)); renderCards(filteredList); updateSelectedCount(); });
+
+/* ========== QUIZ LOGIC ========== */
+btnStart.addEventListener('click', ()=>{
+  const visible = filteredList.length>0 ? filteredList.slice() : ALL_QUESTIONS.slice();
+  const selectedArray = visible.filter(q=>selectedIds.has(q.id));
+  quizList = (selectedArray.length>0 ? selectedArray : visible).slice();
+  if(quizList.length===0){ alert('Nenhuma questão disponível'); return; }
+  shuffleArray(quizList);
+  quizIndex = 0; answeredSet.clear(); stats={correct:0,wrong:0,skipped:0}; summaryArea.style.display='none';
+  loadQuizQuestion();
+});
+
+function loadQuizQuestion(){
+  if(!quizList || quizList.length===0){ qText.textContent='Nenhuma questão.'; answersEl.innerHTML=''; progressEl.textContent='Questão 0 / 0'; return; }
+  if(quizIndex >= quizList.length){ showQuizSummary(); return; }
+  const q = quizList[quizIndex];
+  progressEl.textContent = `Questão ${quizIndex+1} / ${quizList.length}`;
+  qText.textContent = q.q;
+  answersEl.innerHTML = '';
+  btnNext.disabled = true;
+  q.choices.forEach((c, idx)=>{
+    const b = document.createElement('button');
+    b.className = 'answer-btn';
+    b.innerHTML = `<div style="width:28px;font-weight:800">${String.fromCharCode(65+idx)}</div><div style="flex:1;text-align:left">${escapeHtml(c)}</div>`;
+    if(answeredSet.has(q.id)){
+      b.disabled = true; b.classList.add('disabled');
+      // show previous correct if recorded in attempts
+      const hist = JSON.parse(localStorage.getItem('sf_attempts')||'[]');
+      const att = hist.find(a=>a.qid===q.id);
+      if(att){
+        if(att.correct){ if(idx===q.correct) b.classList.add('correct'); }
+        else { if(idx===q.correct) b.classList.add('correct'); /* can't know chosen idx */ }
+      }
+    } else {
+      b.addEventListener('click', ()=>{
+        if(answeredSet.has(q.id)) return;
+        answeredSet.add(q.id);
+        const correctIdx = q.correct;
+        const all = Array.from(document.querySelectorAll('.answer-btn'));
+        all.forEach((btn,i)=>{ btn.disabled=true; btn.classList.add('disabled'); if(i===correctIdx) btn.classList.add('correct'); if(i!==correctIdx && i===idx) btn.classList.add('wrong'); });
+        if(idx===correctIdx) stats.correct++; else stats.wrong++;
+        recordAttempt(q.id, idx===correctIdx);
+        btnNext.disabled=false;
       });
-    
-      document.getElementById("itens").addEventListener("click", function (event) {
-        event.preventDefault();
-        window.location.href = "ENEM.html";
-      });
-    </script>
-    
+    }
+    answersEl.appendChild(b);
+  });
+}
+
+/* skip */
+btnSkip.addEventListener('click', ()=>{
+  if(!quizList || quizList.length===0) return;
+  const q = quizList[quizIndex];
+  if(!answeredSet.has(q.id)){ answeredSet.add(q.id); stats.skipped++; recordAttempt(q.id,false,true); }
+  quizIndex++;
+  if(quizIndex < quizList.length) loadQuizQuestion(); else showQuizSummary();
+});
+
+/* next */
+btnNext.addEventListener('click', ()=>{
+  quizIndex++;
+  if(quizIndex < quizList.length) loadQuizQuestion(); else showQuizSummary();
+});
+
+/* summary */
+function showQuizSummary(){
+  progressEl.textContent = `Fim - ${quizList.length} questões`;
+  qText.textContent = `Resumo do Quiz`;
+  answersEl.innerHTML = '';
+  btnNext.disabled = true;
+  summaryArea.style.display = 'block';
+  summaryArea.innerHTML = `<div><strong>Acertos:</strong> ${stats.correct}</div>
+    <div><strong>Erros:</strong> ${stats.wrong}</div>
+    <div><strong>Pulos:</strong> ${stats.skipped}</div>
+    <div style="margin-top:8px"><strong>Porcentagem:</strong> ${calcPct(stats.correct, quizList.length)}%</div>`;
+  summaryArea.scrollIntoView({behavior:'smooth'});
+}
+
+/* ========== preview modal ========== */
+function showPreviewModal(q){
+  const modal = document.createElement('div');
+  modal.style.position='fixed';modal.style.inset=0;modal.style.background='rgba(0,0,0,0.7)';modal.style.display='flex';modal.style.alignItems='center';modal.style.justifyContent='center';modal.style.zIndex=9999;
+  const box = document.createElement('div');
+  box.style.width='min(900px,94%)';box.style.background='var(--panel)';box.style.padding='18px';box.style.borderRadius='12px';
+  box.innerHTML = `<h3 style="margin:0 0 10px 0;color:var(--accent-2)">${q.topic} — <small style="color:var(--muted)">${q.style}</small></h3>
+    <p style="font-weight:700">${escapeHtml(q.q)}</p>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+      ${q.choices.map((c,i)=>`<div style="padding:8px;border-radius:8px;background:#0a0a16;border:1px solid rgba(255,255,255,0.04)">${String.fromCharCode(65+i)}. ${escapeHtml(c)}</div>`).join('')}
+    </div>
+    <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
+      <button id="closeModal" class="ghost">Fechar</button>
+    </div>`;
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+  document.getElementById('closeModal').addEventListener('click', ()=> modal.remove());
+}
+
+/* ========== local attempts storage ========== */
+function recordAttempt(qid, correct, skipped=false){
+  try{
+    const key='sf_attempts';
+    const arr = JSON.parse(localStorage.getItem(key) || '[]');
+    arr.push({ qid, correct: !!correct, skipped: !!skipped, at: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(arr));
+  }catch(e){ console.warn(e); }
+}
+
+/* ========== export JSON ========== */
+exportBtn.addEventListener('click', ()=>{
+  const data = JSON.stringify(ALL_QUESTIONS, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='questoes_studyflix.json'; a.click(); URL.revokeObjectURL(url);
+});
+
+/* ========== util functions ========== */
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
+function calcPct(correct,total){ return total===0?0:Math.round((correct/total)*100) }
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c)); }
+
+/* ========== attach misc events ========== */
+function attachEvents(){
+  document.getElementById('btnDeselectAll').addEventListener('click', ()=>{ filteredList.forEach(q=>selectedIds.delete(q.id)); renderCards(filteredList); updateSelectedCount(); });
+  document.getElementById('btnSelectAll').addEventListener('click', ()=>{ filteredList.forEach(q=>selectedIds.add(q.id)); renderCards(filteredList); updateSelectedCount(); });
+  document.getElementById('btnInvert').addEventListener('click', ()=>{ filteredList.forEach(q=>{ if(selectedIds.has(q.id)) selectedIds.delete(q.id); else selectedIds.add(q.id); }); renderCards(filteredList); updateSelectedCount(); });
+  document.getElementById('btnClear').addEventListener('click', ()=>{ searchInput.value=''; applyFilters(); });
+  // clicking a card title should preview
+  cardsGrid.addEventListener('click', (e)=>{ const card = e.target.closest('.q-card'); if(!card) return; const id = Number(card.dataset.id); const q = ALL_QUESTIONS.find(x=>x.id===id); if(q) showPreviewModal(q); });
+}
+
+</script>
+</body>
+</html>
