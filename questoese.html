@@ -1,66 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
 <head>
-    <meta charset="UTF-8">
-    ```
-
-Depois de adicionar esta linha e subir o arquivo para o Render, o problema visual dos caracteres estranhos deve ser resolvido.
-
----
-
-## 2. 🔌 Diagnóstico do Carregamento Infinito (Funcional)
-
-Se o quiz **ainda está só carregando**, significa que a comunicação entre o JavaScript e o PHP está falhando. O problema é quase sempre o **Passo 1** (Credenciais) ou o **Passo 3** (Questões Inseridas).
-
-### 2.1. 🔑 Verificação de Conexão (Passo 1)
-
-O problema mais comum é que as credenciais do banco no Render não estão 100% corretas ou o PHP não está conseguindo iniciar a sessão.
-
-**Ação:**
-
-1.  **Revisite `db_config.php`:** Confirme que o `DB_HOST`, `DB_USER`, `DB_PASS` e `DB_NAME` estão **idênticos** às chaves fornecidas pelo seu banco PostgreSQL no Render.
-
-2.  **Corrija a Sessão (Necessário):** Para testar, precisamos ter certeza de que o `get_question.php` consegue começar a sessão. Adicione ou verifique se esta linha está no topo de **todos** os seus arquivos PHP da API (`get_question.php`, `submit_answer.php`, `get_ranking.php`):
-
-    ```php
-    session_start();
-    ```
-
-### 2.2. 📚 Verificação da Inserção de Questões (Passo 3)
-
-Se o seu código de conexão estiver correto, o script de busca de questões está falhando porque a tabela **`questions` está vazia**.
-
-**Ação:**
-
-1.  **Crie e Complete `popular_banco.php`:** Se você não o fez, crie o arquivo e insira as suas 500 questões no array `$questoes`.
-2.  **Execute o Script:** Acesse a URL dele no navegador: `http://seusite.onrender.com/popular_banco.php`.
-
-> ⚠️ Se este script rodar e disser "X questões inseridas com sucesso", o problema do carregamento será resolvido, pois o sistema terá dados para buscar.
-
----
-
-## 🛑 O Teste Definitivo (Para Encontrar o Erro)
-
-Se você fez tudo acima e ainda não funciona, vamos forçar o erro para que você possa me dizer o que está quebrando.
-
-**Ação:**
-
-1.  Abra o arquivo **`api/get_question.php`**.
-2.  Adicione as seguintes linhas **temporariamente** logo abaixo do `require_once '../db_config.php';`:
-
-    ```php
-    // --- CÓDIGO TEMPORÁRIO PARA DEBUG ---
-    // Tenta conectar e mata o script para vermos a mensagem de sucesso ou erro
-    try {
-        $pdo = getDbConnection();
-        // Se a linha abaixo aparecer, a conexão está OK!
-        die("Conexão com o banco SUCESSO! A API está no lugar certo."); 
-    } catch (Exception $e) {
-        // Se a linha abaixo aparecer, a conexão FALHOU!
-        die("ERRO DE CONEXÃO: " . $e->getMessage()); 
+  <meta charset="utf-cm" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Questões - Studyflix</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    // --- FIM DO CÓDIGO TEMPORÁRIO ---
-    ```
 
-3.  Salve o arquivo e faça o deploy no Render.
-4.  Acesse **diretamente** o arquivo no navegador: `http://seusite.onrender.com/api/get_question.php`
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #000000;
+      color: #fff;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
 
-O que você vê na tela ao acessar o `get_question.php` diretamente? Me envie a mensagem **completa** (seja de SUCESSO ou de ERRO). Isso nos dirá exatamente o que está errado.
+    /* Imagem de fundo */
+    #imagem {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      object-fit: cover;
+      opacity: 0.1;
+      z-index: -1;
+      filter: brightness(0.3);
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+    }
+
+    /* Cabeçalho estilo Netflix */
+    header {
+      background-color: #141414;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .logo {
+      height: 45px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-link {
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      user-select: none;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      transition: color 0.3s ease;
+      padding: 8px 0;
+      border-bottom: 3px solid transparent;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: #9b59b6;
+      /* Roxo */
+      border-bottom: 3px solid #9b59b6;
+    }
+
+    /* Espaço para o conteúdo abaixo do header fixo */
+    main {
+      margin-top: 90px;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 20px 40px;
+      width: 100%;
+    }
+
+    .section-title {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 900;
+      font-size: 2.8rem;
+      color: #fff;
+      margin-bottom: 25px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(155, 89, 182, 0.8);
+    }
+    
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 14px 32px;
+      background-color: #9b59b6;
+      color: white;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(155, 89, 182, 0.7);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+      border: none;
+    }
+
+    .button:hover {
+      background-color: #8e44ad;
+      box-shadow: 0 4px 15px rgba(142, 68, 173, 0.9);
+    }
+
+
+    /* Rodapé */
+    footer {
+      background: #141414;
+      padding: 1.5rem 20px;
+      text-align: center;
+      border-top: 2px solid #9b59b6;
+      margin-top: auto;
+      color: #bbb;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .pp,
+    .ppp {
+      width: 48px;
+      height: 48px;
+      opacity: 0.85;
+      transition: opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    .ppp {
+      width: 52px;
+      height: 52px;
+    }
+
+    .pp:hover,
+    .ppp:hover {
+      opacity: 1;
+      filter: drop-shadow(0 0 5px #9b59b6);
+    }
+
+    /*
+    -------------------------------------------
+    NOVOS ESTILOS PARA A PÁGINA DE QUESTÕES
+    -------------------------------------------
+    */
+
+    .tabs {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #333;
+    }
+
+    .tab-button {
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: color 0.3s, border-bottom 0.3s;
+        border-bottom: 4px solid transparent;
+    }
+
+    .tab-button.active {
+        color: #fff;
+        border-bottom: 4px solid #9b59b6;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    #quiz-start-content {
+        background: #181818;
+        padding: 30px;
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    #quiz-start-content label {
+        font-size: 1.2rem;
+        margin-right: 15px;
+    }
+    
+    #area-select {
+        padding: 10px;
+        font-size: 1rem;
+        background: #333;
+        color: #fff;
+        border: 2px solid #9b59b6;
+        border-radius: 4px;
+        margin-right: 20px;
+    }
+
+    /* Container do Quiz */
+    #quiz-content-container {
+        background: #181818;
+        padding: 30px;
+        border-radius: 6px;
+        box-shadow: 0 8px 20px rgba(155, 89, 182, 0.5);
+    }
+
+    #question-text {
+        font-size: 1.3rem;
+        font-weight: 500;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    #options-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .option-button {
+        background-color: #333;
+        border: 2px solid #555;
+        color: #fff;
+        width: 100%;
+        padding: 15px 20px;
+        text-align: left;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .option-button:hover:not(:disabled) {
+        background-color: #444;
+        border-color: #9b59b6;
+    }
+    
+    .option-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Feedback de Acerto/Erro */
+    .option-button.correct {
+        background-color: #27ae60; /* Verde */
+        border-color: #2ecc71;
+        color: #fff;
+        font-weight: 700;
+    }
+    
+    .option-button.incorrect {
+        background-color: #c0392b; /* Vermelho */
+        border-color: #e74c3c;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    #quiz-feedback {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #feedback-message {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    #feedback-message.correct {
+        color: #2ecc71;
+    }
+    
+    #feedback-message.incorrect {
+        color: #e74c3c;
+    }
+
+    #next-question-btn {
+        display: none; /* Começa escondido */
+    }
+
+    /* Tabela de Ranking */
+    #ranking-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    #ranking-table th, #ranking-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #333;
+    }
+    
+    #ranking-table th {
+        background-color: #1f1f1f;
+        color: #9b59b6;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+    }
+    
+    #ranking-table tr:nth-child(even) {
+        background-color: #1a1a1a;
+    }
+    
+    #ranking-table tr:hover {
+        background-color: #2c2c2c;
+    }
+
+    /* Loader */
+    .loader {
+        border: 8px solid #333; 
+        border-top: 8px solid #9b59b6; 
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo Studyflix" onclick="window.location.href='index.html'" />
+    <nav>
+      <h3 id="iten" class="nav-link">PAS</h3>
+      <h3 id="itens" class="nav-link">ENEM</h3>
+    </nav>
+  </header>
+
+  <img id="imagem" src="https://i.ibb.co/nqG7kvKS/Whats-App-Image-2025-04-10-at-19-33-18.jpg" alt="Sua Imagem" />
+
+  <main>
+    <h1 class="section-title">Central de Questões</h1>
+    
+    <div class="tabs">
+        <button class="tab-button active" data-tab="quiz-start">Praticar</button>
+        <button class="tab-button" data-tab="ranking">Ranking Global</button>
+    </div>
+
+    <div id="quiz-start-content" class="tab-content active">
+        <h2>Selecione uma área para começar</h2>
+        <br>
+        <form id="start-quiz-form">
+            <label for="area-select">Matéria:</label>
+            <select id="area-select">
+                <option value="Natureza">Ciências da Natureza</option>
+                <option value="Humanas">Ciências Humanas</option>
+                <option value="Matematica">Matemática</option>
+                <option value="Linguagens">Linguagens</option>
+            </select>
+            <button type="submit" class="button">Começar</button>
+        </form>
+    </div>
+
+    <div id="quiz-content-container" class="tab-content">
+        <div id="quiz-loader" class="loader"></div>
+        <div id="quiz-area" style="display: none;">
+            <p id="question-text">Carregando enunciado...</p>
+            <ul id="options-list">
+                </ul>
+            <div id="quiz-feedback">
+                <span id="feedback-message"></span>
+                <button id="next-question-btn" class="button">Próxima Questão</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ranking-content" class="tab-content">
+        <div id="ranking-loader" class="loader" style="display: none;"></div>
+        <table id="ranking-table">
+            <thead>
+                <tr>
+                    <th>Pos.</th>
+                    <th>Usuário</th>
+                    <th>Acertos</th>
+                    <th>Tentativas</th>
+                </tr>
+            </thead>
+            <tbody id="ranking-body">
+                </tbody>
+        </table>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="social-links">
+      <a href="https://www.instagram.com/study.flixx?igsh=MW9jOXE0aTBhbGFxeg==" target="_blank" rel="noopener" aria-label="Instagram">
+        <img class="pp" src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png" alt="Instagram" />
+      </a>
+      <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <img class="ppp" src="https://i.ibb.co/N6W8q1KF/Whats-App-256.png" alt="WhatsApp" />
+      </a>
+    </div>
+    <p>© Studyflix, Inc.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        
+        // --- Seletores do DOM ---
+        const tabs = document.querySelectorAll(".tab-button");
+        const tabContents = document.querySelectorAll(".tab-content");
+        
+        const startForm = document.getElementById("start-quiz-form");
+        const areaSelect = document.getElementById("area-select");
+
+        const quizStartContent = document.getElementById("quiz-start-content");
+        const quizContentContainer = document.getElementById("quiz-content-container");
+        const quizLoader = document.getElementById("quiz-loader");
+        const quizArea = document.getElementById("quiz-area");
+        
+        const questionText = document.getElementById("question-text");
+        const optionsList = document.getElementById("options-list");
+        const feedbackMessage = document.getElementById("feedback-message");
+        const nextQuestionBtn = document.getElementById("next-question-btn");
+
+        const rankingContent = document.getElementById("ranking-content");
+        const rankingLoader = document.getElementById("ranking-loader");
+        const rankingBody = document.getElementById("ranking-body");
+
+        // --- Estado do Quiz ---
+        let currentQuestionId = null;
+        let currentArea = 'Natureza';
+        let answerSubmitted = false;
+        
+        // --- Navegação por Abas (Tabs) ---
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                const targetTab = tab.getAttribute("data-tab");
+
+                // Desativa todas
+                tabs.forEach(t => t.classList.remove("active"));
+                tabContents.forEach(c => c.classList.remove("active"));
+
+                // Ativa a clicada
+                tab.classList.add("active");
+                
+                // Carrega o conteúdo da aba
+                if (targetTab === 'ranking') {
+                    rankingContent.classList.add("active");
+                    loadRanking();
+                } else if (targetTab === 'quiz-start') {
+                    quizStartContent.classList.add("active");
+                }
+            });
+        });
+
+        // --- Lógica do Quiz ---
+        
+        // 1. Iniciar o Quiz
+        startForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            currentArea = areaSelect.value;
+            
+            // Esconde a seleção e mostra o container do quiz
+            quizStartContent.classList.remove("active");
+            quizContentContainer.classList.add("active");
+            quizArea.style.display = 'none';
+            quizLoader.style.display = 'block';
+
+            loadQuestion();
+        });
+
+        // 2. Carregar uma Questão (via API)
+        async function loadQuestion() {
+            resetQuizUI();
+            quizLoader.style.display = 'block';
+
+            try {
+                // O JS vai chamar o PHP
+                const response = await fetch(`api/get_question.php?area=${currentArea}`);
+                if (!response.ok) {
+                    throw new Error('Erro de rede ao buscar questão.');
+                }
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    questionText.textContent = data.error;
+                    quizLoader.style.display = 'none';
+                    quizArea.style.display = 'block';
+                    optionsList.innerHTML = ''; // Limpa opções
+                    return;
+                }
+                
+                // Preenche a questão
+                currentQuestionId = data.question_id;
+                questionText.textContent = data.enunciado;
+                
+                // Cria os botões de opção
+                createOptionButton('a', data.option_a);
+                createOptionButton('b', data.option_b);
+                createOptionButton('c', data.option_c);
+                createOptionButton('d', data.option_d);
+                if (data.option_e) {
+                    createOptionButton('e', data.option_e);
+                }
+
+                quizLoader.style.display = 'none';
+                quizArea.style.display = 'block';
+
+            } catch (error) {
+                console.error("Falha ao carregar questão:", error);
+                questionText.textContent = "Não foi possível carregar a questão. Tente novamente.";
+            }
+        }
+        
+        // Função auxiliar para criar botões
+        function createOptionButton(value, text) {
+            const li = document.createElement('li');
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.dataset.value = value;
+            button.textContent = `${value.toUpperCase()}) ${text}`;
+            button.addEventListener("click", () => handleOptionClick(button, value));
+            li.appendChild(button);
+            optionsList.appendChild(li);
+        }
+
+        // 3. Usuário clica na opção
+        async function handleOptionClick(clickedButton, selectedValue) {
+            if (answerSubmitted) return; // Impede duplo clique
+            answerSubmitted = true;
+            
+            // Desabilita todos os botões
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.disabled = true;
+            });
+
+            try {
+                // Envia a resposta para o PHP
+                const response = await fetch('api/submit_answer.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question_id: currentQuestionId,
+                        answer: selectedValue
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Mostra o feedback visual
+                if (result.is_correct) {
+                    clickedButton.classList.add('correct');
+                    feedbackMessage.textContent = "Você acertou!";
+                    feedbackMessage.className = 'correct';
+                } else {
+                    clickedButton.classList.add('incorrect');
+                    feedbackMessage.textContent = "Você errou!";
+                    feedbackMessage.className = 'incorrect';
+                    
+                    // Mostra qual era a correta
+                    const correctButton = document.querySelector(`.option-button[data-value="${result.correct_option}"]`);
+                    if (correctButton) {
+                        correctButton.classList.add('correct');
+                    }
+                }
+                
+                nextQuestionBtn.style.display = 'inline-flex';
+
+            } catch (error) {
+                console.error("Erro ao salvar resposta:", error);
+                feedbackMessage.textContent = "Erro ao salvar. Tente novamente.";
+                answerSubmitted = false; // Permite tentar de novo
+            }
+        }
+
+        // 4. Botão "Próxima Questão"
+        nextQuestionBtn.addEventListener("click", loadQuestion);
+        
+        // 5. Resetar a interface do quiz
+        function resetQuizUI() {
+            answerSubmitted = false;
+            optionsList.innerHTML = '';
+            feedbackMessage.textContent = '';
+            nextQuestionBtn.style.display = 'none';
+        }
+
+
+        // --- Lógica do Ranking ---
+        async function loadRanking() {
+            rankingBody.innerHTML = ''; // Limpa
+            rankingLoader.style.display = 'block';
+            rankingContent.classList.add("active"); // Garante que a aba está visível
+
+            try {
+                const response = await fetch('api/get_ranking.php');
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                if (data.length === 0) {
+                    rankingBody.innerHTML = '<tr><td colspan="4">Nenhum ranking disponível. Responda questões para aparecer aqui!</td></tr>';
+                }
+
+                data.forEach((user, index) => {
+                    const row = `
+                        <tr>
+                            <td><b>${index + 1}º</b></td>
+                            <td>${user.username}</td>
+                            <td>${user.total_correct}</td>
+                            <td>${user.total_attempted}</td>
+                        </tr>
+                    `;
+                    rankingBody.innerHTML += row;
+                });
+
+            } catch (error) {
+                console.error("Erro ao carregar ranking:", error);
+                rankingBody.innerHTML = `<tr><td colspan="4">Erro ao carregar o ranking.</td></tr>`;
+            } finally {
+                rankingLoader.style.display = 'none';
+            }
+        }
+
+        // --- Navegação do Header (Copiado do seu index) ---
+        document.getElementById("iten").addEventListener("click", function (event) {
+          event.preventDefault();
+          window.location.href = "PAS.html";
+        });
+
+        document.getElementById("itens").addEventListener("click", function (event) {
+          event.preventDefault();
+          window.location.href = "ENEM.html";
+        });
+        
+    });
+  </script>
+</body>
+
+</html>
