@@ -1,43 +1,52 @@
 <?php
-require_once '../db_config.php';
-session_start();
+// Tenta obter a DATABASE_URL do ambiente do Render
+$db_url = getenv('DATABASE_URL');
+$conn = null;
 
-// O ID do usuário logado será usado para pular questões já respondidas
-$user_id = $_SESSION['user_id'] ?? 1; // Usando 1 para teste temporário
-
-if (!isset($_GET['area'])) {
-    http_response_code(400);
-    die(json_encode(['error' => 'Área da questão não especificada.']));
-}
-
-$area = $_GET['area'];
-
-try {
-    $pdo = getDbConnection();
+if ($db_url) {
+    // === CONEXÃO DE PRODUÇÃO (RENDER) ===
     
-    // Busca uma questão aleatória que não foi respondida por este usuário
-    $stmt = $pdo->prepare("
-        SELECT q.question_id, q.enunciado, q.option_a, q.option_b, q.option_c, q.option_d, q.option_e
-        FROM questions q
-        LEFT JOIN user_answers ua ON q.question_id = ua.question_id AND ua.user_id = ?
-        WHERE q.area = ? AND ua.answer_id IS NULL
-        ORDER BY RANDOM()
-        LIMIT 1
-    ");
+    // Processa a string DATABASE_URL para extrair as credenciais
+    // Sua URL é: postgresql://studyflix_user:C7RDk7jynwGOQqr78NGhBDB7a2QCapvo@dpg-d47ph0k9c44c73cbi1dg-a.oregon-postgres.render.com/studyflix_db_qurq
+    $url_parts = parse_url($db_url);
     
-    $stmt->execute([$user_id, $area]);
-    $question = $stmt->fetch();
+    $host    = $url_parts['host'];
+    $port    = $url_parts['port'] ?? 5432; // Usa 5432 como padrão se a porta não estiver na URL
+    $user    = $url_parts['user'];
+    $pass    = $url_parts['pass'];
+    $db_name = ltrim($url_parts['path'], '/'); 
+    
+    // Constrói a DSN (Data Source Name) para PDO
+    $dsn = "pgsql:host=$host;port=$port;dbname=$db_name;sslmode=require";
+    
+    // O parâmetro 'sslmode=require' é crucial para a maioria dos serviços de DB externos/cloud, incluindo o Render.
 
-    header('Content-Type: application/json');
-    if ($question) {
-        echo json_encode($question);
-    } else {
-        // Mensagem de sucesso se o usuário respondeu todas
-        echo json_encode(['error' => 'Parabéns! Você respondeu todas as questões desta área!']);
+    try {
+        // Conecta usando PDO
+        $conn = new PDO($dsn, $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+    } catch (PDOException $e) {
+        // Exibe um erro genérico e registra o detalhe (não deve exibir $e->getMessage() em produção)
+        error_log("Erro Fatal de Conexão com o BD do Render: " . $e->getMessage());
+        die("❌ Erro de Conexão com o Banco de Dados. Por favor, tente novamente mais tarde.");
     }
 
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Erro ao buscar questão: ' . $e->getMessage()]);
+} else {
+    // === FALLBACK PARA AMBIENTE LOCAL (DEV) ===
+    // Use suas credenciais locais aqui, caso precise rodar o popular_banco.php no seu computador.
+    $host    = 'localhost';
+    $user    = 'seu_usuario_local';
+    $pass    = 'sua_senha_local';
+    $db_name = 'seu_banco_local';
+    
+    $dsn = "pgsql:host=$host;dbname=$db_name";
+    
+    try {
+        $conn = new PDO($dsn, $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        die("❌ Erro de Conexão Local (PostgreSQL): " . $e->getMessage());
+    }
 }
 ?>
