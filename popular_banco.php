@@ -2937,66 +2937,82 @@ $questoes = [
 // -----------------------------------------------------------------------
 // INÍCIO DA LÓGICA DE INSERÇÃO NO BANCO DE DADOS
 // -----------------------------------------------------------------------
+// Certifique-se de que o db_config.php está incluído ANTES desta lógica.
+// require_once 'db_config.php'; // Se já estiver no início do arquivo, não precisa de novo.
 
-// O limite máximo de inserção, conforme solicitado:
-$limite_questoes = 300;
+$limite_questoes = 300; // Limite de questões a serem inseridas
 
 // 1. Aplica o limite ao array de questões (garantindo que não exceda 300)
 $questoes_a_inserir = array_slice($questoes, 0, $limite_questoes);
 
-// Verifica a conexão (supondo que $conn está definido em db_config.php)
-if (!isset($conn) || $conn->connect_error) {
-    // Se não conseguir conectar, mostra o erro e para
-    die("Erro de conexão com o banco de dados. Verifique 'db_config.php' e a variável \$conn.");
+// Verifica a conexão (PDO lida com erros de conexão via exceção, mas é bom verificar se o objeto existe)
+if (!isset($conn)) {
+    // Se a conexão não foi estabelecida, o db_config.php já deve ter morrido com o erro.
+    die("❌ Erro: A conexão com o banco de dados não foi estabelecida. Verifique se db_config.php está incluído e funcional.");
 }
 
-// 2. Prepara a instrução SQL para inserção segura (Prepared Statement)
-// A tabela 'questoes' deve ter as colunas correspondentes: area, enunciado, option_a, ..., correct_option
-$sql = "INSERT INTO questoes (area, enunciado, option_a, option_b, option_c, option_d, option_e, correct_option) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($sql);
+echo "<h3>Iniciando a inserção de " . count($questoes_a_inserir) . " questões...</h3>";
 
-if ($stmt === false) {
-    die("Erro ao preparar a instrução SQL: " . $conn->error);
-}
-
-// 3. Associa os parâmetros (oito 's' para as 8 colunas de string)
-// Se você tiver colunas numéricas (como 'id' ou 'nivel'), use 'i' para integer ou 'd' para double/float
-$stmt->bind_param("ssssssss", $area, $enunciado, $option_a, $option_b, $option_c, $option_d, $option_e, $correct_option);
-
-$inseridas = 0;
-$erros = 0;
-
-// 4. Itera sobre as questões limitadas e executa a inserção
-foreach ($questoes_a_inserir as $questao) {
-    // Extrai os dados do array para as variáveis ligadas
-    $area = $questao['area'];
-    $enunciado = $questao['enunciado'];
-    $option_a = $questao['option_a'];
-    $option_b = $questao['option_b'];
-    $option_c = $questao['option_c'];
-    $option_d = $questao['option_d'];
-    $option_e = $questao['option_e'];
-    $correct_option = $questao['correct_option'];
+try {
+    // 2. Prepara a instrução SQL para inserção segura (Prepared Statement em PDO)
+    // Usamos '?' como placeholders.
+    $sql = "INSERT INTO questoes (area, enunciado, option_a, option_b, option_c, option_d, option_e, correct_option) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     
-    // Executa o prepared statement
-    if ($stmt->execute()) {
-        $inseridas++;
-    } else {
-        $erros++;
-        // Exibe o erro para debugging
-        error_log("Erro ao inserir questão: " . $stmt->error . " (Área: " . $area . ")");
+    $stmt = $conn->prepare($sql);
+
+    // Verifica se a preparação falhou
+    if ($stmt === false) {
+        $errorInfo = $conn->errorInfo();
+        die("Erro ao preparar a instrução SQL: " . $errorInfo[2]);
     }
+
+    $inseridas = 0;
+    $erros = 0;
+
+    // 3. Itera sobre as questões limitadas e executa a inserção usando o array de valores
+    foreach ($questoes_a_inserir as $index => $questao) {
+        
+        // Monta o array de dados para o execute()
+        // O PDO infere o tipo, não precisamos usar "ssssssss"
+        $dados = [
+            $questao['area'],
+            $questao['enunciado'],
+            $questao['option_a'],
+            $questao['option_b'],
+            $questao['option_c'],
+            $questao['option_d'],
+            $questao['option_e'],
+            $questao['correct_option']
+        ];
+        
+        // Executa o prepared statement, passando o array de valores
+        if ($stmt->execute($dados)) {
+            $inseridas++;
+        } else {
+            $erros++;
+            // Exibe o erro do statement para debugging
+            $errorInfo = $stmt->errorInfo();
+            error_log("Erro ao inserir questão " . ($index + 1) . ": " . $errorInfo[2]);
+            echo "<p style='color:red;'>Erro ao inserir questão " . ($index + 1) . ": " . $errorInfo[2] . "</p>";
+        }
+    }
+
+    // 4. Finaliza a execução e fornece o feedback
+    // PDO não usa $stmt->close() nem $conn->close(). A atribuição a null libera os recursos.
+    $stmt = null;
+    $conn = null;
+
+    echo "\n------------------------------------------------\n";
+    echo "<h2>✅ Processo de Inserção Concluído!</h2>";
+    echo "<p>Total de Questões no array: " . count($questoes) . "</p>";
+    echo "<p>Questões realmente inseridas no DB (Limite de $limite_questoes): <strong>" . $inseridas . "</strong></p>";
+    echo "<p>Questões com erro na inserção: <strong>" . $erros . "</strong></p>";
+    echo "------------------------------------------------\n";
+
+} catch (PDOException $e) {
+    // Captura qualquer erro de PDO que possa ter ocorrido durante a execução
+    die("<h1>❌ Erro Fatal de PDO durante a Inserção:</h1><p>" . $e->getMessage() . "</p>");
 }
-
-// 5. Finaliza a execução e fornece o feedback
-$stmt->close();
-$conn->close();
-
-echo "\n------------------------------------------------\n";
-echo "Processo de Inserção Concluído!\n";
-echo "Total de Questões no array: " . count($questoes) . "\n";
-echo "Questões realmente inseridas no DB: " . $inseridas . "\n";
-echo "Questões com erro na inserção: " . $erros . "\n";
-echo "------------------------------------------------\n";
 
 ?>
