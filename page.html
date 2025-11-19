@@ -141,14 +141,12 @@
 
     .button img,
     .button i {
-      /* Adicionado regra para o ícone Font Awesome (i) */
       width: 22px;
       height: 22px;
       filter: invert(1);
     }
 
     .button i {
-      /* Ajuste específico para ícones FA */
       filter: none;
       color: white;
     }
@@ -287,10 +285,11 @@
 
 <body>
   <header>
-    <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo Studyflix" />
+    <img class="logo" id="logo-main" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo Studyflix" />
     <nav>
       <h3 id="iten" class="nav-link">PAS</h3>
       <h3 id="itens" class="nav-link">ENEM</h3>
+      <h3 id="btn-questoes-header" class="nav-link">QUESTÕES</h3>
     </nav>
   </header>
 
@@ -303,11 +302,6 @@
         <a href="flix.html" class="button" aria-label="Assistir">
           <img src="https://icons.iconarchive.com/icons/steve/zondicons/256/Play-icon.png" alt="Ícone Play" />
           <span>ASSISTIR</span>
-        </a>
-        
-        <a href="questoese.html?user_id=1" class="button" aria-label="Fazer Questões">
-          <i class="fas fa-question-circle" style="font-size: 22px;"></i>
-          <span>QUESTÕES</span>
         </a>
         <a href="study.html" class="button" aria-label="Mais informações">
           <img src="https://img.icons8.com/?size=100&id=77&format=png&color=FFFFFF" alt="Ícone Informação" />
@@ -340,8 +334,8 @@
     <section class="content-section">
       <h2 class="section-title">CIÊNCIAS HUMANAS</h2>
       <div class="grid-container">
-        <div class="card" onclick="window.location.href='e.html'" role="button" tabindex="0" aria-label="História Geral"
-          onkeypress="if(event.key==='Enter'){window.location.href='e.html'}">
+        <div class="card" onclick="window.location.href='e.html'" role="button" tabindex="0"
+          aria-label="História Geral" onkeypress="if(event.key==='Enter'){window.location.href='e.html'}">
           <img src="https://i.ibb.co/vxkpd9PD/Whats-App-Image-2025-02-28-at-14-57-59.jpg" alt="História Geral" />
           <div class="card-title">História Geral</div>
         </div>
@@ -441,6 +435,17 @@
       document.getElementById("itens").addEventListener("click", function (event) {
         event.preventDefault();
         window.location.href = "ENEM.html";
+      });
+
+      // NOVO: Clique na logo
+      document.getElementById('logo-main').addEventListener('click', () => {
+        window.location.href = 'page.html';
+      });
+
+      // NOVO: Clique no botão Questões do Header
+      document.getElementById("btn-questoes-header").addEventListener("click", function (event) {
+        event.preventDefault();
+        window.location.href = "questoese.html";
       });
     </script>
   </main>
