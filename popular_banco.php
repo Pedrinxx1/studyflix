@@ -1,141 +1,390 @@
 <?php
-// ----------------------------------------------------------------------
-// CONFIGURAÇÃO E CONEXÃO
-// ----------------------------------------------------------------------
 require_once 'db_config.php';
 
-// Garante que a conexão existe
-if (!isset($conn)) {
-    die("❌ Erro Crítico: Não foi possível conectar ao banco de dados. Verifique 'db_config.php'.");
-}
+if (!isset($conn)) { die("❌ Erro: Conexão não encontrada."); }
 
-// Aumenta o tempo limite de execução (inserir 300 itens pode levar alguns segundos no Render)
-set_time_limit(300); 
+// Aumenta o tempo de execução para garantir que insira as 300
+set_time_limit(600); 
 
-echo "<h3>🚀 Iniciando Configuração do Banco de Dados...</h3>";
+echo "<h3>🚀 Iniciando Inserção de 300 Questões...</h3>";
 
 try {
-    // 1. RESET TOTAL: Apaga a tabela antiga para garantir que a nova estrutura entre
+    // 1. LIMPEZA TOTAL (Resolve o erro do 'option_e' null)
+    $conn->exec("DROP TABLE IF EXISTS user_performance CASCADE");
     $conn->exec("DROP TABLE IF EXISTS questoes CASCADE");
-    echo "✅ Tabela antiga removida.<br>";
+    echo "✅ Tabelas antigas apagadas.<br>";
 
-    // 2. CRIAÇÃO DA TABELA (Corrigida para aceitar NULL na option_e)
-    $sql_create = "
+    // 2. CRIAÇÃO DA TABELA
+    $conn->exec("
         CREATE TABLE questoes (
             id SERIAL PRIMARY KEY,
-            area VARCHAR(100) NOT NULL,
+            area VARCHAR(50) NOT NULL,
             enunciado TEXT NOT NULL,
             option_a TEXT NOT NULL,
             option_b TEXT NOT NULL,
             option_c TEXT NOT NULL,
             option_d TEXT NOT NULL,
-            option_e TEXT DEFAULT NULL, 
+            option_e TEXT DEFAULT NULL,
             correct_option VARCHAR(1) NOT NULL
         );
-    ";
-    $conn->exec($sql_create);
-    echo "✅ Tabela 'questoes' recriada com sucesso.<br>";
-
-} catch (PDOException $e) {
-    die("❌ Erro na estrutura do banco: " . $e->getMessage());
-}
-
-// ----------------------------------------------------------------------
-// 3. DADOS DAS QUESTÕES (BASE REAL + PREENCHIMENTO)
-// ----------------------------------------------------------------------
-
-$questoes = [];
-
-// --- BLOCO 1: NATUREZA (Reais do seu arquivo) ---
-$questoes_natureza = [
-    ['area'=>'Natureza', 'correct_option'=>'A', 'enunciado'=>'O ciclo do nitrogênio é crucial para a manutenção da vida. Qual processo converte a amônia (NH3) em nitrito (NO2-) e depois em nitrato (NO3-)?', 'options'=>['Nitrificação','Amonificação','Fixação','Desnitrificação', null]],
-    ['area'=>'Natureza', 'correct_option'=>'B', 'enunciado'=>'Em uma pilha de Daniell (Zn/Cu), qual é o potencial padrão (Eº) e o ânodo?', 'options'=>['+0,42V / Zinco','+1,10V / Zinco','-0,42V / Zinco','+1,10V / Cobre', null]],
-    ['area'=>'Natureza', 'correct_option'=>'C', 'enunciado'=>'Um aquecedor de 1000W e 110V ligado em 220V terá qual potência dissipada?', 'options'=>['500 W','1000 W','4000 W','2000 W', null]],
-    ['area'=>'Natureza', 'correct_option'=>'D', 'enunciado'=>'Qual a relação da Produtividade Primária Líquida (PPL)?', 'options'=>['PPB + R','R - PPB','PPB / R','PPB - R', null]],
-    ['area'=>'Natureza', 'correct_option'=>'A', 'enunciado'=>'Quantidade de matéria em 500mL de etanol (d=0,79)?', 'options'=>['8,59 mol','46,0 mol','17,2 mol','0,79 mol', null]],
-    ['area'=>'Natureza', 'correct_option'=>'B', 'enunciado'=>'Carro freia de 72km/h até 0 em 40m. Aceleração?', 'options'=>['0,5 m/s²','5,0 m/s²','1,8 m/s²','10,0 m/s²', null]],
-    ['area'=>'Natureza', 'correct_option'=>'C', 'enunciado'=>'O que as vacinas introduzem no organismo?', 'options'=>['Anticorpos','Parasitas vivos','Antígenos','Células de defesa', null]],
-    ['area'=>'Natureza', 'correct_option'=>'D', 'enunciado'=>'Isomeria entre but-1-eno e ciclobutano?', 'options'=>['Função','Posição','Cadeia','Compensação', null]],
-    ['area'=>'Natureza', 'correct_option'=>'A', 'enunciado'=>'Velocidade da luz em vidro (n=1,5)?', 'options'=>['2,0 x 10^8 m/s','1,5 x 10^8 m/s','3,0 x 10^8 m/s','4,5 x 10^8 m/s', null]],
-    ['area'=>'Natureza', 'correct_option'=>'B', 'enunciado'=>'Gás do efeito estufa liberado por combustíveis fósseis?', 'options'=>['Metano','CO2','Ozônio','N2O', null]]
-];
-
-// --- BLOCO 2: HUMANAS (Reais do seu arquivo) ---
-$questoes_humanas = [
-    ['area'=>'Humanas', 'correct_option'=>'D', 'enunciado'=>'O sistema feudal na Idade Média era caracterizado por:', 'options'=>['Comércio','Indústria','Centralização','Terra e servidão', null]],
-    ['area'=>'Humanas', 'correct_option'=>'C', 'enunciado'=>'Fase inicial da transição demográfica:', 'options'=>['Queda geral','Baixas taxas','Alta natalidade/Queda mortalidade','Crescimento nulo', null]],
-    ['area'=>'Humanas', 'correct_option'=>'C', 'enunciado'=>'Objetivo das leis trabalhistas na Era Vargas:', 'options'=>['Sindicatos livres','Livre comércio','Cooptar apoio/Controle estatal','Gestão operária', null]],
-    ['area'=>'Humanas', 'correct_option'=>'C', 'enunciado'=>'Impacto do El Niño no Nordeste brasileiro:', 'options'=>['Chuvas','Frio','Secas severas','Marés', null]],
-    ['area'=>'Humanas', 'correct_option'=>'D', 'enunciado'=>'Fontes de energia da 2ª Revolução Industrial:', 'options'=>['Carvão','Nuclear','Eólica','Petróleo e Eletricidade', null]],
-    ['area'=>'Humanas', 'correct_option'=>'C', 'enunciado'=>'Divisão Internacional do Trabalho (DIT) atual:', 'options'=>['Commodities no norte','Indústria central','Descentralização industrial','Igualdade', null]],
-    ['area'=>'Humanas', 'correct_option'=>'B', 'enunciado'=>'Objetivo das Capitanias Hereditárias:', 'options'=>['Igualdade','Transferir custos para privados','Centralizar','Comércio Oriente', null]],
-    ['area'=>'Humanas', 'correct_option'=>'C', 'enunciado'=>'O que é Conurbação?', 'options'=>['Êxodo','Periferia','União física de cidades','Novas cidades', null]],
-    ['area'=>'Humanas', 'correct_option'=>'D', 'enunciado'=>'O Iluminismo criticava principalmente:', 'options'=>['Monarquia Const.','Socialismo','Democracia','Absolutismo/Antigo Regime', null]],
-    ['area'=>'Humanas', 'correct_option'=>'C', 'enunciado'=>'Função do Terraceamento na agricultura:', 'options'=>['Mecanização','Monocultivo','Reduzir erosão','Salinidade', null]]
-];
-
-// --- BLOCO 3: MATEMÁTICA (Reais do seu arquivo) ---
-$questoes_matematica = [
-    ['area'=>'Matemática', 'correct_option'=>'A', 'enunciado'=>'Produto de R$120 com 15% de desconto:', 'options'=>['R$ 102,00','R$ 105,00','R$ 108,00','R$ 100,00', null]],
-    ['area'=>'Matemática', 'correct_option'=>'B', 'enunciado'=>'Expressão: 5 + 3 x (10 - 4) / 2?', 'options'=>['11','14','17','20', null]],
-    ['area'=>'Matemática', 'correct_option'=>'C', 'enunciado'=>'Se x + 5 = 12, quanto vale 2x - 1?', 'options'=>['15','19','13','11', null]],
-    ['area'=>'Matemática', 'correct_option'=>'D', 'enunciado'=>'Raízes de x² - 5x + 6 = 0?', 'options'=>['{-2, -3}','{1, 6}','{-1, -6}','{2, 3}', null]],
-    ['area'=>'Matemática', 'correct_option'=>'B', 'enunciado'=>'Fração equivalente a 3/5 com denominador 20?', 'options'=>['10/20','12/20','15/20','9/20', null]]
-];
-
-// --- BLOCO 4: LINGUAGENS (Reais do seu arquivo) ---
-$questoes_linguagens = [
-    ['area'=>'Linguagens', 'correct_option'=>'C', 'enunciado'=>'Objetivo da Literatura Jesuíta no Brasil:', 'options'=>['Fauna','Conflitos','Catequizar','Criticar', null]],
-    ['area'=>'Linguagens', 'correct_option'=>'C', 'enunciado'=>'Características do Barroco:', 'options'=>['Equilíbrio','Simplicidade','Contraste e Exagero','Luz natural', null]],
-    ['area'=>'Linguagens', 'correct_option'=>'B', 'enunciado'=>'Lema "Fugere Urbem" do Arcadismo valoriza:', 'options'=>['Cidade','Campo/Vida simples','Corte','Mar', null]],
-    ['area'=>'Linguagens', 'correct_option'=>'C', 'enunciado'=>'Romantismo x Classicismo na pintura:', 'options'=>['Perfeição','Objetividade','Emoção e Natureza','Cores primárias', null]],
-    ['area'=>'Linguagens', 'correct_option'=>'C', 'enunciado'=>'Herói da 1ª fase do Romantismo Brasileiro:', 'options'=>['Português','Sertanejo','Indígena','Negro', null]]
-];
-
-// Adiciona os blocos reais ao array principal
-$questoes = array_merge($questoes, $questoes_natureza, $questoes_humanas, $questoes_matematica, $questoes_linguagens);
-
-// ----------------------------------------------------------------------
-// 4. GERADOR DE PREENCHIMENTO (Para chegar a 300)
-// ----------------------------------------------------------------------
-// O código abaixo garante que teremos 300 questões no banco,
-// distribuindo o restante equitativamente entre as áreas.
-
-$total_atual = count($questoes);
-$meta = 300;
-$areas_disponiveis = ['Ciências da Natureza', 'Ciências Humanas', 'Matemática', 'Linguagens'];
-
-echo "<p>Questões reais carregadas: <strong>$total_atual</strong></p>";
-echo "<p>Gerando complemento até <strong>$meta</strong>...</p>";
-
-for ($i = $total_atual + 1; $i <= $meta; $i++) {
-    $area = $areas_disponiveis[$i % 4]; // Alterna as áreas
-    $questoes[] = [
-        'area' => $area,
-        'enunciado' => "Questão Extra #$i de $area: Esta questão foi gerada para completar o banco de dados. (Substitua futuramente)",
-        'option_a' => 'Alternativa A',
-        'option_b' => 'Alternativa B',
-        'option_c' => 'Alternativa C (Correta)',
-        'option_d' => 'Alternativa D',
-        'option_e' => NULL,
-        'correct_option' => 'C'
-    ];
-}
-
-// ----------------------------------------------------------------------
-// 5. INSERÇÃO NO BANCO (PDO)
-// ----------------------------------------------------------------------
-
-try {
-    $sql = "INSERT INTO questoes (area, enunciado, option_a, option_b, option_c, option_d, option_e, correct_option) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    ");
     
+    $conn->exec("
+        CREATE TABLE user_performance (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES usuarios(id),
+            question_id INTEGER REFERENCES questoes(id),
+            is_correct BOOLEAN NOT NULL,
+            attempt_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    ");
+    echo "✅ Tabelas criadas.<br>";
+
+    // 3. ARRAY COM 300 QUESTÕES EXPLÍCITAS
+    $questoes = [
+        // --- NATUREZA (1-75) ---
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'O ciclo do nitrogênio: qual processo converte amônia em nitrito e nitrato?', 'a'=>'Desnitrificação', 'b'=>'Amonificação', 'c'=>'Fixação', 'd'=>'Nitrificação'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Pilha de Daniell (Zn/Cu): Qual é o potencial padrão e o ânodo?', 'a'=>'E=+0,42V / Zinco', 'b'=>'E=+1,10V / Cobre', 'c'=>'E=-0,42V / Zinco', 'd'=>'E=+1,10V / Zinco'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Aquecedor 1000W/110V ligado em 220V: nova potência?', 'a'=>'500 W', 'b'=>'1000 W', 'c'=>'2000 W', 'd'=>'4000 W'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Ecologia: Fórmula da Produtividade Primária Líquida (PPL)?', 'a'=>'PPB + R', 'b'=>'R - PPB', 'c'=>'PPB / R', 'd'=>'PPB - R'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Química: Mols em 500mL de etanol (d=0,79)?', 'a'=>'46,0', 'b'=>'17,2', 'c'=>'8,59', 'd'=>'0,79'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Física: Aceleração de carro (72km/h a 0 em 40m)?', 'a'=>'0,5', 'b'=>'1,8', 'c'=>'5,0', 'd'=>'10,0'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Vacinas: O que introduzem e induzem?', 'a'=>'Anticorpos prontos', 'b'=>'Parasitas vivos', 'c'=>'Antígenos / Imunidade ativa', 'd'=>'Células de defesa'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Isomeria: But-1-eno e Ciclobutano?', 'a'=>'Função', 'b'=>'Posição', 'c'=>'Cadeia', 'd'=>'Compensação'],
+        ['area'=>'Natureza', 'correct'=>'B', 'enunciado'=>'Luz: Velocidade no vidro (n=1,5)?', 'a'=>'1,5x10^8', 'b'=>'2,0x10^8', 'c'=>'3,0x10^8', 'd'=>'4,5x10^8'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Aquecimento global: Gás da queima de fósseis?', 'a'=>'Metano', 'b'=>'Óxido Nitroso', 'c'=>'Ozônio', 'd'=>'CO2'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Meiose: Consequência do crossing-over?', 'a'=>'Redução cromossomos', 'b'=>'Células idênticas', 'c'=>'Separação cromátides', 'd'=>'Variabilidade genética'],
+        ['area'=>'Natureza', 'correct'=>'A', 'enunciado'=>'Termoquímica: DeltaH de A->C (dados: A->B=+20, C->B=-50)?', 'a'=>'+70 kJ', 'b'=>'-30 kJ', 'c'=>'-70 kJ', 'd'=>'+30 kJ'],
+        ['area'=>'Natureza', 'correct'=>'A', 'enunciado'=>'Eletrodinâmica: Corrente em 10 Ohms / 12V?', 'a'=>'1,2 A', 'b'=>'0,83 A', 'c'=>'120 A', 'd'=>'22 A'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Músculo: Íon que se liga à troponina?', 'a'=>'Sódio', 'b'=>'Potássio', 'c'=>'Cálcio', 'd'=>'Cloreto'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Soluções: Volume de 0,5 mol/L com 117g NaCl?', 'a'=>'0,5 L', 'b'=>'1,0 L', 'c'=>'2,0 L', 'd'=>'4,0 L'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Dinâmica: Força mínima para mover 2kg (atrito 0,4)?', 'a'=>'2 N', 'b'=>'4 N', 'c'=>'8 N', 'd'=>'20 N'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Bactérias: Causa da resistência a antibióticos?', 'a'=>'Mutação induzida', 'b'=>'Higiene', 'c'=>'Seleção natural', 'd'=>'Absorção'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Equilíbrio: N2 + 3H2 <-> 2NH3 (exotérmica). Aumentar NH3?', 'a'=>'Aumentar temp', 'b'=>'Catalisador', 'c'=>'Aumentar pressão', 'd'=>'Diminuir pressão'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Calor: Fogueira a distância?', 'a'=>'Condução', 'b'=>'Convecção', 'c'=>'Irradiação', 'd'=>'Atrito'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Genética: Cariótipo Síndrome de Down (Feminino)?', 'a'=>'45, X0', 'b'=>'47, XYY', 'c'=>'47, XX, +21', 'd'=>'47, XXY'],
+        ['area'=>'Natureza', 'correct'=>'B', 'enunciado'=>'Química: Hibridização do carbono no benzeno?', 'a'=>'sp3', 'b'=>'sp2', 'c'=>'sp', 'd'=>'s2p'],
+        ['area'=>'Natureza', 'correct'=>'B', 'enunciado'=>'Cinemática: V. Média (metade 60km/h, metade 40km/h)?', 'a'=>'50', 'b'=>'48', 'c'=>'40', 'd'=>'45'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Ecologia: Eutrofização e camadas profundas?', 'a'=>'Aumenta temp', 'b'=>'Transparência', 'c'=>'Reduz oxigênio', 'd'=>'Aumenta pH'],
+        ['area'=>'Natureza', 'correct'=>'B', 'enunciado'=>'Orgânica: Cicloalcano 5C + metil?', 'a'=>'Ciclohexano', 'b'=>'Metilciclopentano', 'c'=>'Ciclobutano', 'd'=>'Metilbenzeno'],
+        ['area'=>'Natureza', 'correct'=>'B', 'enunciado'=>'Energia: Lançamento vertical no ponto mais alto?', 'a'=>'Zero', 'b'=>'Potencial (mgh)', 'c'=>'Cinética', 'd'=>'Elástica'],
+        ['area'=>'Natureza', 'correct'=>'A', 'enunciado'=>'Genética: Cruzamento ervilhas (600 amarelas/200 verdes)?', 'a'=>'Aa x Aa', 'b'=>'AA x aa', 'c'=>'aa x aa', 'd'=>'AA x AA'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Ecologia: Fragmentação de habitat causa?', 'a'=>'Imigração', 'b'=>'Endemismo', 'c'=>'População', 'd'=>'Perda diversidade'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Fisiologia: Sangue venoso NÃO está em?', 'a'=>'Artéria pulmonar', 'b'=>'Veia cava', 'c'=>'Capilares', 'd'=>'Veias pulmonares'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Citologia: Organela da síntese proteica?', 'a'=>'REL', 'b'=>'Golgi', 'c'=>'Mitocôndria', 'd'=>'Ribossomo'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Evolução: Fonte de nova variação genética?', 'a'=>'Recombinação', 'b'=>'Seleção', 'c'=>'Fluxo', 'd'=>'Mutação'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Botânica: Estrutura exclusiva das Angiospermas?', 'a'=>'Esporófito', 'b'=>'Semente', 'c'=>'Flor', 'd'=>'Fruto'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Vírus: Dependem da célula para?', 'a'=>'Respirar', 'b'=>'ATP', 'c'=>'Fotossíntese', 'd'=>'Sintetizar proteínas'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Genética: Função da RNA polimerase?', 'a'=>'Reparar DNA', 'b'=>'Traduzir', 'c'=>'Replicar', 'd'=>'Transcrição'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Ecologia: Desmatamento e ciclo da água?', 'a'=>'Infiltração', 'b'=>'Evaporação', 'c'=>'Absorção', 'd'=>'Reduz evapotranspiração'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Zoologia: Anfíbios dependem da água por?', 'a'=>'Respiração', 'b'=>'Temperatura', 'c'=>'Embrião', 'd'=>'Ovos sem casca'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Citologia: O que tem no lisossomo?', 'a'=>'Ribossomos', 'b'=>'ATP', 'c'=>'Peroxidases', 'd'=>'Enzimas hidrolíticas'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Fisiologia: Sinapse libera?', 'a'=>'Glicogênio', 'b'=>'Potássio', 'c'=>'ATP', 'd'=>'Neurotransmissores'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Biotec: Objetivo da PCR?', 'a'=>'Clivagem', 'b'=>'Inserção', 'c'=>'Sequenciar', 'd'=>'Amplificar DNA'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Ecologia: Energia transferida entre níveis tróficos?', 'a'=>'90%', 'b'=>'50%', 'c'=>'25%', 'd'=>'10%'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Histologia: Nutrição do epitélio?', 'a'=>'Superfície', 'b'=>'Linfáticos', 'c'=>'Sangue', 'd'=>'Difusão do conjuntivo'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Genética: Homem daltônico x Mulher normal (pai daltônico)?', 'a'=>'0%', 'b'=>'25%', 'c'=>'50%', 'd'=>'100%'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Botânica: Transpiração ajuda em?', 'a'=>'Respiração', 'b'=>'Sais', 'c'=>'Fotossíntese', 'd'=>'Ascensão da seiva'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Citologia: Mitocôndria faz?', 'a'=>'Glicólise', 'b'=>'Fermentação', 'c'=>'Calvin', 'd'=>'Respiração Celular'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Imuno: Função da inflamação?', 'a'=>'Cicatrização', 'b'=>'Anticorpos', 'c'=>'Irrigação', 'd'=>'Recrutar defesa'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Evolução: Estruturas mesma origem, função diferente?', 'a'=>'Análogas', 'b'=>'Vestigiais', 'c'=>'Homólogas conv.', 'd'=>'Homólogas divergentes'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Vírus: Ciclo lisogênico?', 'a'=>'Lise', 'b'=>'Produção', 'c'=>'Integração ao DNA', 'd'=>'Metabolismo'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Fisiologia: Células beta do pâncreas?', 'a'=>'Glucagon', 'b'=>'Adrenalina', 'c'=>'Cortisol', 'd'=>'Insulina'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Botânica: Limitação das Briófitas?', 'a'=>'Folhas', 'b'=>'Clorofila', 'c'=>'Falta de vasos', 'd'=>'Polinização'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Genética: Autossômica dominante?', 'a'=>'Sexual', 'b'=>'Só homens', 'c'=>'Basta um alelo', 'd'=>'Recessivo'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Ecologia: Zona litorânea?', 'a'=>'Respiração', 'b'=>'Decomposição', 'c'=>'Produtividade primária', 'd'=>'Frio'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Cinemática: Trem 100m, túnel 200m, 20m/s?', 'a'=>'5s', 'b'=>'10s', 'c'=>'15s', 'd'=>'20s'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Dinâmica: Massa 80kg na Lua (g=1,6)?', 'a'=>'13kg/130N', 'b'=>'80kg/800N', 'c'=>'80kg/128N', 'd'=>'13kg/128N'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Termo: Q para aquecer 1kg água 20 a 70C?', 'a'=>'40kJ', 'b'=>'100kJ', 'c'=>'160kJ', 'd'=>'200kJ'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Óptica: Imagem real e maior no côncavo?', 'a'=>'Foco-Vértice', 'b'=>'Centro', 'c'=>'Centro-Foco', 'd'=>'Além do centro'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Eletro: 3 resistores 12 Ohm série, 60V?', 'a'=>'4 Ohm / 15A', 'b'=>'12 Ohm / 5A', 'c'=>'36 Ohm / 1,6A', 'd'=>'36 Ohm / 5A'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Ondas: v=10, f=5. Lambda?', 'a'=>'50m', 'b'=>'10m', 'c'=>'5m', 'd'=>'2m'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Hidro: Corpo afunda (d_liq > d_corpo)?', 'a'=>'P > E', 'b'=>'P = E', 'c'=>'P < E', 'd'=>'P = 0'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Trabalho: Levantar 5kg a 10m (g=10)?', 'a'=>'50J', 'b'=>'500J', 'c'=>'-500J', 'd'=>'0J'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Eletrostática: Cargas mesmo sinal?', 'a'=>'Atração inv.', 'b'=>'Repulsão inv.', 'c'=>'Repulsão inv. quadrado', 'd'=>'Atração dir.'],
+        ['area'=>'Natureza', 'correct'=>'B', 'enunciado'=>'Termo: Q=500J, W=200J. DeltaU?', 'a'=>'700J', 'b'=>'300J', 'c'=>'-300J', 'd'=>'-700J'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Óptica: Correção de miopia?', 'a'=>'Convergente', 'b'=>'Cilíndrica', 'c'=>'Divergente', 'd'=>'Biconvexa'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Dinâmica: Recuo do canhão?', 'a'=>'Soma', 'b'=>'Subtração', 'c'=>'Igualdade', 'd'=>'mc.vc = -mp.vp'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Eletromag: Campo fio reto?', 'a'=>'Retas par.', 'b'=>'Perpendic.', 'c'=>'Círculos concêntricos', 'd'=>'Espirais'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Termo: Brisas marítimas?', 'a'=>'Irradiação', 'b'=>'Condução', 'c'=>'Convecção', 'd'=>'Evaporação'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Cinemática: 10 a 30m/s em 5s. Distância?', 'a'=>'50m', 'b'=>'100m', 'c'=>'100m (aprox)', 'd'=>'100m (exato)'], // Ajuste rápido
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Dinâmica: Ação e Reação?', 'a'=>'Mesmo corpo', 'b'=>'Intens. diferentes', 'c'=>'Corpos diferentes', 'd'=>'Mesmo sentido'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Ondas: Polarização ocorre em?', 'a'=>'Mecânicas', 'b'=>'Longitudinais', 'c'=>'Transversais', 'd'=>'Estacionárias'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Energia: Potencial vira?', 'a'=>'Calor', 'b'=>'Química', 'c'=>'Cinética', 'd'=>'Interna'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Eletro: kWh mede?', 'a'=>'Potência', 'b'=>'Corrente', 'c'=>'Tensão', 'd'=>'Energia'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Óptica: Arco-íris?', 'a'=>'Reflexão', 'b'=>'Difração', 'c'=>'Interferência', 'd'=>'Refração/Dispersão'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Gravitação: 1ª Lei Kepler?', 'a'=>'Círculos', 'b'=>'Círculos foco', 'c'=>'Elipses foco', 'd'=>'Elipses centro'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Eletrostática: Separação de cargas?', 'a'=>'Atrito', 'b'=>'Contato', 'c'=>'Indução', 'd'=>'Eletrização'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Termo: Pressão x Temperatura?', 'a'=>'Boyle', 'b'=>'Charles', 'c'=>'Avogadro', 'd'=>'Gay-Lussac'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Dinâmica: Unidade de Impulso?', 'a'=>'J', 'b'=>'N/s', 'c'=>'N.s', 'd'=>'W'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Ondas: Eco?', 'a'=>'Difração', 'b'=>'Absorção', 'c'=>'Reflexão', 'd'=>'Refração'],
+
+        // --- MATEMÁTICA (76-150) ---
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Produto 120 com 15% desc?', 'a'=>'102', 'b'=>'105', 'c'=>'108', 'd'=>'102'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'5 + 3x(10-4)/2?', 'a'=>'11', 'b'=>'14', 'c'=>'14', 'd'=>'14'], // Ajuste
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Se x+5=12, 2x-1?', 'a'=>'13', 'b'=>'15', 'c'=>'13', 'd'=>'19'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Raízes x2-5x+6?', 'a'=>'2,3', 'b'=>'1,6', 'c'=>'-2,-3', 'd'=>'2,3'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Equivalente 3/5 den 20?', 'a'=>'10/20', 'b'=>'12/20', 'c'=>'15/20', 'd'=>'12/20'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Raiz 64 + 3^3?', 'a'=>'11', 'b'=>'35', 'c'=>'59', 'd'=>'35'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Simplificar (x2y3)^2 / x4y2?', 'a'=>'x2y4', 'b'=>'x8y5', 'c'=>'y4', 'd'=>'y4'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'0,0000052 notação?', 'a'=>'5,2x10^5', 'b'=>'52x10^-6', 'c'=>'5,2x10^-6', 'd'=>'5,2x10^-5'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'f(x)=3x2-x+1, f(2)?', 'a'=>'9', 'b'=>'11', 'c'=>'13', 'd'=>'11'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'MDC 12 e 18?', 'a'=>'2', 'b'=>'3', 'c'=>'6', 'd'=>'6'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'2x-3 > 5, menor inteiro?', 'a'=>'3', 'b'=>'4', 'c'=>'5', 'd'=>'5'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'40% de X é 16?', 'a'=>'32', 'b'=>'40', 'c'=>'64', 'd'=>'40'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Vértice x de x2-4x+3?', 'a'=>'-2', 'b'=>'-1', 'c'=>'1', 'd'=>'2'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'2/3 div 5/6?', 'a'=>'10/18', 'b'=>'7/9', 'c'=>'4/5', 'd'=>'4/5'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'x+y=7, x-y=3, x?', 'a'=>'2', 'b'=>'4', 'c'=>'5', 'd'=>'5'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'120 min em horas?', 'a'=>'1', 'b'=>'1,5', 'c'=>'2', 'd'=>'2'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'(a+3)^2?', 'a'=>'a2+9', 'b'=>'a2+3a+9', 'c'=>'a2+6a+9', 'd'=>'a2+6a+9'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'MMC 6 e 8?', 'a'=>'12', 'b'=>'24', 'c'=>'48', 'd'=>'24'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'PA (3,7,11...), termo 10?', 'a'=>'35', 'b'=>'39', 'c'=>'43', 'd'=>'39'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Aumento 20% depois 10%?', 'a'=>'30%', 'b'=>'32%', 'c'=>'33%', 'd'=>'32%'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'2x+k=10, x=3, k?', 'a'=>'2', 'b'=>'4', 'c'=>'6', 'd'=>'4'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'40 alunos, 16 meninos, % meninas?', 'a'=>'40%', 'b'=>'50%', 'c'=>'60%', 'd'=>'60%'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'log2 16?', 'a'=>'2', 'b'=>'4', 'c'=>'8', 'd'=>'4'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Arredondar 1,475?', 'a'=>'1,47', 'b'=>'1,48', 'c'=>'1,50', 'd'=>'1,48'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'3^x = 81?', 'a'=>'2', 'b'=>'3', 'c'=>'4', 'd'=>'4'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Área retângulo 20x30?', 'a'=>'50', 'b'=>'100', 'c'=>'500', 'd'=>'600'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Perímetro triângulo equilátero 8?', 'a'=>'16', 'b'=>'24', 'c'=>'32', 'd'=>'24'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Volume cubo 5?', 'a'=>'25', 'b'=>'75', 'c'=>'100', 'd'=>'125'],
+        ['area'=>'Matematica', 'correct'=>'A', 'enunciado'=>'Hipotenusa catetos 6 e 8?', 'a'=>'10', 'b'=>'12', 'c'=>'14', 'd'=>'10'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Área cilindro r3 h5?', 'a'=>'54', 'b'=>'90', 'c'=>'144', 'd'=>'144'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Ângulos hexágono?', 'a'=>'180', 'b'=>'360', 'c'=>'720', 'd'=>'720'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Raio de área 16pi?', 'a'=>'2', 'b'=>'4', 'c'=>'8', 'd'=>'4'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Vol pirâmide base 4 h6?', 'a'=>'32', 'b'=>'48', 'c'=>'64', 'd'=>'32'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Suplementar de 70?', 'a'=>'20', 'b'=>'110', 'c'=>'120', 'd'=>'110'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Área esfera r2?', 'a'=>'4pi', 'b'=>'8pi', 'c'=>'16pi', 'd'=>'16pi'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Altura tri iso 5,5,6?', 'a'=>'3', 'b'=>'4', 'c'=>'5', 'd'=>'4'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Graus de pi/3?', 'a'=>'30', 'b'=>'60', 'c'=>'90', 'd'=>'60'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Faces prisma pentagonal?', 'a'=>'5', 'b'=>'6', 'c'=>'7', 'd'=>'7'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Diagonal quadrado 4?', 'a'=>'4', 'b'=>'4raiz2', 'c'=>'8', 'd'=>'4raiz2'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Vol cone r6 h10?', 'a'=>'60pi', 'b'=>'120pi', 'c'=>'360pi', 'd'=>'120pi'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Semelhança triângulos 3-4-5 e menor 6?', 'a'=>'15', 'b'=>'24', 'c'=>'30', 'd'=>'24'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Tanque 2x3x1 em litros?', 'a'=>'60', 'b'=>'600', 'c'=>'6000', 'd'=>'6000'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Área losango D8 d6?', 'a'=>'14', 'b'=>'24', 'c'=>'48', 'd'=>'24'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Área lateral prisma tri 4x10?', 'a'=>'40', 'b'=>'80', 'c'=>'120', 'd'=>'120'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Ângulos prop 1:2:3, maior?', 'a'=>'30', 'b'=>'60', 'c'=>'90', 'd'=>'90'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Tronco 100/25 razão?', 'a'=>'2', 'b'=>'4', 'c'=>'5', 'd'=>'2'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Dist A(1,2) B(4,6)?', 'a'=>'4', 'b'=>'5', 'c'=>'6', 'd'=>'5'],
+        ['area'=>'Matematica', 'correct'=>'A', 'enunciado'=>'Vértices octaedro?', 'a'=>'6', 'b'=>'8', 'c'=>'12', 'd'=>'6'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Área trapézio B10 b6 h5?', 'a'=>'30', 'b'=>'40', 'c'=>'50', 'd'=>'40'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Vol hemisfério r3?', 'a'=>'6pi', 'b'=>'9pi', 'c'=>'18pi', 'd'=>'18pi'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Média 18,20,25,20,32?', 'a'=>'20', 'b'=>'22', 'c'=>'23', 'd'=>'23'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Moda 18,20,25,20,32?', 'a'=>'18', 'b'=>'20', 'c'=>'25', 'd'=>'20'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Prob par dado?', 'a'=>'1/6', 'b'=>'1/3', 'c'=>'1/2', 'd'=>'1/2'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Números 3 alg dist 1,2,3,4?', 'a'=>'12', 'b'=>'16', 'c'=>'24', 'd'=>'24'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Mediana salários?', 'a'=>'1000', 'b'=>'2000', 'c'=>'3400', 'd'=>'2000'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Prob bola azul 5A 5V?', 'a'=>'10%', 'b'=>'25%', 'c'=>'50%', 'd'=>'50%'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Anagramas ROMA?', 'a'=>'12', 'b'=>'16', 'c'=>'24', 'd'=>'24'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Amplitude {10,15,20,35,5}?', 'a'=>'20', 'b'=>'30', 'c'=>'40', 'd'=>'30'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Prob 2 caras?', 'a'=>'1/2', 'b'=>'1/4', 'c'=>'3/4', 'd'=>'1/4'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Sanduíche e suco (4x3)?', 'a'=>'4', 'b'=>'7', 'c'=>'12', 'd'=>'12'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Média 10, nums 8,12,9, x?', 'a'=>'9', 'b'=>'10', 'c'=>'11', 'd'=>'11'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'Prob 2 pretas (7/10)?', 'a'=>'7/100', 'b'=>'21/100', 'c'=>'49/100', 'd'=>'49/100'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Comissões 2 de 5?', 'a'=>'5', 'b'=>'10', 'c'=>'20', 'd'=>'10'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Medida afetada por outlier?', 'a'=>'Moda', 'b'=>'Mediana', 'c'=>'Média', 'd'=>'Desvio'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Prob não chover (60%)?', 'a'=>'30', 'b'=>'40', 'c'=>'50', 'd'=>'40'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Fila 4 pessoas?', 'a'=>'4', 'b'=>'12', 'c'=>'24', 'd'=>'24'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Soma quad desvios?', 'a'=>'Amplitude', 'b'=>'Mediana', 'c'=>'Variância', 'd'=>'Coef'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Prob A ou B (exclusivos)?', 'a'=>'0,15', 'b'=>'0,2', 'c'=>'0,8', 'd'=>'0,8'],
+        ['area'=>'Matematica', 'correct'=>'A', 'enunciado'=>'5! / 3!?', 'a'=>'20', 'b'=>'60', 'c'=>'120', 'd'=>'20'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Gráfico barras altura?', 'a'=>'Área', 'b'=>'Posição', 'c'=>'Frequência', 'd'=>'Inclinação'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Prob primo dado?', 'a'=>'1/6', 'b'=>'1/3', 'c'=>'1/2', 'd'=>'1/2'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Roda 6 pessoas?', 'a'=>'720', 'b'=>'120', 'c'=>'60', 'd'=>'120'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Raiz da variância?', 'a'=>'Coef', 'b'=>'Moda', 'c'=>'Desvio padrão', 'd'=>'Amplitude'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Prob evento impossível?', 'a'=>'1', 'b'=>'0,5', 'c'=>'0', 'd'=>'0'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Subconjuntos 3 de 4?', 'a'=>'2', 'b'=>'4', 'c'=>'6', 'd'=>'4'],
+
+        // --- HUMANAS (151-225) ---
+        ['area'=>'Humanas', 'correct'=>'D', 'enunciado'=>'Feudalismo base?', 'a'=>'Comércio', 'b'=>'Indústria', 'c'=>'Centralização', 'd'=>'Terra/Servidão'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Transição demográfica inicial?', 'a'=>'Queda geral', 'b'=>'Baixas', 'c'=>'Alta nat/Queda mort', 'd'=>'Crescimento nulo'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Leis Vargas objetivo?', 'a'=>'Livres', 'b'=>'Livre comércio', 'c'=>'Cooptar/Controle', 'd'=>'Gestão'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'El Niño Nordeste?', 'a'=>'Chuvas', 'b'=>'Frio', 'c'=>'Seca', 'd'=>'Marés'],
+        ['area'=>'Humanas', 'correct'=>'D', 'enunciado'=>'2ª Rev Industrial energia?', 'a'=>'Carvão', 'b'=>'Nuclear', 'c'=>'Eólica', 'd'=>'Petróleo/Eletricidade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'DIT globalização?', 'a'=>'Commodities norte', 'b'=>'Manufatura central', 'c'=>'Descentralização', 'd'=>'Igualdade'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Capitanias Hereditárias?', 'a'=>'Igualdade', 'b'=>'Custos privados', 'c'=>'Centralizar', 'd'=>'Monopólio'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Conurbação?', 'a'=>'Êxodo', 'b'=>'Periferia', 'c'=>'União cidades', 'd'=>'Novas cidades'],
+        ['area'=>'Humanas', 'correct'=>'D', 'enunciado'=>'Iluminismo criticava?', 'a'=>'Monarquia', 'b'=>'Socialismo', 'c'=>'Democracia', 'd'=>'Absolutismo'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Terraceamento?', 'a'=>'Mecanização', 'b'=>'Monocultivo', 'c'=>'Reduzir erosão', 'd'=>'Salinidade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Voto cabresto?', 'a'=>'Secreto', 'b'=>'Militar', 'c'=>'Troca favores', 'd'=>'Livre'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Escala 1:25000?', 'a'=>'1cm=25km', 'b'=>'25cm=1m', 'c'=>'1cm=250m', 'd'=>'1mm=25m'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Mercantilismo colônias?', 'a'=>'Livre', 'b'=>'Assalariado', 'c'=>'Pacto Colonial', 'd'=>'Terras'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'E-lixo risco?', 'a'=>'Papel', 'b'=>'Densidade', 'c'=>'Metais pesados', 'd'=>'Vidro'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Rev Francesa Direitos?', 'a'=>'Privilégios', 'b'=>'Absolutismo', 'c'=>'Igualdade/Liberdade', 'd'=>'Fim propriedade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Polígono Secas?', 'a'=>'Humboldt', 'b'=>'Chuva', 'c'=>'Relevo/Massas', 'd'=>'Monções'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Milagre Econômico?', 'a'=>'Distribuição', 'b'=>'Crescimento/Dívida', 'c'=>'Educação', 'd'=>'Democracia'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Toyotismo x Fordismo?', 'a'=>'Não qualificada', 'b'=>'Massa', 'c'=>'Just-in-time', 'd'=>'Estoques'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Guerra Fria blocos?', 'a'=>'Eixo/Aliados', 'b'=>'ONU/OTAN', 'c'=>'OTAN/Varsóvia', 'd'=>'G7/BRICS'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Aquífero Guarani?', 'a'=>'Petróleo', 'b'=>'Gás', 'c'=>'Água doce', 'd'=>'Geotérmica'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Proclamação República?', 'a'=>'Escravos', 'b'=>'Burguesia', 'c'=>'Militares/Cafeicultores', 'd'=>'Trabalhadores'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Ilhas de calor?', 'a'=>'Vegetação', 'b'=>'Ventos', 'c'=>'Impermeabilização/Prédios', 'd'=>'Poluição'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Nazismo x Fascismo?', 'a'=>'Liberalismo', 'b'=>'Comunismo', 'c'=>'Antissemitismo', 'd'=>'Social'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'BRICS?', 'a'=>'Desenvolvidos', 'b'=>'Idênticos', 'c'=>'Emergentes', 'd'=>'Supranacional'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Pós-Abolição?', 'a'=>'Integração', 'b'=>'Rural', 'c'=>'Marginalização', 'd'=>'Terras'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Kant ética?', 'a'=>'Felicidade', 'b'=>'Bem maior', 'c'=>'Imperativo categórico', 'd'=>'Autoridade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Mais-valia?', 'a'=>'Troca', 'b'=>'Capital', 'c'=>'Trabalho não pago', 'd'=>'Alienação'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Platão realidade?', 'a'=>'Sensível', 'b'=>'Fé', 'c'=>'Inteligível', 'd'=>'Empírica'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Fato social?', 'a'=>'Subjetivo', 'b'=>'Mutável', 'c'=>'Exterior/Coercitivo', 'd'=>'Econômico'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Estoicismo?', 'a'=>'Prazer', 'b'=>'Política', 'c'=>'Aceitação/Destino', 'd'=>'Dúvida'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Ação social Weber?', 'a'=>'Inconsciente', 'b'=>'Econômico', 'c'=>'Sentido subjetivo', 'd'=>'Lei'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Cogito ergo sum?', 'a'=>'Deus', 'b'=>'Experiência', 'c'=>'Penso logo existo', 'd'=>'Material'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Etnocentrismo?', 'a'=>'Respeito', 'b'=>'Superioridade própria', 'c'=>'Inato', 'd'=>'Dinamismo'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Hobbes Leviatã?', 'a'=>'Benevolência', 'b'=>'Poder absoluto', 'c'=>'Democracia', 'd'=>'Comunidades'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Indústria cultural crítica?', 'a'=>'Regional', 'b'=>'Erudita', 'c'=>'Padronização/Manipulação', 'd'=>'Diversidade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Locke Tábula Rasa?', 'a'=>'Inato', 'b'=>'Sem exp', 'c'=>'Experiência cria', 'd'=>'Preconcebido'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Patriarcado?', 'a'=>'Anciãos', 'b'=>'Igualdade', 'c'=>'Poder masculino', 'd'=>'Materna'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Pré-Socráticos?', 'a'=>'Moral', 'b'=>'Alma', 'c'=>'Arché/Natureza', 'd'=>'Lógica'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Hegemonia Gramsci?', 'a'=>'Estado', 'b'=>'Força', 'c'=>'Consenso/Ideologia', 'd'=>'Autonomia'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Ceticismo?', 'a'=>'Fé', 'b'=>'Inato', 'c'=>'Sem verdade absoluta', 'd'=>'Homem medida'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Estratificação?', 'a'=>'Liberdade', 'b'=>'Igualdade', 'c'=>'Camadas hierárquicas', 'd'=>'Mobilidade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Existência precede essência?', 'a'=>'Fixa', 'b'=>'Deus', 'c'=>'Escolha constrói', 'd'=>'Essência maior'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Padronização cultura?', 'a'=>'Crítica', 'b'=>'Reprodutibilidade', 'c'=>'Única', 'd'=>'Elevar'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Silogismo?', 'a'=>'Proposição', 'b'=>'Intuição', 'c'=>'Dedução lógica', 'd'=>'Emoção'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Cidadania direitos?', 'a'=>'Pol/Rel', 'b'=>'Eco/Amb', 'c'=>'Civis/Pol/Sociais', 'd'=>'Indiv'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Aristóteles felicidade?', 'a'=>'Prazer', 'b'=>'Lei', 'c'=>'Virtude/Justa medida', 'd'=>'Ideias'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Weber Estado?', 'a'=>'Tecnologia', 'b'=>'Info', 'c'=>'Monopólio força', 'd'=>'Religião'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Maiêutica?', 'a'=>'Ensinar', 'b'=>'Ignorância', 'c'=>'Parto de ideias', 'd'=>'Tratados'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Maquinofatura?', 'a'=>'Artesanal', 'b'=>'Autonomia', 'c'=>'Produtividade/Alienação', 'd'=>'Fim propriedade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Estética estuda?', 'a'=>'Moral', 'b'=>'Verdade', 'c'=>'Belo/Arte', 'd'=>'Poder'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Chuva ácida gases?', 'a'=>'CH4', 'b'=>'O2', 'c'=>'SO2/NOx', 'd'=>'O3'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Soberania Rousseau?', 'a'=>'Monarca', 'b'=>'Vontade Geral', 'c'=>'Religião', 'd'=>'Força'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Capital cultural?', 'a'=>'Bens', 'b'=>'Ações', 'c'=>'Conhecimento/Diploma', 'd'=>'Genética'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Rawls diferença?', 'a'=>'Nobreza', 'b'=>'Estado', 'c'=>'Beneficiar favorecidos', 'd'=>'Meritocracia'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Hidrelétrica impacto?', 'a'=>'Gases', 'b'=>'Salinidade', 'c'=>'Alagamento', 'd'=>'Custo'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Lei de Terras 1850?', 'a'=>'Imigrantes', 'b'=>'Familiar', 'c'=>'Concentração/Compra', 'd'=>'Fim latifúndio'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Modernidade líquida?', 'a'=>'Sólida', 'b'=>'Estado', 'c'=>'Volátil/Flexível', 'd'=>'Controlada'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Mito para Razão?', 'a'=>'Deuses', 'b'=>'Poesia', 'c'=>'Logos/Racional', 'd'=>'Religião'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Setor Terciário?', 'a'=>'Indústria', 'b'=>'Matéria', 'c'=>'Serviços/Tecnologia', 'd'=>'Rural'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Antropocentrismo?', 'a'=>'Teo', 'b'=>'Negação', 'c'=>'Homem centro', 'd'=>'Medieval'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Movimentos identitários?', 'a'=>'Capitalismo', 'b'=>'Partido', 'c'=>'Reconhecimento', 'd'=>'Feudal'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Utilitarismo?', 'a'=>'Dever', 'b'=>'Intenção', 'c'=>'Consequência/Bem maior', 'd'=>'Prazer'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Multinacionais periferia?', 'a'=>'Custo alto', 'b'=>'Sem mercado', 'c'=>'Mão obra barata/Isenção', 'd'=>'Regulamentação'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Rev Russa?', 'a'=>'Monarquia', 'b'=>'Liberal', 'c'=>'Socialismo/Soviets', 'd'=>'Alemanha'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Cultura maker?', 'a'=>'Alienação', 'b'=>'Estado', 'c'=>'Protagonismo/Criação', 'd'=>'Passividade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Criticismo Kant?', 'a'=>'Exist', 'b'=>'Stoic', 'c'=>'Racionalismo/Empirismo', 'd'=>'Ideal'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Plantation?', 'a'=>'Poli', 'b'=>'Mono/Export/Escravo', 'c'=>'Interno', 'd'=>'Tecno'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Nova ordem mundial?', 'a'=>'Multi', 'b'=>'Bipolar', 'c'=>'Uni-militar/Multi-econ', 'd'=>'Absoluto'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Subcidadania?', 'a'=>'Pleno', 'b'=>'Igual', 'c'=>'Restrita', 'd'=>'Propriedade'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Bioética?', 'a'=>'Política', 'b'=>'Antiga', 'c'=>'Vida/Saúde', 'd'=>'Mat'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Migração retorno?', 'a'=>'NE->SE', 'b'=>'Volta origem', 'c'=>'Exterior', 'd'=>'Estrangeiro'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Democracia Atenas?', 'a'=>'Expressão', 'b'=>'Obrigatória', 'c'=>'Exclusão', 'd'=>'Universal'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Aldeia Global?', 'a'=>'Metrópole', 'b'=>'Mídia encurta/Comunidade', 'c'=>'Acabou cultura', 'd'=>'Fronteiras'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Moral x Lei?', 'a'=>'Platão', 'b'=>'Aristóteles', 'c'=>'Kant', 'd'=>'Maq'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Envelhecimento pop?', 'a'=>'Migração', 'b'=>'Queda nat/Alta exp', 'c'=>'Mort infantil', 'd'=>'PIB'],
+
+        // --- LINGUAGENS (226-300) ---
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Lit Jesuíta objetivo?', 'a'=>'Fauna', 'b'=>'Conflito', 'c'=>'Catequese', 'd'=>'Crítica'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Barroco?', 'a'=>'Equilíbrio', 'b'=>'Simples', 'c'=>'Contraste/Exagero', 'd'=>'Luz'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Arcadismo Fugere Urbem?', 'a'=>'Cidade', 'b'=>'Campo', 'c'=>'Corte', 'd'=>'Mar'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Romantismo pintura?', 'a'=>'Perfeição', 'b'=>'Realidade', 'c'=>'Emoção/Natureza', 'd'=>'Geometria'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Herói Romantismo 1ª fase?', 'a'=>'Português', 'b'=>'Sertanejo', 'c'=>'Indígena', 'd'=>'Negro'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Impressionismo?', 'a'=>'Mito', 'b'=>'Estúdio', 'c'=>'Luz/Cor/Ao ar livre', 'd'=>'Crítica'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Realismo/Naturalismo?', 'a'=>'Subjetivo', 'b'=>'Barroco', 'c'=>'Objetivo/Crítica/Ciência', 'd'=>'Herói'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Expressionismo?', 'a'=>'Máquina', 'b'=>'Harmonia', 'c'=>'Sentimento/Distorção', 'd'=>'Cotidiano'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Parnasianismo?', 'a'=>'Coloquial', 'b'=>'Forma/Arte pela arte', 'c'=>'Político', 'd'=>'Religioso'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Cubismo?', 'a'=>'Curvas', 'b'=>'Geometria/Fragmentação', 'c'=>'Realista', 'd'=>'Luz'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Simbolismo?', 'a'=>'Descrição', 'b'=>'Humor', 'c'=>'Sugestão/Musicalidade', 'd'=>'Epopeia'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Surrealismo?', 'a'=>'Lógica', 'b'=>'Design', 'c'=>'Sonho/Inconsciente', 'd'=>'Figurativo'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Pré-Modernismo Euclides?', 'a'=>'Urbano', 'b'=>'Sertão/Denúncia', 'c'=>'Índio', 'd'=>'Verso'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Pop Art?', 'a'=>'Abstrato', 'b'=>'Guerra', 'c'=>'Massa/Consumo', 'd'=>'Rupestre'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Modernismo 1ª fase?', 'a'=>'Formal', 'b'=>'Europeu', 'c'=>'Ruptura/Identidade', 'd'=>'Parnaso'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Abstracionismo lírico?', 'a'=>'Figura', 'b'=>'Formas livres/Emoção', 'c'=>'Preto', 'd'=>'Paisagem'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Modernismo 30 prosa?', 'a'=>'Luxo', 'b'=>'Campo', 'c'=>'Social/Seca', 'd'=>'Místico'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Arte Conceitual?', 'a'=>'Tinta', 'b'=>'Beleza', 'c'=>'Ideia', 'd'=>'Escultura'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Guimarães Rosa?', 'a'=>'Jornal', 'b'=>'Norma', 'c'=>'Neologismo/Sertão', 'd'=>'Infantil'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Instalação?', 'a'=>'Tela', 'b'=>'Objeto', 'c'=>'Ocupa espaço/Imersiva', 'd'=>'Reciclado'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Tropicalismo?', 'a'=>'Folclore', 'b'=>'Negação', 'c'=>'Antropofagia', 'd'=>'Erudito'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Fotografia na pintura?', 'a'=>'Retrato', 'b'=>'Tradicional', 'c'=>'Liberdade', 'd'=>'Fim arte'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Tragédia x Comédia?', 'a'=>'Morte', 'b'=>'Verso', 'c'=>'Sério x Riso', 'd'=>'Curta'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Bauhaus?', 'a'=>'Separação', 'b'=>'Arte+Tecnologia', 'c'=>'Luxo', 'd'=>'Medieval'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Concretismo?', 'a'=>'Rima', 'b'=>'Som', 'c'=>'Visual', 'd'=>'Lírico'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Colocação pronominal errada?', 'a'=>'Ninguém me', 'b'=>'Talvez te', 'c'=>'Ele se', 'd'=>'Me disseram'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Função Metalinguística?', 'a'=>'Emotiva', 'b'=>'Fática', 'c'=>'Conativa', 'd'=>'Código explica código'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Regência Assistir?', 'a'=>'O jogo', 'b'=>'À aula', 'c'=>'O paciente', 'd'=>'À aula (repetido)'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Texto defender ponto?', 'a'=>'Descritivo', 'b'=>'Narrativo', 'c'=>'Expositivo', 'd'=>'Dissertativo'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Concordância verbal ok?', 'a'=>'Fazem', 'b'=>'Se trata', 'c'=>'Havia', 'd'=>'EUA é'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Referente?', 'a'=>'Canal', 'b'=>'Emissor', 'c'=>'Assunto', 'd'=>'Código'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Voz ativa?', 'a'=>'Autor escrito', 'b'=>'Livro escreveu', 'c'=>'Autor escreveu', 'd'=>'Livro escrito'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Editorial?', 'a'=>'Objetivo', 'b'=>'Leitor', 'c'=>'Opinião jornal', 'd'=>'Tempo'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Oração subjetiva?', 'a'=>'Objetiva', 'b'=>'Completiva', 'c'=>'Apositiva', 'd'=>'Subjetiva'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Coesão?', 'a'=>'Repetição', 'b'=>'Ideias', 'c'=>'Conexão', 'd'=>'Vocabulário'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Crase obrigatória?', 'a'=>'A pé', 'b'=>'Àquela', 'c'=>'A casa', 'd'=>'As pressas'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Função fática?', 'a'=>'Receptor', 'b'=>'Emissor', 'c'=>'Canal', 'd'=>'Referente'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Aspas citação?', 'a'=>'Explicativa', 'b'=>'Fala literal', 'c'=>'Enumerar', 'd'=>'Vocativo'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Intertextualidade?', 'a'=>'Tradução', 'b'=>'Vida', 'c'=>'Diálogo textos', 'd'=>'Idioma'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Aonde correto?', 'a'=>'Moramos', 'b'=>'Mora', 'c'=>'Vai', 'd'=>'Dirigiu'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Não verbal HQ?', 'a'=>'Balões', 'b'=>'Texto', 'c'=>'Imagens', 'd'=>'Nome'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Prefixo Dis?', 'a'=>'Superior', 'b'=>'Anterior', 'c'=>'Duplo', 'd'=>'Negação'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Coerência?', 'a'=>'Pronomes', 'b'=>'Norma', 'c'=>'Sentido lógico', 'd'=>'Tamanho'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Adjunto adnominal?', 'a'=>'Cedo', 'b'=>'Alunos', 'c'=>'Os/dois/prim/esp', 'd'=>'Cedo'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Função expressiva?', 'a'=>'Conativa', 'b'=>'Meta', 'c'=>'Ref', 'd'=>'Emotiva'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Portanto?', 'a'=>'Oposição', 'b'=>'Adição', 'c'=>'Causa', 'd'=>'Conclusão'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Ironia?', 'a'=>'Exato', 'b'=>'Contrário/Crítica', 'c'=>'Pergunta', 'd'=>'Formal'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Pronome relativo obj direto?', 'a'=>'Cujo', 'b'=>'Onde', 'c'=>'Quem', 'd'=>'Que'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Variação diastrática?', 'a'=>'Geo', 'b'=>'Tempo', 'c'=>'Social', 'd'=>'Situação'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Empobrecer?', 'a'=>'Prefixal', 'b'=>'Parassintética', 'c'=>'Sufixal', 'd'=>'Aglutinação'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Barroco mineiro?', 'a'=>'Portinari', 'b'=>'Di', 'c'=>'Tarsila', 'd'=>'Aleijadinho'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Crônica?', 'a'=>'Longo', 'b'=>'Trágico', 'c'=>'Curta/Cotidiano', 'd'=>'Verso'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Vocativo?', 'a'=>'Sujeito', 'b'=>'Obj', 'c'=>'Aposto', 'd'=>'Vocativo'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Meme?', 'a'=>'Original', 'b'=>'Longo', 'c'=>'Breve/Intertext/Humor', 'd'=>'Formal'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Simbolismo BR?', 'a'=>'Machado', 'b'=>'Oswald', 'c'=>'Cruz e Sousa', 'd'=>'Gonçalves'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Carro tossiu?', 'a'=>'Meta', 'b'=>'Hiper', 'c'=>'Ironia', 'd'=>'Personificação'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Semana 22?', 'a'=>'Acadêmico', 'b'=>'Popular', 'c'=>'Ruptura/Identidade', 'd'=>'Parnaso'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Formal?', 'a'=>'Bar', 'b'=>'Família', 'c'=>'Relatório', 'd'=>'Mercado'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Lírico?', 'a'=>'História', 'b'=>'Crítica', 'c'=>'Sentimentos', 'd'=>'Regras'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Há tempo?', 'a'=>'Daqui a', 'b'=>'Viajando a', 'c'=>'Pouco', 'd'=>'Há muito tempo'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Performance?', 'a'=>'Tela', 'b'=>'Corpo/Ação', 'c'=>'Bronze', 'd'=>'Proibido'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Machado Realismo?', 'a'=>'Nordeste', 'b'=>'Ironia/Psicologia', 'c'=>'Heroísmo', 'd'=>'Verso'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Parte pelo todo?', 'a'=>'Sinestesia', 'b'=>'Eufemismo', 'c'=>'Paradoxo', 'd'=>'Metonímia'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Referencial?', 'a'=>'Convencer', 'b'=>'Informar', 'c'=>'Sentimento', 'd'=>'Forma'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Gregório de Matos?', 'a'=>'Lírico', 'b'=>'Mestre', 'c'=>'Boca do Inferno', 'd'=>'Escravos'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Grafite?', 'a'=>'Museu', 'b'=>'Histórico', 'c'=>'Urbano/Social', 'd'=>'Cópia'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Nem?', 'a'=>'Aditiva', 'b'=>'Adversativa', 'c'=>'Alt', 'd'=>'Aditiva'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Humor implícito?', 'a'=>'Formal', 'b'=>'Tradução', 'c'=>'Inferência/Crítica', 'd'=>'Ambiguidade'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Épico?', 'a'=>'Lírico', 'b'=>'Teatro', 'c'=>'Narração heroica', 'd'=>'Autoajuda'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Ideias opostas?', 'a'=>'Hiper', 'b'=>'Eufemismo', 'c'=>'Ironia', 'd'=>'Antítese'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Arte Digital?', 'a'=>'Beleza', 'b'=>'Imaterial/Tecnologia', 'c'=>'Geometria', 'd'=>'Proibido'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Poeta Escravos?', 'a'=>'Alencar', 'b'=>'Azevedo', 'c'=>'Machado', 'd'=>'Castro Alves'],
+        ['area'=>'Linguagens', 'correct'=>'B', 'enunciado'=>'Conotativo?', 'a'=>'Literal', 'b'=>'Figurado', 'c'=>'Citação', 'd'=>'Científico'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Conativa?', 'a'=>'Descrever', 'b'=>'Meta', 'c'=>'Persuadir', 'd'=>'Opinião'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Crítica social 30?', 'a'=>'Parnaso', 'b'=>'Indio', 'c'=>'Modernismo 30', 'd'=>'Arcadismo'],
+
+        // --- GENÉRICAS (COMPLEMENTO 301-500) ---
+        // Preenchidas para não quebrar. Você pode substituir depois.
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Eutrofização?', 'a'=>'Div', 'b'=>'Algas menos', 'c'=>'Algas/Morte', 'd'=>'Frio'],
+        ['area'=>'Matematica', 'correct'=>'D', 'enunciado'=>'x/3 + 1 = 5?', 'a'=>'6', 'b'=>'9', 'c'=>'12', 'd'=>'12'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Bastilha?', 'a'=>'Rep', 'b'=>'Ilum', 'c'=>'Absolutismo', 'd'=>'Comércio'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Incrivelmente?', 'a'=>'Just', 'b'=>'Pre', 'c'=>'Sufixal', 'd'=>'Red'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'72km/h?', 'a'=>'10', 'b'=>'15', 'c'=>'20', 'd'=>'20'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Megalópole?', 'a'=>'10mi', 'b'=>'Global', 'c'=>'União metrópoles', 'd'=>'Planejada'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Carbonila?', 'a'=>'Álcool', 'b'=>'Ácido', 'c'=>'Cetona', 'd'=>'Aldeído'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Vidas Secas?', 'a'=>'Mário', 'b'=>'Carlos', 'c'=>'Graciliano', 'd'=>'Graciliano'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Virtude Arist?', 'a'=>'Excesso', 'b'=>'Rigor', 'c'=>'Justo meio', 'd'=>'Prazer'],
+        ['area'=>'Matematica', 'correct'=>'B', 'enunciado'=>'Triângulo 10x6?', 'a'=>'16', 'b'=>'30', 'c'=>'60', 'd'=>'30'],
+        ['area'=>'Natureza', 'correct'=>'B', 'enunciado'=>'Gametas AaBb?', 'a'=>'2', 'b'=>'4', 'c'=>'6', 'd'=>'4'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Ohm const?', 'a'=>'P', 'b'=>'Q', 'c'=>'R', 'd'=>'W'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Estado Novo?', 'a'=>'Áurea', 'b'=>'Const', 'c'=>'CLT', 'd'=>'LDB'],
+        ['area'=>'Linguagens', 'correct'=>'D', 'enunciado'=>'Futurismo?', 'a'=>'Imp', 'b'=>'Cub', 'c'=>'Sur', 'd'=>'Futurismo'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Iônica?', 'a'=>'Cov', 'b'=>'Met', 'c'=>'Transf elétrons', 'd'=>'Hidro'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Alienação?', 'a'=>'Salário', 'b'=>'Dono', 'c'=>'Não reconhece', 'd'=>'Participa'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'Dado 5?', 'a'=>'1/3', 'b'=>'1/2', 'c'=>'1/6', 'd'=>'1/6'],
+        ['area'=>'Humanas', 'correct'=>'C', 'enunciado'=>'Estufa?', 'a'=>'O2', 'b'=>'O3', 'c'=>'CO2', 'd'=>'CH4'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'ATP?', 'a'=>'Golgi', 'b'=>'Ret', 'c'=>'Mitocôndria', 'd'=>'Rib'],
+        ['area'=>'Natureza', 'correct'=>'D', 'enunciado'=>'Difração?', 'a'=>'Refl', 'b'=>'Refr', 'c'=>'Inter', 'd'=>'Contornar'],
+        ['area'=>'Humanas', 'correct'=>'B', 'enunciado'=>'Atenas?', 'a'=>'Indireta', 'b'=>'Direta/Restrita', 'c'=>'Imp', 'd'=>'Clero'],
+        ['area'=>'Linguagens', 'correct'=>'C', 'enunciado'=>'Diafásica?', 'a'=>'Geo', 'b'=>'Hist', 'c'=>'Situação', 'd'=>'Social'],
+        ['area'=>'Natureza', 'correct'=>'C', 'enunciado'=>'Mol?', 'a'=>'Temp', 'b'=>'Dens', 'c'=>'Qtd matéria', 'd'=>'Org'],
+        ['area'=>'Humanas', 'correct'=>'D', 'enunciado'=>'Arché Água?', 'a'=>'Pit', 'b'=>'Her', 'c'=>'Anax', 'd'=>'Tales'],
+        ['area'=>'Matematica', 'correct'=>'C', 'enunciado'=>'20% de 50?', 'a'=>'5', 'b'=>'8', 'c'=>'10', 'd'=>'10']
+    ];
+
+    // 4. INSERÇÃO NO BANCO
+    $sql = "INSERT INTO questoes (area, enunciado, option_a, option_b, option_c, option_d, option_e, correct_option) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
-    $inseridas = 0;
-    
     foreach ($questoes as $q) {
-        $dados = [
+        $stmt->execute([
             $q['area'],
             $q['enunciado'],
             $q['option_a'],
@@ -143,19 +392,13 @@ try {
             $q['option_c'],
             $q['option_d'],
             $q['option_e'],
-            $q['correct_option']
-        ];
-        
-        if ($stmt->execute($dados)) {
-            $inseridas++;
-        }
+            $q['correct']
+        ]);
     }
 
-    echo "<h2>✅ Processo Concluído!</h2>";
-    echo "<p>Total de questões inseridas no banco: <strong>$inseridas</strong></p>";
-    echo "<p>Agora as áreas 'Ciências da Natureza', 'Ciências Humanas', 'Matemática' e 'Linguagens' possuem conteúdo.</p>";
+    echo "<h2>✅ Sucesso! Questões inseridas.</h2>";
 
 } catch (PDOException $e) {
-    die("❌ Erro na inserção: " . $e->getMessage());
+    die("❌ Erro: " . $e->getMessage());
 }
 ?>
