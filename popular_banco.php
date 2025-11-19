@@ -1,9 +1,46 @@
 <?php
-// Inclui o arquivo que tem as suas credenciais de conexão.
-// Certifique-se de que 'db_config.php' define uma variável $conn (conexão MySQLi ou PDO).
-require_once 'db_config.php';
+// ...
+require_once 'db_config.php'; 
+// ...
 
-// INÍCIO DO BLOCO DE DADOS DAS QUESTÕES (Total: 300 Questões)
+// =========================================================
+// CÓDIGO PARA CRIAR A TABELA 'questoes' (INSIRA AQUI)
+// =========================================================
+
+echo "<h3>Verificando e criando tabelas...</h3>";
+
+try {
+    // Comando SQL para criar a tabela 'questoes' (PostgreSQL)
+    // O comando IF NOT EXISTS evita que dê erro se você rodar o script mais de uma vez.
+    $sql_create_table = "
+        CREATE TABLE IF NOT EXISTS questoes (
+            id SERIAL PRIMARY KEY,
+            area VARCHAR(100) NOT NULL,
+            enunciado TEXT NOT NULL,
+            option_a TEXT NOT NULL,
+            option_b TEXT NOT NULL,
+            option_c TEXT NOT NULL,
+            option_d TEXT NOT NULL,
+            option_e TEXT NOT NULL,
+            correct_option VARCHAR(1) NOT NULL
+        );
+    ";
+    
+    // Executa o comando de criação da tabela (PDO::exec é ideal para CREATE, ALTER, DROP)
+    $conn->exec($sql_create_table);
+    
+    echo "✅ Tabela 'questoes' verificada/criada com sucesso!";
+
+} catch (PDOException $e) {
+    die("<h1>❌ Erro Fatal ao Criar Tabela:</h1><p>" . $e->getMessage() . "</p>");
+}
+
+// =========================================================
+// FIM DO CÓDIGO DE CRIAÇÃO
+// =========================================================
+
+// Agora o restante do seu popular_banco.php (o array de $questoes e a lógica de inserção)
+// ...
 $questoes = [
     // ----------------------------------------------------
     // QUESTÕES 1 A 100 (BLOCO ANTERIOR DE BIOLOGIA, QUÍMICA, FÍSICA)
