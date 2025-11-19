@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Studyflix - PAS e ENEM</title>
   <style>
+    /* Estilos CSS (mantidos inalterados, mas com remoção dos estilos do .btn-questoes) */
     body {
       margin: 0;
       background-color: #141414;
@@ -29,7 +30,6 @@
       position: relative;
     }
 
-    /* Logo no canto superior esquerdo */
     header img.logo {
       position: absolute;
       left: 0;
@@ -183,25 +183,7 @@
       color: #eee;
     }
 
-    .btn-questoes {
-      margin-top: 20px;
-      background-color: #7100bc;
-      color: white;
-      border: none;
-      padding: 12px 30px;
-      font-weight: 700;
-      font-size: 1rem;
-      border-radius: 30px;
-      cursor: pointer;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      transition: background-color 0.3s ease;
-    }
-
-    .btn-questoes:hover {
-      background-color: #7100bc;
-    }
+    /* REMOVIDO: Regras CSS para o .btn-questoes */
 
     @media (max-width: 700px) {
       .container {
@@ -229,309 +211,305 @@
   </header>
 
   <nav id="subject-bar" aria-label="Seleção de PAS ou Matéria">
-    <!-- Botões PAS 1,2,3 ou matérias ENEM aparecerão aqui -->
-  </nav>
+    </nav>
 
   <div class="container">
     <aside class="sidebar" aria-label="Seleção de tópicos">
       <h2 id="sidebar-title">Tópicos</h2>
       <ul class="topic-list" id="topic-list">
-        <!-- Tópicos dinâmicos -->
-      </ul>
-      <button class="btn-questoes" id="btn-questoes">Questões</button>
-    </aside>
+        </ul>
+      </aside>
 
     <section class="videos-area">
       <h2 id="topic-title">Tópicos</h2>
       <div class="videos-grid" id="videos-grid">
-        <!-- Vídeos dinâmicos -->
-      </div>
-      <a href="#" target="_blank" rel="noopener" class="btn-obras" id="btn-obras" aria-label="Ver obras" style="display: block; text-align: center; margin-top: 20px; color: #7100bc; font-weight: 700; text-decoration: none;">Ver obras</a>
+        </div>
+      <a href="#" target="_blank" rel="noopener" class="btn-obras" id="btn-obras" aria-label="Ver obras"
+        style="display: block; text-align: center; margin-top: 20px; color: #7100bc; font-weight: 700; text-decoration: none;">Ver
+        obras</a>
     </section>
   </div>
 
   <script>
     // Redireciona ao clicar na logo
-document.getElementById('logo').addEventListener('click', () => {
-  window.location.href = 'page.html';
-});
+    document.getElementById('logo').addEventListener('click', () => {
+      window.location.href = 'page.html';
+    });
 
-// Dados PAS
-const pasData = {
-  pas1: {
-    obrasUrl: "https://passeandounb.com/obras-do-pas-1/",
-    topics: {
-      "Bioquímica": [
-        { title: "Introdução à Bioquímica", url: "https://www.youtube.com/embed/1Q8fG0TtVAY" },
-        { title: "Macromoléculas", url: "https://www.youtube.com/embed/8kK2zwjRV0M" }
-      ],
-      "Citologia": [
-        { title: "Células: Estrutura e Função", url: "https://www.youtube.com/embed/URUJD5NEXC8" }
-      ],
-      "Metabolismo Energético": [
-        { title: "Metabolismo Energético - Aula 1", url: "https://www.youtube.com/embed/8ZtInClXe1Q" }
-      ],
-      "Ecologia": [
-        { title: "Introdução à Ecologia", url: "https://www.youtube.com/embed/5qap5aO4i9A" }
-      ]
+    // -------------------------------------------------------------------
+    // Dados PAS e ENEM (mantidos inalterados)
+    // -------------------------------------------------------------------
+    const pasData = {
+      pas1: {
+        obrasUrl: "https://passeandounb.com/obras-do-pas-1/",
+        topics: {
+          "Bioquímica": [
+            { title: "Introdução à Bioquímica", url: "https://www.youtube.com/embed/1Q8fG0TtVAY" },
+            { title: "Macromoléculas", url: "https://www.youtube.com/embed/8kK2zwjRV0M" }
+          ],
+          "Citologia": [
+            { title: "Células: Estrutura e Função", url: "https://www.youtube.com/embed/URUJD5NEXC8" }
+          ],
+          "Metabolismo Energético": [
+            { title: "Metabolismo Energético - Aula 1", url: "https://www.youtube.com/embed/8ZtInClXe1Q" }
+          ],
+          "Ecologia": [
+            { title: "Introdução à Ecologia", url: "https://www.youtube.com/embed/5qap5aO4i9A" }
+          ]
+        }
+      },
+      pas2: {
+        obrasUrl: "https://passeandounb.com/obras-do-pas-2/",
+        topics: {
+          "Taxonomia": [
+            { title: "Classificação dos Seres Vivos", url: "https://www.youtube.com/embed/6b6v6v6v6v6" },
+            { title: "Sistemas de Taxonomia", url: "https://www.youtube.com/embed/5b5b5b5b5b5" }
+          ],
+          "Zoologia": [
+            { title: "Introdução à Zoologia", url: "https://www.youtube.com/embed/3b3b3b3b3b3" }
+          ],
+          "Microbiologia": [
+            { title: "Microbiologia Básica", url: "https://www.youtube.com/embed/9b9b9b9b9b9" }
+          ],
+          "Botânica": [
+            { title: "Introdução à Botânica", url: "https://www.youtube.com/embed/7b7b7b7b7b7" }
+          ]
+        }
+      },
+      pas3: {
+        obrasUrl: "https://passeandounb.com/obras-do-pas-3/",
+        topics: {
+          "Bioquímica": [
+            { title: "Bioquímica Avançada", url: "https://www.youtube.com/embed/2Q8fG0TtVAY" }
+          ],
+          "Citologia": [
+            { title: "Citologia Avançada", url: "https://www.youtube.com/embed/3Q8fG0TtVAY" }
+          ],
+          "Genética": [
+            { title: "Introdução à Genética", url: "https://www.youtube.com/embed/4Q8fG0TtVAY" }
+          ],
+          "Biotecnologia (Engenharia Genética)": [
+            { title: "Engenharia Genética", url: "https://www.youtube.com/embed/5Q8fG0TtVAY" }
+          ],
+          "Origem da Vida e Evolução": [
+            { title: "Evolução", url: "https://www.youtube.com/embed/6Q8fG0TtVAY" }
+          ],
+          "Histologia Animal": [
+            { title: "Histologia Animal", url: "https://www.youtube.com/embed/7Q8fG0TtVAY" }
+          ],
+          "Fisiologia Humana": [
+            { title: "Fisiologia Humana", url: "https://www.youtube.com/embed/8Q8fG0TtVAY" }
+          ]
+        }
+      }
+    };
+
+    const enemData = {
+      obrasUrl: "https://passeandounb.com/obras-do-enem/",
+      topics: {
+        "Biologia Celular": [
+          { title: "Células Procariontes e Eucariontes", url: "https://www.youtube.com/embed/URUJD5NEXC8" }
+        ],
+        "Fisiologia Humana": [
+          { title: "Sistema Digestivo", url: "https://www.youtube.com/embed/8ZtInClXe1Q" },
+          { title: "Sistema Respiratório", url: "https://www.youtube.com/embed/5qap5aO4i9A" }
+        ],
+        "DNA e RNA": [
+          { title: "Estrutura do DNA", url: "https://www.youtube.com/embed/1Q8fG0TtVAY" }
+        ],
+        "Genética": [
+          { title: "1ª Lei de Mendel", url: "https://www.youtube.com/embed/2Q8fG0TtVAY" },
+          { title: "2ª Lei de Mendel", url: "https://www.youtube.com/embed/3Q8fG0TtVAY" }
+        ],
+        "Ecologia": [
+          { title: "Relações Ecológicas", url: "https://www.youtube.com/embed/5qap5aO4i9A" }
+        ]
+      }
+    };
+
+    // DOM Elements
+    const btnPas = document.getElementById('btn-pas');
+    const btnEnem = document.getElementById('btn-enem');
+    const subjectBar = document.getElementById('subject-bar');
+    const topicList = document.getElementById('topic-list');
+    const topicTitle = document.getElementById('topic-title');
+    const sidebarTitle = document.getElementById('sidebar-title');
+    const videosGrid = document.getElementById('videos-grid');
+    const btnObras = document.getElementById('btn-obras');
+    // REMOVIDO: const btnQuestoes = document.getElementById('btn-questoes');
+
+    // State
+    let currentMain = 'pas';
+    let currentPas = 'pas1';
+    let currentTopic = null;
+
+    // Clear active buttons helper
+    function clearActiveButtons(container) {
+      container.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
     }
-  },
-  pas2: {
-    obrasUrl: "https://passeandounb.com/obras-do-pas-2/",
-    topics: {
-      "Taxonomia": [
-        { title: "Classificação dos Seres Vivos", url: "https://www.youtube.com/embed/6b6v6v6v6v6" },
-        { title: "Sistemas de Taxonomia", url: "https://www.youtube.com/embed/5b5b5b5b5b5" }
-      ],
-      "Zoologia": [
-        { title: "Introdução à Zoologia", url: "https://www.youtube.com/embed/3b3b3b3b3b3" }
-      ],
-      "Microbiologia": [
-        { title: "Microbiologia Básica", url: "https://www.youtube.com/embed/9b9b9b9b9b9" }
-      ],
-      "Botânica": [
-        { title: "Introdução à Botânica", url: "https://www.youtube.com/embed/7b7b7b7b7b7" }
-      ]
+
+    // Clear topics and videos
+    function clearTopics() {
+      topicList.innerHTML = '';
     }
-  },
-  pas3: {
-    obrasUrl: "https://passeandounb.com/obras-do-pas-3/",
-    topics: {
-      "Bioquímica": [
-        { title: "Bioquímica Avançada", url: "https://www.youtube.com/embed/2Q8fG0TtVAY" }
-      ],
-      "Citologia": [
-        { title: "Citologia Avançada", url: "https://www.youtube.com/embed/3Q8fG0TtVAY" }
-      ],
-      "Genética": [
-        { title: "Introdução à Genética", url: "https://www.youtube.com/embed/4Q8fG0TtVAY" }
-      ],
-      "Biotecnologia (Engenharia Genética)": [
-        { title: "Engenharia Genética", url: "https://www.youtube.com/embed/5Q8fG0TtVAY" }
-      ],
-      "Origem da Vida e Evolução": [
-        { title: "Evolução", url: "https://www.youtube.com/embed/6Q8fG0TtVAY" }
-      ],
-      "Histologia Animal": [
-        { title: "Histologia Animal", url: "https://www.youtube.com/embed/7Q8fG0TtVAY" }
-      ],
-      "Fisiologia Humana": [
-        { title: "Fisiologia Humana", url: "https://www.youtube.com/embed/8Q8fG0TtVAY" }
-      ]
+
+    function clearVideos() {
+      videosGrid.innerHTML = '';
     }
-  }
-};
 
-// Dados ENEM atualizados com vídeos por tópico
-const enemData = {
-  obrasUrl: "https://passeandounb.com/obras-do-enem/",
-  topics: {
-    "Biologia Celular": [
-      { title: "Células Procariontes e Eucariontes", url: "https://www.youtube.com/embed/URUJD5NEXC8" }
-    ],
-    "Fisiologia Humana": [
-      { title: "Sistema Digestivo", url: "https://www.youtube.com/embed/8ZtInClXe1Q" },
-      { title: "Sistema Respiratório", url: "https://www.youtube.com/embed/5qap5aO4i9A" }
-    ],
-    "DNA e RNA": [
-      { title: "Estrutura do DNA", url: "https://www.youtube.com/embed/1Q8fG0TtVAY" }
-    ],
-    "Genética": [
-      { title: "1ª Lei de Mendel", url: "https://www.youtube.com/embed/2Q8fG0TtVAY" },
-      { title: "2ª Lei de Mendel", url: "https://www.youtube.com/embed/3Q8fG0TtVAY" }
-    ],
-    "Ecologia": [
-      { title: "Relações Ecológicas", url: "https://www.youtube.com/embed/5qap5aO4i9A" }
-    ]
-  }
-};
+    // Load subject bar
+    function loadSubjectBar() {
+      subjectBar.innerHTML = '';
+      if (currentMain === 'pas') {
+        ['pas1', 'pas2', 'pas3'].forEach(pas => {
+          const btn = document.createElement('button');
+          btn.textContent = pas.toUpperCase();
+          btn.dataset.pas = pas;
+          if (pas === currentPas) btn.classList.add('active');
+          btn.addEventListener('click', () => {
+            if (currentPas === pas) return;
+            currentPas = pas;
+            currentTopic = null;
+            clearActiveButtons(subjectBar);
+            btn.classList.add('active');
+            loadTopicsPas();
+          });
+          subjectBar.appendChild(btn);
+        });
+      } else {
+        // ENEM selecionado: barra vazia (sem botões)
+      }
+    }
 
-// DOM Elements
-const btnPas = document.getElementById('btn-pas');
-const btnEnem = document.getElementById('btn-enem');
-const subjectBar = document.getElementById('subject-bar');
-const topicList = document.getElementById('topic-list');
-const topicTitle = document.getElementById('topic-title');
-const sidebarTitle = document.getElementById('sidebar-title');
-const videosGrid = document.getElementById('videos-grid');
-const btnObras = document.getElementById('btn-obras');
-const btnQuestoes = document.getElementById('btn-questoes');
+    // Load PAS topics
+    function loadTopicsPas() {
+      sidebarTitle.textContent = `Tópicos - ${currentPas.toUpperCase()}`;
+      clearTopics();
+      clearVideos();
+      topicTitle.textContent = 'Selecione um tópico';
+      btnObras.href = pasData[currentPas].obrasUrl;
+      btnObras.style.display = 'block';
+      btnObras.textContent = 'Ver todas as obras do PAS'; // Texto atualizado
 
-// State
-let currentMain = 'pas'; // 'pas' or 'enem'
-let currentPas = 'pas1'; // 'pas1', 'pas2', 'pas3'
-let currentTopic = null;
-
-// Clear active buttons helper
-function clearActiveButtons(container) {
-  container.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-}
-
-// Clear topics and videos
-function clearTopics() {
-  topicList.innerHTML = '';
-}
-
-function clearVideos() {
-  videosGrid.innerHTML = '';
-}
-
-// Load subject bar
-function loadSubjectBar() {
-  subjectBar.innerHTML = '';
-  if (currentMain === 'pas') {
-    ['pas1', 'pas2', 'pas3'].forEach(pas => {
-      const btn = document.createElement('button');
-      btn.textContent = pas.toUpperCase();
-      btn.dataset.pas = pas;
-      if (pas === currentPas) btn.classList.add('active');
-      btn.addEventListener('click', () => {
-        if (currentPas === pas) return;
-        currentPas = pas;
-        currentTopic = null;
-        clearActiveButtons(subjectBar);
-        btn.classList.add('active');
-        loadTopicsPas();
+      const topics = pasData[currentPas].topics;
+      Object.keys(topics).forEach(topicName => {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.textContent = topicName;
+        btn.addEventListener('click', () => {
+          if (currentTopic === topicName) return;
+          currentTopic = topicName;
+          clearActiveButtons(topicList);
+          btn.classList.add('active');
+          loadVideosPas(topicName);
+        });
+        li.appendChild(btn);
+        topicList.appendChild(li);
       });
-      subjectBar.appendChild(btn);
+    }
+
+    // Load videos PAS
+    function loadVideosPas(topicName) {
+      topicTitle.textContent = topicName;
+      clearVideos();
+      const videos = pasData[currentPas].topics[topicName];
+      videos.forEach(video => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML = `
+          <iframe src="${video.url}" allowfullscreen></iframe>
+          <div class="video-info">${video.title}</div>
+        `;
+        videosGrid.appendChild(card);
+      });
+    }
+
+    // Load ENEM topics with videos
+    function loadTopicsEnem() {
+      sidebarTitle.textContent = 'Tópicos - ENEM';
+      clearTopics();
+      clearVideos();
+      topicTitle.textContent = 'Selecione um tópico';
+      btnObras.style.display = 'none'; // Esconde "Ver obras" no ENEM
+
+      const topics = enemData.topics;
+
+      Object.keys(topics).forEach(topicName => {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.textContent = topicName;
+        btn.addEventListener('click', () => {
+          if (currentTopic === topicName) return;
+          currentTopic = topicName;
+          clearActiveButtons(topicList);
+          btn.classList.add('active');
+          loadVideosEnem(topicName);
+        });
+        li.appendChild(btn);
+        topicList.appendChild(li);
+      });
+    }
+
+    // Load videos ENEM
+    function loadVideosEnem(topicName) {
+      topicTitle.textContent = topicName;
+      clearVideos();
+      const videos = enemData.topics[topicName];
+      videos.forEach(video => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML = `
+          <iframe src="${video.url}" allowfullscreen></iframe>
+          <div class="video-info">${video.title}</div>
+        `;
+        videosGrid.appendChild(card);
+      });
+    }
+
+    // Initialize page
+    function init() {
+      currentMain = 'pas';
+      currentPas = 'pas1';
+      currentTopic = null;
+
+      btnPas.classList.add('active');
+      btnEnem.classList.remove('active');
+
+      loadSubjectBar();
+      loadTopicsPas();
+    }
+
+    // Main nav events
+    btnPas.addEventListener('click', () => {
+      if (currentMain === 'pas') return;
+      currentMain = 'pas';
+      currentPas = 'pas1';
+      currentTopic = null;
+
+      btnPas.classList.add('active');
+      btnEnem.classList.remove('active');
+
+      loadSubjectBar();
+      loadTopicsPas();
     });
-  } else {
-    // ENEM selecionado: barra vazia (sem botões)
-  }
-}
 
-// Load PAS topics
-function loadTopicsPas() {
-  sidebarTitle.textContent = `Tópicos - ${currentPas.toUpperCase()}`;
-  clearTopics();
-  clearVideos();
-  topicTitle.textContent = 'Selecione um tópico';
-  btnObras.href = pasData[currentPas].obrasUrl;
-  btnObras.style.display = 'block';
-  btnObras.textContent = 'Ver todas as obras do PAS'; // Texto atualizado
+    btnEnem.addEventListener('click', () => {
+      if (currentMain === 'enem') return;
+      currentMain = 'enem';
+      currentPas = null;
+      currentTopic = null;
 
-  const topics = pasData[currentPas].topics;
-  Object.keys(topics).forEach(topicName => {
-    const li = document.createElement('li');
-    const btn = document.createElement('button');
-    btn.textContent = topicName;
-    btn.addEventListener('click', () => {
-      if (currentTopic === topicName) return;
-      currentTopic = topicName;
-      clearActiveButtons(topicList);
-      btn.classList.add('active');
-      loadVideosPas(topicName);
+      btnEnem.classList.add('active');
+      btnPas.classList.remove('active');
+
+      loadSubjectBar();
+      loadTopicsEnem();
     });
-    li.appendChild(btn);
-    topicList.appendChild(li);
-  });
-}
 
-// Load videos PAS
-function loadVideosPas(topicName) {
-  topicTitle.textContent = topicName;
-  clearVideos();
-  const videos = pasData[currentPas].topics[topicName];
-  videos.forEach(video => {
-    const card = document.createElement('div');
-    card.className = 'video-card';
-    card.innerHTML = `
-      <iframe src="${video.url}" allowfullscreen></iframe>
-      <div class="video-info">${video.title}</div>
-    `;
-    videosGrid.appendChild(card);
-  });
-}
+    // REMOVIDO: Lógica do botão de Questões.
 
-// Load ENEM topics with videos
-function loadTopicsEnem() {
-  sidebarTitle.textContent = 'Tópicos - ENEM';
-  clearTopics();
-  clearVideos();
-  topicTitle.textContent = 'Selecione um tópico';
-  btnObras.style.display = 'none'; // Esconde "Ver obras" no ENEM
-
-  const topics = enemData.topics;
-
-  Object.keys(topics).forEach(topicName => {
-    const li = document.createElement('li');
-    const btn = document.createElement('button');
-    btn.textContent = topicName;
-    btn.addEventListener('click', () => {
-      if (currentTopic === topicName) return;
-      currentTopic = topicName;
-      clearActiveButtons(topicList);
-      btn.classList.add('active');
-      loadVideosEnem(topicName);
-    });
-    li.appendChild(btn);
-    topicList.appendChild(li);
-  });
-}
-
-// Load videos ENEM
-function loadVideosEnem(topicName) {
-  topicTitle.textContent = topicName;
-  clearVideos();
-  const videos = enemData.topics[topicName];
-  videos.forEach(video => {
-    const card = document.createElement('div');
-    card.className = 'video-card';
-    card.innerHTML = `
-      <iframe src="${video.url}" allowfullscreen></iframe>
-      <div class="video-info">${video.title}</div>
-    `;
-    videosGrid.appendChild(card);
-  });
-}
-
-// Initialize page
-function init() {
-  currentMain = 'pas';
-  currentPas = 'pas1';
-  currentTopic = null;
-
-  btnPas.classList.add('active');
-  btnEnem.classList.remove('active');
-
-  loadSubjectBar();
-  loadTopicsPas();
-}
-
-// Main nav events
-btnPas.addEventListener('click', () => {
-  if (currentMain === 'pas') return;
-  currentMain = 'pas';
-  currentPas = 'pas1';
-  currentTopic = null;
-
-  btnPas.classList.add('active');
-  btnEnem.classList.remove('active');
-
-  loadSubjectBar();
-  loadTopicsPas();
-});
-
-btnEnem.addEventListener('click', () => {
-  if (currentMain === 'enem') return;
-  currentMain = 'enem';
-  currentPas = null;
-  currentTopic = null;
-
-  btnEnem.classList.add('active');
-  btnPas.classList.remove('active');
-
-  loadSubjectBar();
-  loadTopicsEnem();
-});
-
-// Questões button
-btnQuestoes.addEventListener('click', () => {
-  window.open('questoese.html', '_blank');
-});
-
-// Inicializa
-init();
+    // Inicializa
+    init();
   </script>
 </body>
 

@@ -139,10 +139,18 @@
       border: none;
     }
 
-    .button img {
+    .button img,
+    .button i {
+      /* Adicionado regra para o ícone Font Awesome (i) */
       width: 22px;
       height: 22px;
       filter: invert(1);
+    }
+
+    .button i {
+      /* Ajuste específico para ícones FA */
+      filter: none;
+      color: white;
     }
 
     .button:hover {
@@ -296,6 +304,11 @@
           <img src="https://icons.iconarchive.com/icons/steve/zondicons/256/Play-icon.png" alt="Ícone Play" />
           <span>ASSISTIR</span>
         </a>
+        
+        <a href="questoese.html?user_id=1" class="button" aria-label="Fazer Questões">
+          <i class="fas fa-question-circle" style="font-size: 22px;"></i>
+          <span>QUESTÕES</span>
+        </a>
         <a href="study.html" class="button" aria-label="Mais informações">
           <img src="https://img.icons8.com/?size=100&id=77&format=png&color=FFFFFF" alt="Ícone Informação" />
           <span>MAIS INFORMAÇÕES</span>
@@ -306,15 +319,18 @@
     <section class="content-section">
       <h2 class="section-title">CIÊNCIAS DA NATUREZA</h2>
       <div class="grid-container">
-        <div class="card" onclick="window.location.href='a.html'" role="button" tabindex="0" aria-label="Biologia" onkeypress="if(event.key==='Enter'){window.location.href='a.html'}">
+        <div class="card" onclick="window.location.href='a.html'" role="button" tabindex="0" aria-label="Biologia"
+          onkeypress="if(event.key==='Enter'){window.location.href='a.html'}">
           <img src="https://i.ibb.co/1YJBLpsW/Whats-App-Image-2025-02-27-at-19-58-54.jpg" alt="Biologia" />
           <div class="card-title">Biologia</div>
         </div>
-        <div class="card" onclick="window.location.href='b.html'" role="button" tabindex="0" aria-label="Física" onkeypress="if(event.key==='Enter'){window.location.href='b.html'}">
+        <div class="card" onclick="window.location.href='b.html'" role="button" tabindex="0" aria-label="Física"
+          onkeypress="if(event.key==='Enter'){window.location.href='b.html'}">
           <img src="https://i.ibb.co/vCCktjL9/Whats-App-Image-2025-02-27-at-20-06-41.jpg" alt="Física" />
           <div class="card-title">Física</div>
         </div>
-        <div class="card" onclick="window.location.href='c.html'" role="button" tabindex="0" aria-label="Química" onkeypress="if(event.key==='Enter'){window.location.href='c.html'}">
+        <div class="card" onclick="window.location.href='c.html'" role="button" tabindex="0" aria-label="Química"
+          onkeypress="if(event.key==='Enter'){window.location.href='c.html'}">
           <img src="https://i.ibb.co/gZsn7cpW/Whats-App-Image-2025-02-27-at-20-41-39.jpg" alt="Química" />
           <div class="card-title">Química</div>
         </div>
@@ -324,19 +340,23 @@
     <section class="content-section">
       <h2 class="section-title">CIÊNCIAS HUMANAS</h2>
       <div class="grid-container">
-        <div class="card" onclick="window.location.href='e.html'" role="button" tabindex="0" aria-label="História Geral" onkeypress="if(event.key==='Enter'){window.location.href='e.html'}">
+        <div class="card" onclick="window.location.href='e.html'" role="button" tabindex="0" aria-label="História Geral"
+          onkeypress="if(event.key==='Enter'){window.location.href='e.html'}">
           <img src="https://i.ibb.co/vxkpd9PD/Whats-App-Image-2025-02-28-at-14-57-59.jpg" alt="História Geral" />
           <div class="card-title">História Geral</div>
         </div>
-        <div class="card" onclick="window.location.href='f.html'" role="button" tabindex="0" aria-label="Geografia" onkeypress="if(event.key==='Enter'){window.location.href='f.html'}">
+        <div class="card" onclick="window.location.href='f.html'" role="button" tabindex="0" aria-label="Geografia"
+          onkeypress="if(event.key==='Enter'){window.location.href='f.html'}">
           <img src="https://i.ibb.co/Kj1q9YG6/Whats-App-Image-2025-02-28-at-15-08-38.jpg" alt="Geografia" />
           <div class="card-title">Geografia</div>
         </div>
-        <div class="card" onclick="window.location.href='g.html'" role="button" tabindex="0" aria-label="Sociologia" onkeypress="if(event.key==='Enter'){window.location.href='g.html'}">
+        <div class="card" onclick="window.location.href='g.html'" role="button" tabindex="0" aria-label="Sociologia"
+          onkeypress="if(event.key==='Enter'){window.location.href='g.html'}">
           <img src="https://i.ibb.co/HL79L3w8/Whats-App-Image-2025-02-28-at-16-14-29.jpg" alt="Sociologia" />
           <div class="card-title">Sociologia</div>
         </div>
-        <div class="card" onclick="window.location.href='h.html'" role="button" tabindex="0" aria-label="Filosofia" onkeypress="if(event.key==='Enter'){window.location.href='h.html'}">
+        <div class="card" onclick="window.location.href='h.html'" role="button" tabindex="0" aria-label="Filosofia"
+          onkeypress="if(event.key==='Enter'){window.location.href='h.html'}">
           <img src="https://i.ibb.co/G4rJS2fr/Whats-App-Image-2025-02-28-at-16-19-39.jpg" alt="Filosofia" />
           <div class="card-title">Filosofia</div>
         </div>
@@ -346,19 +366,24 @@
     <section class="content-section">
       <h2 class="section-title">MATEMÁTICA</h2>
       <div class="grid-container">
-        <div class="card" onclick="window.location.href='i.html'" role="button" tabindex="0" aria-label="Matemática Básica" onkeypress="if(event.key==='Enter'){window.location.href='i.html'}">
+        <div class="card" onclick="window.location.href='i.html'" role="button" tabindex="0"
+          aria-label="Matemática Básica" onkeypress="if(event.key==='Enter'){window.location.href='i.html'}">
           <img src="https://i.ibb.co/DHVtkXbR/Whats-App-Image-2025-02-28-at-21-48-52.jpg" alt="Matemática Básica" />
           <div class="card-title">Matemática Básica</div>
         </div>
-        <div class="card" onclick="window.location.href='j.html'" role="button" tabindex="0" aria-label="Álgebra" onkeypress="if(event.key==='Enter'){window.location.href='j.html'}">
+        <div class="card" onclick="window.location.href='j.html'" role="button" tabindex="0" aria-label="Álgebra"
+          onkeypress="if(event.key==='Enter'){window.location.href='j.html'}">
           <img src="https://i.ibb.co/b5VTFyBM/Whats-App-Image-2025-02-28-at-21-57-35.jpg" alt="Álgebra" />
           <div class="card-title">Álgebra</div>
         </div>
-        <div class="card" onclick="window.location.href='k.html'" role="button" tabindex="0" aria-label="Estatística e Probabilidade" onkeypress="if(event.key==='Enter'){window.location.href='k.html'}">
-          <img src="https://i.ibb.co/2Yn8gbTD/Whats-App-Image-2025-02-28-at-22-09-28.jpg" alt="Estatística e Probabilidade" />
+        <div class="card" onclick="window.location.href='k.html'" role="button" tabindex="0"
+          aria-label="Estatística e Probabilidade" onkeypress="if(event.key==='Enter'){window.location.href='k.html'}">
+          <img src="https://i.ibb.co/2Yn8gbTD/Whats-App-Image-2025-02-28-at-22-09-28.jpg"
+            alt="Estatística e Probabilidade" />
           <div class="card-title">Estatística e Probabilidade</div>
         </div>
-        <div class="card" onclick="window.location.href='l.html'" role="button" tabindex="0" aria-label="Geometria" onkeypress="if(event.key==='Enter'){window.location.href='l.html'}">
+        <div class="card" onclick="window.location.href='l.html'" role="button" tabindex="0" aria-label="Geometria"
+          onkeypress="if(event.key==='Enter'){window.location.href='l.html'}">
           <img src="https://i.ibb.co/WNZ4rzSW/Whats-App-Image-2025-02-28-at-22-19-44.jpg" alt="Geometria" />
           <div class="card-title">Geometria</div>
         </div>
@@ -368,44 +393,51 @@
     <section class="content-section">
       <h2 class="section-title">LINGUAGENS</h2>
       <div class="grid-container">
-        <div class="card" onclick="window.location.href='m.html'" role="button" tabindex="0" aria-label="Linguagem 1" onkeypress="if(event.key==='Enter'){window.location.href='m.html'}">
+        <div class="card" onclick="window.location.href='m.html'" role="button" tabindex="0" aria-label="Linguagem 1"
+          onkeypress="if(event.key==='Enter'){window.location.href='m.html'}">
           <img src="https://i.ibb.co/Y4b7kjRw/Whats-App-Image-2025-03-03-at-16-46-53.jpg" alt="Linguagem 1" />
           <div class="card-title">Literatura</div>
         </div>
-        <div class="card" onclick="window.location.href='n.html'" role="button" tabindex="0" aria-label="Linguagem 2" onkeypress="if(event.key==='Enter'){window.location.href='n.html'}">
+        <div class="card" onclick="window.location.href='n.html'" role="button" tabindex="0" aria-label="Linguagem 2"
+          onkeypress="if(event.key==='Enter'){window.location.href='n.html'}">
           <img src="https://i.ibb.co/RpLjKf2z/Whats-App-Image-2025-03-03-at-16-54-27.jpg" alt="Linguagem 2" />
           <div class="card-title">Artes</div>
         </div>
-        <div class="card" onclick="window.location.href='o.html'" role="button" tabindex="0" aria-label="Linguagem 3" onkeypress="if(event.key==='Enter'){window.location.href='o.html'}">
+        <div class="card" onclick="window.location.href='o.html'" role="button" tabindex="0" aria-label="Linguagem 3"
+          onkeypress="if(event.key==='Enter'){window.location.href='o.html'}">
           <img src="https://i.ibb.co/qzWfLmW/Whats-App-Image-2025-03-03-at-17-05-21.jpg" alt="Linguagem 3" />
           <div class="card-title">Gramática</div>
         </div>
-        <div class="card" onclick="window.location.href='p.html'" role="button" tabindex="0" aria-label="Linguagem 4" onkeypress="if(event.key==='Enter'){window.location.href='p.html'}">
+        <div class="card" onclick="window.location.href='p.html'" role="button" tabindex="0" aria-label="Linguagem 4"
+          onkeypress="if(event.key==='Enter'){window.location.href='p.html'}">
           <img src="https://i.ibb.co/z95XYZr/Whats-App-Image-2025-03-03-at-17-36-12.jpg" alt="Linguagem 4" />
           <div class="card-title">Língua Estrangeira</div>
         </div>
       </div>
     </section>
-    
+
     <footer>
       <div class="social-links">
-        <a href="https://www.instagram.com/study.flixx?igsh=MW9jOXE0aTBhbGFxeg==" target="_blank" rel="noopener" aria-label="Instagram">
-          <img class="pp" src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png" alt="Instagram" />
+        <a href="https://www.instagram.com/study.flixx?igsh=MW9jOXE0aTBhbGFxeg==" target="_blank" rel="noopener"
+          aria-label="Instagram">
+          <img class="pp" src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png"
+            alt="Instagram" />
         </a>
-        <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank" rel="noopener"
+          aria-label="WhatsApp">
           <img class="ppp" src="https://i.ibb.co/N6W8q1KF/Whats-App-256.png" alt="WhatsApp" />
         </a>
       </div>
       <p>© Studyflix, Inc.</p>
     </footer>
-    
+
     <script>
       // Navegação dos links do header
       document.getElementById("iten").addEventListener("click", function (event) {
         event.preventDefault();
         window.location.href = "PAS.html";
       });
-    
+
       document.getElementById("itens").addEventListener("click", function (event) {
         event.preventDefault();
         window.location.href = "ENEM.html";
@@ -413,3 +445,5 @@
     </script>
   </main>
 </body>
+
+</html>
