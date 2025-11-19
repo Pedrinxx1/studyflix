@@ -1,37 +1,37 @@
 <?php
 header('Content-Type: application/json');
 
-// O caminho pode variar dependendo da estrutura do seu projeto.
-// Assumimos que db_config.php está na raiz.
+// O caminho pode variar, mantivemos o padrão 'subindo um nível'
 require_once '../db_config.php'; 
 
-// Verifica se o objeto de conexão existe
+// Verifica se a conexão falhou
 if (!isset($conn)) {
     echo json_encode(['error' => 'Falha na conexão com o banco de dados.']);
     exit();
 }
 
-// 1. Obtém e limpa o parâmetro 'area'
-$area = $_GET['area'] ?? null;
+// 1. Mapeamento de nomes (Crucial para resolver o erro)
+// O JS envia a chave (ex: 'Natureza'), o DB tem o valor completo (ex: 'Ciências da Natureza')
+$area_map = [
+    'Natureza' => 'Ciências da Natureza',
+    'Humanas' => 'Ciências Humanas',
+    'Matematica' => 'Matemática',
+    'Linguagens' => 'Linguagens'
+];
 
-if (!$area) {
-    echo json_encode(['error' => 'Área de estudo não especificada.']);
+// 2. Obtém e limpa o parâmetro 'area'
+$area_key = $_GET['area'] ?? null;
+
+if (!isset($area_map[$area_key])) {
+    echo json_encode(['error' => 'Área de estudo inválida ou não especificada.']);
     exit();
 }
 
-// 2. Traduz as áreas da URL para os valores do DB
-// Os valores do HTML (Natureza, Humanas, Matematica, Linguagens) precisam ser os mesmos
-// que você usou ao popular o banco de dados. Vamos usar os mesmos nomes:
-$allowed_areas = ['Natureza', 'Humanas', 'Matematica', 'Linguagens']; 
+// Usa o nome mapeado para buscar no banco de dados (ex: 'Ciências da Natureza')
+$area_to_search = $area_map[$area_key];
 
-if (!in_array($area, $allowed_areas)) {
-    echo json_encode(['error' => 'Área inválida.']);
-    exit();
-}
-
-// 3. Monta a consulta SQL para buscar uma questão aleatória (compatível com PostgreSQL)
-// RANDOM() é a função correta no PostgreSQL para obter um registro aleatório.
-$sql = "SELECT id, enunciado, option_a, option_b, option_c, option_d, option_e, correct_option 
+// 3. Monta e executa a consulta SQL para buscar uma questão aleatória (PostgreSQL)
+$sql = "SELECT id, enunciado, option_a, option_b, option_c, option_d, option_e
         FROM questoes 
         WHERE area = ? 
         ORDER BY RANDOM() 
@@ -39,25 +39,23 @@ $sql = "SELECT id, enunciado, option_a, option_b, option_c, option_d, option_e, 
 
 try {
     $stmt = $conn->prepare($sql);
-    $stmt->execute([$area]); // Binda a variável $area
-    $questao = $stmt->fetch(PDO::FETCH_ASSOC); // Obtém a questão como array associativo
+    $stmt->execute([$area_to_search]);
+    $questao = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($questao) {
-        // Renomeia a coluna 'id' para 'question_id' para compatibilidade com o JS
+        // Prepara e retorna o JSON para o JavaScript
         $questao['question_id'] = $questao['id'];
         unset($questao['id']);
-
-        // Remove a resposta correta para não enviá-la ao front-end
+        // IMPORTANTE: A resposta correta (correct_option) não deve ser enviada ao front-end aqui.
         unset($questao['correct_option']); 
 
-        // Retorna a questão em JSON
         echo json_encode($questao);
     } else {
-        echo json_encode(['error' => "Nenhuma questão encontrada para a área: $area."]);
+        // Retorna o erro que você estava vendo, mas agora com o nome que tentou buscar
+        echo json_encode(['error' => "Nenhuma questão encontrada para a área: $area_to_search."]);
     }
 
 } catch (PDOException $e) {
-    // Em produção, você deve apenas logar este erro, não exibi-lo.
     error_log("Erro no DB ao buscar questão: " . $e->getMessage());
     echo json_encode(['error' => 'Erro interno do servidor ao carregar questão.']);
 }
