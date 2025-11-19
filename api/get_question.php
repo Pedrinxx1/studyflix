@@ -1,43 +1,64 @@
 <?php
-require_once '../db_config.php';
-session_start();
+header('Content-Type: application/json');
 
-// O ID do usuário logado será usado para pular questões já respondidas
-$user_id = $_SESSION['user_id'] ?? 1; // Usando 1 para teste temporário
+// O caminho pode variar dependendo da estrutura do seu projeto.
+// Assumimos que db_config.php está na raiz.
+require_once '../db_config.php'; 
 
-if (!isset($_GET['area'])) {
-    http_response_code(400);
-    die(json_encode(['error' => 'Área da questão não especificada.']));
+// Verifica se o objeto de conexão existe
+if (!isset($conn)) {
+    echo json_encode(['error' => 'Falha na conexão com o banco de dados.']);
+    exit();
 }
 
-$area = $_GET['area'];
+// 1. Obtém e limpa o parâmetro 'area'
+$area = $_GET['area'] ?? null;
+
+if (!$area) {
+    echo json_encode(['error' => 'Área de estudo não especificada.']);
+    exit();
+}
+
+// 2. Traduz as áreas da URL para os valores do DB
+// Os valores do HTML (Natureza, Humanas, Matematica, Linguagens) precisam ser os mesmos
+// que você usou ao popular o banco de dados. Vamos usar os mesmos nomes:
+$allowed_areas = ['Natureza', 'Humanas', 'Matematica', 'Linguagens']; 
+
+if (!in_array($area, $allowed_areas)) {
+    echo json_encode(['error' => 'Área inválida.']);
+    exit();
+}
+
+// 3. Monta a consulta SQL para buscar uma questão aleatória (compatível com PostgreSQL)
+// RANDOM() é a função correta no PostgreSQL para obter um registro aleatório.
+$sql = "SELECT id, enunciado, option_a, option_b, option_c, option_d, option_e, correct_option 
+        FROM questoes 
+        WHERE area = ? 
+        ORDER BY RANDOM() 
+        LIMIT 1";
 
 try {
-    $pdo = getDbConnection();
-    
-    // Busca uma questão aleatória que não foi respondida por este usuário
-    $stmt = $pdo->prepare("
-        SELECT q.question_id, q.enunciado, q.option_a, q.option_b, q.option_c, q.option_d, q.option_e
-        FROM questions q
-        LEFT JOIN user_answers ua ON q.question_id = ua.question_id AND ua.user_id = ?
-        WHERE q.area = ? AND ua.answer_id IS NULL
-        ORDER BY RANDOM()
-        LIMIT 1
-    ");
-    
-    $stmt->execute([$user_id, $area]);
-    $question = $stmt->fetch();
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$area]); // Binda a variável $area
+    $questao = $stmt->fetch(PDO::FETCH_ASSOC); // Obtém a questão como array associativo
 
-    header('Content-Type: application/json');
-    if ($question) {
-        echo json_encode($question);
+    if ($questao) {
+        // Renomeia a coluna 'id' para 'question_id' para compatibilidade com o JS
+        $questao['question_id'] = $questao['id'];
+        unset($questao['id']);
+
+        // Remove a resposta correta para não enviá-la ao front-end
+        unset($questao['correct_option']); 
+
+        // Retorna a questão em JSON
+        echo json_encode($questao);
     } else {
-        // Mensagem de sucesso se o usuário respondeu todas
-        echo json_encode(['error' => 'Parabéns! Você respondeu todas as questões desta área!']);
+        echo json_encode(['error' => "Nenhuma questão encontrada para a área: $area."]);
     }
 
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Erro ao buscar questão: ' . $e->getMessage()]);
+} catch (PDOException $e) {
+    // Em produção, você deve apenas logar este erro, não exibi-lo.
+    error_log("Erro no DB ao buscar questão: " . $e->getMessage());
+    echo json_encode(['error' => 'Erro interno do servidor ao carregar questão.']);
 }
 ?>
