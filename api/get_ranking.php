@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-include 'db_config.php';
+include __DIR__ . '/db_config.php';
 
 try {
     $sql = "SELECT username, total_correct, total_attempted 
