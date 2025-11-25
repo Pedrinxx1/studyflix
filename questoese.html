@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,18 +8,13 @@
   <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
   
   <style>
-    /* ------------------------------------------- */
-    /* ESTILOS GERAIS */
-    /* ------------------------------------------- */
-
-    /* Reset básico: remove margem e preenchimento padrão do navegador */
+    /* Reset básico */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    /* Estilo do corpo: define fonte, cor de fundo escura, cor de texto e layout (flex column para footer ir para o fim) */
     body {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       background-color: #000000;
@@ -32,7 +26,6 @@
       justify-content: flex-start;
     }
 
-    /* Imagem de fundo: fixa, ocupa toda a tela, opacidade baixa (efeito escuro) e fica por trás de tudo (z-index: -1) */
     #imagem {
       position: fixed;
       top: 0;
@@ -47,7 +40,6 @@
       border-bottom-right-radius: 15px;
     }
 
-    /* Cabeçalho (Header): fixo no topo, fundo escuro, com sombra */
     header {
       background-color: #141414;
       height: 70px;
@@ -68,7 +60,6 @@
       user-select: none;
     }
 
-    /* Navegação */
     nav {
       display: flex;
       gap: 30px;
@@ -84,17 +75,16 @@
       letter-spacing: 1.5px;
       transition: color 0.3s ease;
       padding: 8px 0;
-      border-bottom: 3px solid transparent; /* Cria espaço para o sublinhado na ativação */
+      border-bottom: 3px solid transparent;
+      text-decoration: none; 
     }
 
-    /* Efeito hover e estado ativo */
     .nav-link:hover,
     .nav-link.active {
-      color: #9b59b6; /* Roxo */
+      color: #9b59b6;
       border-bottom: 3px solid #9b59b6;
     }
 
-    /* Conteúdo Principal (Main): Margem superior para evitar sobreposição com o header fixo, centralizado e com largura máxima */
     main {
       margin-top: 90px;
       max-width: 1100px;
@@ -104,7 +94,6 @@
       width: 100%;
     }
 
-    /* Título da seção */
     .section-title {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-weight: 900;
@@ -113,10 +102,9 @@
       margin-bottom: 25px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(155, 89, 182, 0.8); /* Sombra roxa no texto */
+      text-shadow: 0 0 8px rgba(155, 89, 182, 0.8);
     }
     
-    /* Estilo do Botão Principal */
     .button {
       display: inline-flex;
       align-items: center;
@@ -140,8 +128,6 @@
       box-shadow: 0 4px 15px rgba(142, 68, 173, 0.9);
     }
 
-
-    /* Rodapé (Footer): Fundo escuro, borda superior roxa, fica no final da página (margin-top: auto) */
     footer {
       background: #141414;
       padding: 1.5rem 20px;
@@ -153,7 +139,6 @@
       user-select: none;
     }
 
-    /* Links de Mídia Social */
     .social-links {
       display: flex;
       justify-content: center;
@@ -181,11 +166,6 @@
       filter: drop-shadow(0 0 5px #9b59b6);
     }
 
-    /* ------------------------------------------- */
-    /* ESTILOS ESPECÍFICOS DO QUIZ/PÁGINA */
-    /* ------------------------------------------- */
-
-    /* Container das abas (Praticar/Ranking) */
     .tabs {
         display: flex;
         gap: 20px;
@@ -193,7 +173,6 @@
         border-bottom: 2px solid #333;
     }
 
-    /* Botão de aba */
     .tab-button {
         background: none;
         border: none;
@@ -206,23 +185,19 @@
         border-bottom: 4px solid transparent;
     }
 
-    /* Botão de aba ativo */
     .tab-button.active {
         color: #fff;
         border-bottom: 4px solid #9b59b6;
     }
 
-    /* Conteúdo das abas (por padrão, escondido) */
     .tab-content {
         display: none;
     }
 
-    /* Conteúdo da aba ativo (visível) */
     .tab-content.active {
         display: block;
     }
 
-    /* Estilo da área de início do quiz (seleção de matéria) */
     #quiz-start-content {
         background: #181818;
         padding: 30px;
@@ -235,7 +210,6 @@
         margin-right: 15px;
     }
     
-    /* Estilo do dropdown de seleção de área */
     #area-select {
         padding: 10px;
         font-size: 1rem;
@@ -246,15 +220,13 @@
         margin-right: 20px;
     }
 
-    /* Container do Quiz (onde a questão aparece) */
     #quiz-content-container {
         background: #181818;
         padding: 30px;
         border-radius: 6px;
-        box-shadow: 0 8px 20px rgba(155, 89, 182, 0.5); /* Sombra roxa destacada */
+        box-shadow: 0 8px 20px rgba(155, 89, 182, 0.5);
     }
 
-    /* Texto do enunciado da questão */
     #question-text {
         font-size: 1.3rem;
         font-weight: 500;
@@ -262,7 +234,6 @@
         margin-bottom: 30px;
     }
 
-    /* Lista das opções de resposta */
     #options-list {
         list-style: none;
         display: flex;
@@ -270,7 +241,6 @@
         gap: 15px;
     }
 
-    /* Botão de opção de resposta */
     .option-button {
         background-color: #333;
         border: 2px solid #555;
@@ -294,22 +264,20 @@
         opacity: 0.7;
     }
 
-    /* FEEDBACK DE ACERTO/ERRO */
     .option-button.correct {
-        background-color: #27ae60; /* Verde */
+        background-color: #27ae60;
         border-color: #2ecc71;
         color: #fff;
         font-weight: 700;
     }
     
     .option-button.incorrect {
-        background-color: #c0392b; /* Vermelho */
+        background-color: #c0392b;
         border-color: #e74c3c;
         color: #fff;
         font-weight: 700;
     }
 
-    /* Container do feedback e botão 'Próxima' */
     #quiz-feedback {
         margin-top: 20px;
         display: flex;
@@ -331,10 +299,9 @@
     }
 
     #next-question-btn {
-        display: none; /* Escondido até o usuário responder */
+        display: none;
     }
 
-    /* Tabela de Ranking */
     #ranking-table {
         width: 100%;
         border-collapse: collapse;
@@ -362,10 +329,9 @@
         background-color: #2c2c2c;
     }
 
-    /* Efeito de carregamento (Loader/Spinner) */
     .loader {
         border: 8px solid #333; 
-        border-top: 8px solid #9b59b6; /* Cor roxa no topo para o efeito de rotação */
+        border-top: 8px solid #9b59b6;
         border-radius: 50%;
         width: 60px;
         height: 60px;
@@ -373,12 +339,10 @@
         margin: 20px auto;
     }
 
-    /* Definição da animação de rotação */
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-
   </style>
 </head>
 
@@ -386,12 +350,12 @@
   <header>
     <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo Studyflix" onclick="window.location.href='index.html'" />
     <nav>
-      <h3 id="iten" class="nav-link">PAS</h3>
-      <h3 id="itens" class="nav-link">ENEM</h3>
+      <a href="PAS.html" class="nav-link">PAS</a>
+      <a href="ENEM.html" class="nav-link">ENEM</a>
     </nav>
   </header>
 
-  <img id="imagem" src="https://i.ibb.co/nqG7kvKS/Whats-App-Image-2025-04-10-at-19-33-18.jpg" alt="Sua Imagem" />
+  <img id="imagem" src="https://i.ibb.co/nqG7kvKS/Whats-App-Image-2025-04-10-at-19-33-18.jpg" alt="Fundo" />
 
   <main>
     <h1 class="section-title">Central de Questões</h1>
@@ -418,9 +382,9 @@
 
     <div id="quiz-content-container" class="tab-content">
         <div id="quiz-loader" class="loader"></div>
-        <div id="quiz-area" style="display: none;"> <p id="question-text">Carregando enunciado...</p>
-            <ul id="options-list">
-                </ul>
+        <div id="quiz-area" style="display: none;">
+            <p id="question-text">Carregando...</p>
+            <ul id="options-list"></ul>
             <div id="quiz-feedback">
                 <span id="feedback-message"></span>
                 <button id="next-question-btn" class="button">Próxima Questão</button>
@@ -439,19 +403,17 @@
                     <th>Tentativas</th>
                 </tr>
             </thead>
-            <tbody id="ranking-body">
-                </tbody>
+            <tbody id="ranking-body"></tbody>
         </table>
     </div>
-
   </main>
 
   <footer>
     <div class="social-links">
-      <a href="https://www.instagram.com/study.flixx?igsh=MW9jOXE0aTBhbGFxeg==" target="_blank" rel="noopener" aria-label="Instagram">
+      <a href="https://www.instagram.com/study.flixx?igsh=MW9jOXE0aTBhbGFxeg==" target="_blank">
         <img class="pp" src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png" alt="Instagram" />
       </a>
-      <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank" rel="noopener" aria-label="WhatsApp">
+      <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank">
         <img class="ppp" src="https://i.ibb.co/N6W8q1KF/Whats-App-256.png" alt="WhatsApp" />
       </a>
     </div>
@@ -460,9 +422,9 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // ⚙️ CONFIGURE AQUI: Caminho da pasta com os arquivos PHP
+        const API_BASE_URL = 'api';  // Se PHP está na pasta "api"
         
-        // --- Seletores do DOM ---
-        // Variáveis para referenciar elementos HTML e manipular a interface
         const tabs = document.querySelectorAll(".tab-button");
         const tabContents = document.querySelectorAll(".tab-content");
         const startForm = document.getElementById("start-quiz-form");
@@ -479,170 +441,122 @@
         const rankingLoader = document.getElementById("ranking-loader");
         const rankingBody = document.getElementById("ranking-body");
 
-        // --- Estado do Quiz ---
-        let currentQuestionId = null; // ID da questão atual (usado para submeter a resposta)
-        let currentArea = 'Natureza'; // Área selecionada (inicia com Natureza)
-        let answerSubmitted = false; // Flag para prevenir cliques múltiplos
+        let currentQuestionId = null;
+        let currentArea = 'Natureza';
+        let answerSubmitted = false;
         
-        // --- Navegação por Abas (Tabs) ---
         tabs.forEach(tab => {
             tab.addEventListener("click", () => {
                 const targetTab = tab.getAttribute("data-tab");
-
-                // Remove a classe 'active' de todos os botões e conteúdos
                 tabs.forEach(t => t.classList.remove("active"));
                 tabContents.forEach(c => c.classList.remove("active"));
-
-                // Adiciona a classe 'active' no botão clicado e no conteúdo alvo
                 tab.classList.add("active");
                 
-                // Se a aba for 'ranking', chama a função para carregar os dados
                 if (targetTab === 'ranking') {
                     rankingContent.classList.add("active");
                     loadRanking();
                 } else if (targetTab === 'quiz-start') {
-                    // Se for a tela inicial, mostra o formulário de seleção
                     quizStartContent.classList.add("active");
                 }
             });
         });
 
-        // --- Lógica do Quiz ---
-        
-        // 1. Iniciar o Quiz (Evento de submissão do formulário)
         startForm.addEventListener("submit", (e) => {
-            e.preventDefault(); // Impede o envio tradicional do formulário
-            currentArea = areaSelect.value; // Salva a área selecionada
-            
-            // Troca a visualização: esconde o formulário, mostra o loader do quiz
+            e.preventDefault();
+            currentArea = areaSelect.value;
             quizStartContent.classList.remove("active");
             quizContentContainer.classList.add("active");
             quizArea.style.display = 'none';
             quizLoader.style.display = 'block';
-
-            loadQuestion(); // Inicia o carregamento da primeira questão
+            loadQuestion();
         });
 
-        // 2. Carregar uma Questão (via API)
         async function loadQuestion() {
-            resetQuizUI(); // Limpa a interface da questão anterior
+            resetQuizUI();
             quizLoader.style.display = 'block';
 
             try {
-                // Chamada à API PHP para buscar uma questão aleatória na área selecionada
-                const response = await fetch(`api/get_question.php?area=${currentArea}`);
+                const response = await fetch(`${API_BASE_URL}/get_question.php?area=${currentArea}`);
+                const data = await response.json();
                 
-                if (!response.ok) {
-                    // Tratamento de erro de rede ou se o PHP retornar um status HTTP ruim
-                    const text = await response.text();
-                    try {
-                        const jsonError = JSON.parse(text);
-                        throw new Error(jsonError.error || 'Erro desconhecido ao buscar questão.');
-                    } catch (e) {
-                        throw new Error(`Erro de rede: ${response.status} ${response.statusText}`);
-                    }
-                }
-                
-                const data = await response.json(); // Converte a resposta JSON
-                
-                // Se a API PHP retornar um erro no payload (ex: 'Nenhuma questão encontrada')
                 if (data.error) {
                     questionText.textContent = data.error;
                     quizLoader.style.display = 'none';
                     quizArea.style.display = 'block';
-                    optionsList.innerHTML = ''; // Limpa opções
                     return;
                 }
                 
-                // Preenche a interface com os dados da questão
                 currentQuestionId = data.question_id;
                 questionText.textContent = data.enunciado;
                 
-                // Cria os botões de opção dinamicamente
                 createOptionButton('a', data.option_a);
                 createOptionButton('b', data.option_b);
                 createOptionButton('c', data.option_c);
                 createOptionButton('d', data.option_d);
-                if (data.option_e) {
-                    createOptionButton('e', data.option_e); // Opção E é opcional
-                }
+                if (data.option_e) createOptionButton('e', data.option_e);
 
                 quizLoader.style.display = 'none';
-                quizArea.style.display = 'block'; // Mostra a área do quiz
+                quizArea.style.display = 'block';
+                
             } catch (error) {
-                // Trata erros durante a requisição
-                console.error("Falha ao carregar questão:", error);
-                questionText.textContent = `Não foi possível carregar a questão. (${error.message || 'Erro desconhecido'}).`;
+                questionText.textContent = 'Erro ao carregar questão. Verifique se os arquivos PHP estão corretos.';
                 quizLoader.style.display = 'none';
                 quizArea.style.display = 'block';
             }
         }
         
-        // Função auxiliar para criar os botões de opção
         function createOptionButton(value, text) {
             const li = document.createElement('li');
             const button = document.createElement('button');
             button.className = 'option-button';
-            button.dataset.value = value; // Armazena a letra da opção (a, b, c...)
+            button.dataset.value = value;
             button.textContent = `${value.toUpperCase()}) ${text}`;
-            button.addEventListener("click", () => handleOptionClick(button, value)); // Adiciona o evento de clique
+            button.addEventListener("click", () => handleOptionClick(button, value));
             li.appendChild(button);
             optionsList.appendChild(li);
         }
 
-        // 3. Usuário clica na opção
         async function handleOptionClick(clickedButton, selectedValue) {
-            if (answerSubmitted) return; // Se já respondeu, ignora
+            if (answerSubmitted) return;
             answerSubmitted = true;
             
-            // Desabilita todos os botões para travar a resposta
-            document.querySelectorAll('.option-button').forEach(btn => {
-                btn.disabled = true;
-            });
+            document.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
 
             try {
-                // Requisição POST para o PHP submeter a resposta e verificar se está correta
-                const response = await fetch('api/submit_answer.php', {
+                const response = await fetch(`${API_BASE_URL}/submit_answer.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         question_id: currentQuestionId,
-                        answer: selectedValue
+                        answer: selectedValue,
+                        user_id: "guest"  // ⚠️ TROQUE pelo ID do seu sistema
                     })
                 });
                 
                 const result = await response.json();
                 
-                // Mostra o feedback visual
                 if (result.is_correct) {
                     clickedButton.classList.add('correct');
-                    feedbackMessage.textContent = "Você acertou!";
+                    feedbackMessage.textContent = "✅ Você acertou!";
                     feedbackMessage.className = 'correct';
                 } else {
                     clickedButton.classList.add('incorrect');
-                    feedbackMessage.textContent = "Você errou!";
+                    feedbackMessage.textContent = "❌ Você errou!";
                     feedbackMessage.className = 'incorrect';
                     
-                    // Se errou, encontra e destaca a opção correta
                     const correctButton = document.querySelector(`.option-button[data-value="${result.correct_option}"]`);
-                    if (correctButton) {
-                        correctButton.classList.add('correct');
-                    }
+                    if (correctButton) correctButton.classList.add('correct');
                 }
                 
-                nextQuestionBtn.style.display = 'inline-flex'; // Mostra o botão 'Próxima Questão'
-
+                nextQuestionBtn.style.display = 'inline-flex';
             } catch (error) {
-                console.error("Erro ao salvar resposta:", error);
-                feedbackMessage.textContent = "Erro ao salvar. Tente novamente.";
-                answerSubmitted = false; // Permite tentar de novo se o erro não for do usuário
+                feedbackMessage.textContent = "Erro ao salvar";
+                answerSubmitted = false;
             }
         }
 
-        // 4. Botão "Próxima Questão"
         nextQuestionBtn.addEventListener("click", loadQuestion);
         
-        // 5. Resetar a interface do quiz para a próxima questão
         function resetQuizUI() {
             answerSubmitted = false;
             optionsList.innerHTML = '';
@@ -651,60 +565,35 @@
             nextQuestionBtn.style.display = 'none';
         }
 
-
-        // --- Lógica do Ranking ---
         async function loadRanking() {
-            rankingBody.innerHTML = ''; // Limpa resultados antigos
+            rankingBody.innerHTML = '';
             rankingLoader.style.display = 'block';
-            rankingContent.classList.add("active");
 
             try {
-                // Chamada à API PHP para buscar os dados de ranking
-                const response = await fetch('api/get_ranking.php');
+                const response = await fetch(`${API_BASE_URL}/get_ranking.php`);
                 const data = await response.json();
 
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
                 if (data.length === 0) {
-                    rankingBody.innerHTML = '<tr><td colspan="4">Nenhum ranking disponível. Responda questões para aparecer aqui!</td></tr>';
+                    rankingBody.innerHTML = '<tr><td colspan="4">Nenhum ranking disponível</td></tr>';
+                } else {
+                    data.forEach((user, index) => {
+                        rankingBody.innerHTML += `
+                            <tr>
+                                <td><b>${index + 1}º</b></td>
+                                <td>${user.username}</td>
+                                <td>${user.total_correct}</td>
+                                <td>${user.total_attempted}</td>
+                            </tr>
+                        `;
+                    });
                 }
-
-                // Preenche a tabela com os dados do ranking
-                data.forEach((user, index) => {
-                    const row = `
-                        <tr>
-                            <td><b>${index + 1}º</b></td>
-                            <td>${user.username}</td>
-                            <td>${user.total_correct}</td>
-                            <td>${user.total_attempted}</td>
-                        </tr>
-                    `;
-                    rankingBody.innerHTML += row;
-                });
-
             } catch (error) {
-                console.error("Erro ao carregar ranking:", error);
-                rankingBody.innerHTML = `<tr><td colspan="4">Erro ao carregar o ranking.</td></tr>`;
+                rankingBody.innerHTML = '<tr><td colspan="4">Erro ao carregar ranking</td></tr>';
             } finally {
                 rankingLoader.style.display = 'none';
             }
         }
-
-        // --- Navegação do Header ---
-        document.getElementById("iten").addEventListener("click", function (event) {
-          event.preventDefault();
-          window.location.href = "PAS.html"; // Redireciona para PAS.html
-        });
-
-        document.getElementById("itens").addEventListener("click", function (event) {
-          event.preventDefault();
-          window.location.href = "ENEM.html"; // Redireciona para ENEM.html
-        });
-        
     });
   </script>
 </body>
-
 </html>

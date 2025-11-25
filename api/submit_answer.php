@@ -1,58 +1,87 @@
 <?php
-header('Content-Type: application/json');
-
-// O caminho pode variar, mantivemos o padrão 'subindo um nível'
-require_once '../db_config.php'; 
-
-if (!isset($conn)) {
-    echo json_encode(['error' => 'Falha na conexão com o banco de dados.']);
-    exit();
-}
-
-// ⚠️ SIMULAÇÃO DE USUÁRIO: Use um ID de um usuário existente (ex: 1)
-// Em um sistema real, este ID viria da sessão após o login.
-$user_id = 1; 
-
-// 1. Recebe os dados JSON (question_id e answer)
-$input = json_decode(file_get_contents('php://input'), true);
-$question_id = $input['question_id'] ?? null;
-$submitted_answer = $input['answer'] ?? null;
-
-if (!$question_id || !$submitted_answer) {
-    echo json_encode(['error' => 'Dados de resposta incompletos.']);
-    exit();
-}
+require_once 'db_config.php';
 
 try {
-    // 2. Busca a resposta correta e a área da questão
-    $sql = "SELECT correct_option FROM questoes WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$question_id]);
-    $questao = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$questao) {
-        echo json_encode(['error' => 'Questão não encontrada.']);
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
+    
+    if (!isset($data['question_id']) || !isset($data['answer'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Dados incompletos']);
         exit();
     }
     
-    $correct_option = $questao['correct_option'];
-    $is_correct = (strtolower($submitted_answer) === strtolower($correct_option));
-
-    // 3. REGISTRA A PERFORMANCE DO USUÁRIO
-    // Insere o registro na tabela user_performance
-    $sql_insert = "INSERT INTO user_performance (user_id, question_id, is_correct) VALUES (?, ?, ?)";
-    $stmt_insert = $conn->prepare($sql_insert);
-    // O valor 1 ou 0 para TRUE/FALSE em alguns drivers é mais seguro, mas aqui usamos o BOOLEAN.
-    $stmt_insert->execute([$user_id, $question_id, $is_correct]); 
+    $questionId = $data['question_id'];
+    $userAnswer = strtolower($data['answer']);
+    $userId = isset($data['user_id']) ? $data['user_id'] : 'guest';
     
-    // 4. Retorna o resultado para o JavaScript
+    // Buscar questão
+    $filter = ['question_id' => $questionId];
+    $query = new MongoDB\Driver\Query($filter);
+    $cursor = $mongoClient->executeQuery($dbName . '.questions', $query);
+    $questions = $cursor->toArray();
+    
+    if (empty($questions)) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Questão não encontrada']);
+        exit();
+    }
+    
+    $question = $questions[0];
+    $correctOption = strtolower($question->correct_option);
+    $isCorrect = ($userAnswer === $correctOption);
+    
+    // Salvar resposta
+    $answerRecord = [
+        'answer_id' => uniqid('ans_', true),
+        'user_id' => $userId,
+        'question_id' => $questionId,
+        'answer' => $userAnswer,
+        'is_correct' => $isCorrect,
+        'timestamp' => date('c')
+    ];
+    
+    $bulk = new MongoDB\Driver\BulkWrite;
+    $bulk->insert($answerRecord);
+    $mongoClient->executeBulkWrite($dbName . '.answers', $bulk);
+    
+    // Atualizar estatísticas
+    $userFilter = ['user_id' => $userId];
+    $userQuery = new MongoDB\Driver\Query($userFilter);
+    $userCursor = $mongoClient->executeQuery($dbName . '.user_stats', $userQuery);
+    $users = $userCursor->toArray();
+    
+    $bulkStats = new MongoDB\Driver\BulkWrite;
+    
+    if (empty($users)) {
+        $bulkStats->insert([
+            'user_id' => $userId,
+            'username' => 'Usuário ' . substr($userId, 0, 8),
+            'total_attempted' => 1,
+            'total_correct' => $isCorrect ? 1 : 0,
+            'last_updated' => date('c')
+        ]);
+    } else {
+        $user = $users[0];
+        $bulkStats->update(
+            ['user_id' => $userId],
+            ['$set' => [
+                'total_attempted' => $user->total_attempted + 1,
+                'total_correct' => $user->total_correct + ($isCorrect ? 1 : 0),
+                'last_updated' => date('c')
+            ]]
+        );
+    }
+    
+    $mongoClient->executeBulkWrite($dbName . '.user_stats', $bulkStats);
+    
     echo json_encode([
-        'is_correct' => $is_correct,
-        'correct_option' => $correct_option 
+        'is_correct' => $isCorrect,
+        'correct_option' => $correctOption
     ]);
-
-} catch (PDOException $e) {
-    error_log("Erro no DB ao submeter resposta e salvar performance: " . $e->getMessage());
-    echo json_encode(['error' => 'Erro interno ao processar resposta.']);
+    
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Erro: ' . $e->getMessage()]);
 }
 ?>
