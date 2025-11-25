@@ -1,39 +1,44 @@
 <?php
-// Credenciais do Render PostgreSQL
-define('DB_HOST', 'dpg-d47ph0k9c44c73cbi1dg-a.oregon-postgres.render.com');
-define('DB_USER', 'studyflix_user');
-define('DB_PASS', 'C7RDk7jynwGOQqr78NGhBDB7a2QCapvo');
-define('DB_NAME', 'studyflix_db_qurq');
+// TENTA FORÇAR RESPOSTA JSON EM CASO DE ERRO FATAL (Início do Script)
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    if (!(error_reporting() & $errno)) {
+        return false;
+    }
+    header('Content-Type: application/json', true, 500);
+    echo json_encode(['error' => "Erro no servidor PHP (Código: {$errno}): {$errstr} na linha {$errline} de {$errfile}"]);
+    exit(1);
+});
 
-// Configurações PDO
-$options = [
-    // Garante que o PHP lance exceções (erros) em caso de falha de DB
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    // Desliga a emulação de prepared statements (mais seguro)
-    PDO::ATTR_EMULATE_PREPARES => false,
-    // Força o modo de resultados associativos por padrão
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
+header('Content-Type: application/json; charset=utf-8');
 
-// Tenta estabelecer a conexão PDO (PostgreSQL)
+// 🚨 Incluir o arquivo de configuração de conexão
+include __DIR__ . '/db_config.php'; 
+
+$area = $_GET['area'] ?? 'Natureza';
+
 try {
-    // 🚨 CORREÇÃO AQUI: Adiciona 'client_encoding=utf8' e 'sslmode=require'
-    $dsn = "pgsql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";sslmode=require;client_encoding=utf8";
+    // CORREÇÃO SQL: Usa LOWER() para comparação case-insensitive
+    $sql = "SELECT question_id, enunciado, option_a, option_b, option_c, option_d, option_e 
+            FROM questions 
+            WHERE LOWER(area) = LOWER(?) 
+            ORDER BY RANDOM() 
+            LIMIT 1";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$area]); // Executa com o parâmetro
 
-    $conn = new PDO(
-        $dsn,
-        DB_USER,
-        DB_PASS,
-        $options
-    );
-    // A codificação agora é tratada na string DSN acima.
+    if ($stmt->rowCount() > 0) {
+        $question = $stmt->fetch(PDO::FETCH_ASSOC); 
+        echo json_encode($question);
+    } else {
+        http_response_code(404); // Retorna 404 se não houver dados, o que é correto para o frontend
+        echo json_encode(['error' => 'Nenhuma questão encontrada para a área: ' . htmlspecialchars($area)]);
+    }
 
 } catch (PDOException $e) {
-    // Retorna um JSON de erro em caso de falha de conexão (CORRETO)
-    header('Content-Type: application/json');
     http_response_code(500);
-    echo json_encode(['error' => 'Falha na conexão com o Banco de Dados. Detalhe: ' . $e->getMessage()]);
-    exit();
+    echo json_encode(['error' => 'Erro ao buscar questão (PDO): ' . $e->getMessage()]);
 }
-// Conexão bem-sucedida, a variável $conn é o objeto PDO.
+
+$conn = null; 
 ?>
