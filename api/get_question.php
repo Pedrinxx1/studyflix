@@ -1,36 +1,32 @@
 <?php
-require_once 'db_config.php';
+header('Content-Type: application/json; charset=utf-8');
+include 'db_connection.php'; // Usa a conexão PDO
+
+$area = $_GET['area'] ?? 'Natureza';
 
 try {
-    $area = isset($_GET['area']) ? $_GET['area'] : 'Natureza';
-    
-    $filter = ['area' => $area];
-    $query = new MongoDB\Driver\Query($filter);
-    $cursor = $mongoClient->executeQuery($dbName . '.questions', $query);
-    $questions = $cursor->toArray();
-    
-    if (empty($questions)) {
+    // PostgreSQL usa RANDOM() para ordem aleatória
+    $sql = "SELECT question_id, enunciado, option_a, option_b, option_c, option_d, option_e 
+            FROM questions 
+            WHERE area = ? 
+            ORDER BY RANDOM() 
+            LIMIT 1";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$area]); // Executa com o parâmetro
+
+    if ($stmt->rowCount() > 0) {
+        $question = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch usando PDO
+        echo json_encode($question);
+    } else {
         http_response_code(404);
-        echo json_encode(['error' => 'Nenhuma questão encontrada para: ' . $area]);
-        exit();
+        echo json_encode(['error' => 'Nenhuma questão encontrada para a área: ' . htmlspecialchars($area)]);
     }
-    
-    $randomQuestion = $questions[array_rand($questions)];
-    
-    echo json_encode([
-        'question_id' => (string) $randomQuestion->question_id,
-        'area' => $randomQuestion->area,
-        'enunciado' => $randomQuestion->enunciado,
-        'option_a' => $randomQuestion->option_a,
-        'option_b' => $randomQuestion->option_b,
-        'option_c' => $randomQuestion->option_c,
-        'option_d' => $randomQuestion->option_d,
-        'option_e' => isset($randomQuestion->option_e) ? $randomQuestion->option_e : null,
-        'correct_option' => $randomQuestion->correct_option
-    ], JSON_UNESCAPED_UNICODE);
-    
-} catch (Exception $e) {
+
+} catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Erro: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Erro ao buscar questão: ' . $e->getMessage()]);
 }
+
+$conn = null; // Fecha a conexão PDO
 ?>

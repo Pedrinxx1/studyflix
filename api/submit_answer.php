@@ -1,87 +1,70 @@
 <?php
-require_once 'db_config.php';
+header('Content-Type: application/json; charset=utf-8');
+include 'db_connection.php';
+
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
+
+if (!isset($data['question_id'], $data['answer'], $data['user_id'])) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Dados incompletos fornecidos.']);
+    exit();
+}
+
+$question_id = $data['question_id'];
+$user_answer = $data['answer'];
+$user_id = $data['user_id']; 
 
 try {
-    $input = file_get_contents('php://input');
-    $data = json_decode($input, true);
-    
-    if (!isset($data['question_id']) || !isset($data['answer'])) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Dados incompletos']);
-        exit();
-    }
-    
-    $questionId = $data['question_id'];
-    $userAnswer = strtolower($data['answer']);
-    $userId = isset($data['user_id']) ? $data['user_id'] : 'guest';
-    
-    // Buscar questão
-    $filter = ['question_id' => $questionId];
-    $query = new MongoDB\Driver\Query($filter);
-    $cursor = $mongoClient->executeQuery($dbName . '.questions', $query);
-    $questions = $cursor->toArray();
-    
-    if (empty($questions)) {
+    $conn->beginTransaction(); // Inicia transação
+
+    // 1. Busca a resposta correta
+    $stmt = $conn->prepare("SELECT correct_option FROM questions WHERE question_id = ?");
+    $stmt->execute([$question_id]);
+    $question_data = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = null; 
+
+    if (!$question_data) {
         http_response_code(404);
-        echo json_encode(['error' => 'Questão não encontrada']);
+        echo json_encode(['error' => 'Questão não encontrada.']);
+        $conn = null;
         exit();
     }
+
+    $correct_option = $question_data['correct_option'];
+    $is_correct = (strtolower($user_answer) === strtolower($correct_option));
+    $is_correct_int = $is_correct ? 1 : 0;
     
-    $question = $questions[0];
-    $correctOption = strtolower($question->correct_option);
-    $isCorrect = ($userAnswer === $correctOption);
+    // 2. PostgreSQL UPSERT: Garante que o usuário existe e atualiza a pontuação
+    $username = ($user_id === 'guest') ? 'Visitante' : $user_id;
+
+    $sql_upsert = "INSERT INTO user_scores (user_id, username, total_attempted, total_correct) 
+                   VALUES (?, ?, 1, ?)
+                   ON CONFLICT (user_id) DO UPDATE 
+                   SET total_attempted = user_scores.total_attempted + 1,
+                       total_correct = user_scores.total_correct + ?
+                   WHERE user_scores.user_id = ?"; // Necessário para evitar que a atualização afete todos os registros.
     
-    // Salvar resposta
-    $answerRecord = [
-        'answer_id' => uniqid('ans_', true),
-        'user_id' => $userId,
-        'question_id' => $questionId,
-        'answer' => $userAnswer,
-        'is_correct' => $isCorrect,
-        'timestamp' => date('c')
-    ];
+    $stmt = $conn->prepare($sql_upsert);
+    $stmt->execute([$user_id, $username, $is_correct_int, $is_correct_int, $user_id]);
+    $stmt = null;
     
-    $bulk = new MongoDB\Driver\BulkWrite;
-    $bulk->insert($answerRecord);
-    $mongoClient->executeBulkWrite($dbName . '.answers', $bulk);
-    
-    // Atualizar estatísticas
-    $userFilter = ['user_id' => $userId];
-    $userQuery = new MongoDB\Driver\Query($userFilter);
-    $userCursor = $mongoClient->executeQuery($dbName . '.user_stats', $userQuery);
-    $users = $userCursor->toArray();
-    
-    $bulkStats = new MongoDB\Driver\BulkWrite;
-    
-    if (empty($users)) {
-        $bulkStats->insert([
-            'user_id' => $userId,
-            'username' => 'Usuário ' . substr($userId, 0, 8),
-            'total_attempted' => 1,
-            'total_correct' => $isCorrect ? 1 : 0,
-            'last_updated' => date('c')
-        ]);
-    } else {
-        $user = $users[0];
-        $bulkStats->update(
-            ['user_id' => $userId],
-            ['$set' => [
-                'total_attempted' => $user->total_attempted + 1,
-                'total_correct' => $user->total_correct + ($isCorrect ? 1 : 0),
-                'last_updated' => date('c')
-            ]]
-        );
-    }
-    
-    $mongoClient->executeBulkWrite($dbName . '.user_stats', $bulkStats);
-    
+    $conn->commit(); // Confirma transação
+
+    // 3. Retorna o resultado
     echo json_encode([
-        'is_correct' => $isCorrect,
-        'correct_option' => $correctOption
+        'is_correct' => $is_correct,
+        'correct_option' => $correct_option,
+        'message' => $is_correct ? 'Correto!' : 'Incorreto.'
     ]);
-    
-} catch (Exception $e) {
+
+} catch (PDOException $e) {
+    if ($conn->inTransaction()) {
+        $conn->rollBack(); 
+    }
     http_response_code(500);
-    echo json_encode(['error' => 'Erro: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Erro interno do servidor ao salvar resposta: ' . $e->getMessage()]);
 }
+
+$conn = null;
 ?>

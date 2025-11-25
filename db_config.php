@@ -1,23 +1,29 @@
 <?php
-// Configuração do MongoDB
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json; charset=utf-8');
+// Credenciais do Render PostgreSQL (Extraídas da sua string de conexão)
+// ATENÇÃO: Verifique se estes são os valores corretos no seu painel do Render.
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+define('DB_HOST', 'dpg-d47ph0k9c44c73cbi1dg-a.oregon-postgres.render.com');
+define('DB_USER', 'studyflix_user');
+define('DB_PASS', 'C7RDk7jynwGOQqr78NGhBDB7a2QCapvo');
+define('DB_NAME', 'studyflix_db_qurq');
 
+// Tenta estabelecer a conexão PDO (PostgreSQL)
 try {
-    // Conectar ao MongoDB
-    $mongoClient = new MongoDB\Driver\Manager("mongodb://localhost:27017");
-    $dbName = "test_database";  // ⚠️ Troque se necessário
-    
-} catch (Exception $e) {
+    $conn = new PDO(
+        "pgsql:host=" . DB_HOST . ";dbname=" . DB_NAME,
+        DB_USER,
+        DB_PASS,
+        // Configurações para garantir exceções em caso de erro
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION] 
+    );
+    // Garante que a codificação seja UTF-8 para caracteres especiais
+    $conn->exec("SET NAMES 'utf8mb4'");
+} catch (PDOException $e) {
+    // Retorna um JSON de erro para o front-end
+    header('Content-Type: application/json');
     http_response_code(500);
-    echo json_encode(['error' => 'Erro ao conectar: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Falha na conexão com o Banco de Dados (PostgreSQL). Detalhe: ' . $e->getMessage()]);
     exit();
 }
+// Conexão bem-sucedida, a variável $conn agora é um objeto PDO.
 ?>
