@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-include 'db_connection.php';
+include 'db_config.php';
 
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);

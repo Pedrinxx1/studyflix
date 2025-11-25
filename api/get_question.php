@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-include 'db_connection.php'; // Usa a conexão PDO
+include 'db_config.php'; // Usa a conexão PDO
 
 $area = $_GET['area'] ?? 'Natureza';
 
