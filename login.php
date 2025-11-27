@@ -5,12 +5,13 @@ $conn = pg_connect("host=dpg-d4kbinodl3ps73dh16l0-a.oregon-postgres.render.com
                     user=studyflix_user 
                     password=iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y 
                     port=5432 
-                    sslmode=require"); // <<< ADICIONADO
+                    sslmode=require"); 
 
 if (!$conn) {
     die("Erro de conexão com o banco de dados.");
 }
 
+// ⚠️ Linha 11 e 12: SEM CARACTERES OCULTOS
 $email = $_POST['email'];
 $senha = $_POST['senha'];
 
