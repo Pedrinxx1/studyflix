@@ -1,9 +1,0 @@
-# Arquivo: render.yaml
-services:
-  - type: web
-    name: studyflix-php
-    runtime: php
-    plan: starter
-    # Adiciona a instalação dos pacotes PostgreSQL
-    buildCommand: apt-get update -y && apt-get install -y php-pdo-pgsql
-    startCommand: apache2-foreground
