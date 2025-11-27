@@ -457,7 +457,6 @@
     const quizContentContainer = document.getElementById("quiz-content-container");
     const quizLoader = document.getElementById("quiz-loader");
     const quizArea = document.getElementById("quiz-area");
-    // Certifique-se de ter um elemento <span id="session-status"></span> no seu HTML
     const sessionStatus = document.getElementById("session-status"); 
     const questionText = document.getElementById("question-text");
     const optionsList = document.getElementById("options-list");
@@ -471,7 +470,7 @@
     let currentArea = 'Natureza';
     let answerSubmitted = false;
 
-    // NOVO: Função para carregar dados do usuário
+    // Função para carregar dados do usuário (obtém o nome completo do user_data.php)
     async function loadUserData() {
         try {
             const url = `${API_BASE_URL}/user_data.php`;
@@ -484,8 +483,6 @@
                 userId = currentUsername;
                 isLoggedIn = true;
                 console.log(`Usuário logado: ${currentDisplayName} (${currentUsername})`);
-            } else {
-                console.warn("Usuário não logado. Usando modo Convidado.");
             }
         } catch (error) {
             console.error("Erro ao carregar dados do usuário:", error);
@@ -555,7 +552,6 @@
 
         // Envia os dados para o save_score.php
         try {
-            // Usa URLSearchParams para enviar dados no formato x-www-form-urlencoded
             const dataToSend = new URLSearchParams();
             dataToSend.append('username', currentUsername);
             dataToSend.append('display_name', currentDisplayName); 
@@ -564,7 +560,7 @@
 
             const response = await fetch(`${API_BASE_URL}/save_score.php`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // Tipo correto
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
                 body: dataToSend
             });
 
