@@ -1,12 +1,14 @@
 <?php
-$conn = pg_connect("host=dpg-d4kbinodl3ps73dh16l0-a 
-                    dbname=studyflix_db_qurq 
-                    user=studyflix_user 
-                    password=C7RDk7jynwGOQqr78NGhBDB7a2QCapvo 
-                    port=5432");
+// Conexão corrigida com HOST COMPLETO e SSLMODE=REQUIRE
+$conn = pg_connect("host=dpg-d4kbinodl3ps73dh16l0-a.oregon-postgres.render.com 
+                    dbname=studyflix_db_qurq_hi3g 
+                    user=studyflix_user 
+                    password=iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y 
+                    port=5432 
+                    sslmode=require"); // <<< ADICIONADO
 
 if (!$conn) {
-    die("Erro de conexão com o banco de dados.");
+    die("Erro de conexão com o banco de dados.");
 }
 
 $email = $_POST['email'];
@@ -16,13 +18,13 @@ $query = "SELECT * FROM usuarios WHERE email = $1";
 $result = pg_query_params($conn, $query, array($email));
 
 if ($row = pg_fetch_assoc($result)) {
-    if (password_verify($senha, $row['senha'])) {
-        echo "sucesso"; // ⚠️ Importante: retorna texto simples pro JS
-    } else {
-        echo "Senha incorreta.";
-    }
+    if (password_verify($senha, $row['senha'])) {
+        echo "sucesso";
+    } else {
+        echo "Senha incorreta.";
+    }
 } else {
-    echo "Usuário não encontrado.";
+    echo "Usuário não encontrado.";
 }
 
 pg_close($conn);
