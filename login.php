@@ -1,32 +1,39 @@
 <?php
-// Conexão corrigida com HOST COMPLETO e SSLMODE=REQUIRE
-$conn = pg_connect("host=dpg-d4kbinodl3ps73dh16l0-a.oregon-postgres.render.com 
- dbname=studyflix_db_qurq_hi3g 
- user=studyflix_user 
- password=iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y 
- port=5432 
-                    sslmode=require"); 
+// login.php
+session_start(); // <--- OBRIGATÓRIO NA PRIMEIRA LINHA
+header('Content-Type: application/json'); // Resposta sempre em JSON para o JS
 
-if (!$conn) {
- die("Erro de conexão com o banco de dados.");
+include 'db_config.php'; // Usa a conexão PDO do seu db_config.php
+
+$email = $_POST['email'] ?? '';
+$senha = $_POST['senha'] ?? '';
+
+if (empty($email) || empty($senha)) {
+    echo json_encode(['success' => false, 'message' => 'Preencha todos os campos.']);
+    exit;
 }
 
-// ⚠️ Linha 11 e 12: SEM CARACTERES OCULTOS
-$email = $_POST['email'];
-$senha = $_POST['senha'];
+try {
+    // Busca o usuário pelo email
+    $sql = "SELECT * FROM usuarios WHERE email = :email LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':email' => $email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$query = "SELECT * FROM usuarios WHERE email = $1";
-$result = pg_query_params($conn, $query, array($email));
+    // Verifica senha
+    if ($user && password_verify($senha, $user['senha'])) {
+        
+        // --- A MÁGICA ACONTECE AQUI ---
+        $_SESSION['user_id'] = $user['email']; // Email é o ID único
+        $_SESSION['nome_completo'] = $user['nome']; // Nome para o Ranking
+        // ------------------------------
 
-if ($row = pg_fetch_assoc($result)) {
- if (password_verify($senha, $row['senha'])) {
- echo "sucesso";
- } else {
- echo "Senha incorreta.";
- }
-} else {
- echo "Usuário não encontrado.";
+        echo json_encode(['success' => true, 'message' => 'Login realizado!']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Email ou senha incorretos.']);
+    }
+
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Erro no banco: ' . $e->getMessage()]);
 }
-
-pg_close($conn);
 ?>
