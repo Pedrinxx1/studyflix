@@ -1,44 +1,29 @@
 <?php
-// TENTA FORÇAR RESPOSTA JSON EM CASO DE ERRO FATAL (Início do Script)
-set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-    if (!(error_reporting() & $errno)) {
-        return false;
-    }
-    header('Content-Type: application/json', true, 500);
-    echo json_encode(['error' => "Erro no servidor PHP (Código: {$errno}): {$errstr} na linha {$errline} de {$errfile}"]);
-    exit(1);
-});
+// Credenciais do Render PostgreSQL
+define('DB_HOST', 'dpg-d4kbinodl3ps73dh16l0-a'); // <<< NOVO HOST
+define('DB_USER', 'studyflix_user'); // Mantido
+define('DB_PASS', 'iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y'); // <<< NOVA SENHA
+define('DB_NAME', 'studyflix_db_qurq'); // Mantido
 
-header('Content-Type: application/json; charset=utf-8');
-
-// 🚨 Incluir o arquivo de configuração de conexão
-include __DIR__ . '/db_config.php'; 
-
-$area = $_GET['area'] ?? 'Natureza';
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_EMULATE_PREPARES => false,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
 
 try {
-    // CORREÇÃO SQL: Usa LOWER() para comparação case-insensitive
-    $sql = "SELECT question_id, enunciado, option_a, option_b, option_c, option_d, option_e 
-            FROM questions 
-            WHERE LOWER(area) = LOWER(?) 
-            ORDER BY RANDOM() 
-            LIMIT 1";
-            
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$area]); // Executa com o parâmetro
-
-    if ($stmt->rowCount() > 0) {
-        $question = $stmt->fetch(PDO::FETCH_ASSOC); 
-        echo json_encode($question);
-    } else {
-        http_response_code(404); // Retorna 404 se não houver dados, o que é correto para o frontend
-        echo json_encode(['error' => 'Nenhuma questão encontrada para a área: ' . htmlspecialchars($area)]);
-    }
-
+    $dsn = "pgsql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";sslmode=require;client_encoding=utf8";
+    
+    $conn = new PDO(
+        $dsn,
+        DB_USER,
+        DB_PASS,
+        $options
+    );
 } catch (PDOException $e) {
+    header('Content-Type: application/json');
     http_response_code(500);
-    echo json_encode(['error' => 'Erro ao buscar questão (PDO): ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Falha na conexão com o Banco de Dados. Detalhe: ' . $e->getMessage()]);
+    exit();
 }
-
-$conn = null; 
 ?>

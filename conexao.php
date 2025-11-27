@@ -1,10 +1,10 @@
 <?php
 // Conexão com banco de dados Render (usando interno)
-$host = 'dpg-d47ph0k9c44c73cbi1dg-a';
+$host = 'dpg-d4kbinodl3ps73dh16l0-a';
 $port = '5432';
 $dbname = 'studyflix_db_qurq';
 $user = 'studyflix_user';
-$password = 'C7RDk7jynwGOQqr78NGhBDB7a2QCapvo';
+$password = 'iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y';
 
 try {
     $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname", $user, $password);
