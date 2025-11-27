@@ -1,9 +1,11 @@
 <?php
 // login.php
-session_start(); // <--- OBRIGATÓRIO NA PRIMEIRA LINHA
-header('Content-Type: application/json'); // Resposta sempre em JSON para o JS
+session_start();
+header('Content-Type: application/json');
 
-include 'db_config.php'; // Usa a conexão PDO do seu db_config.php
+// LINHA CORRIGIDA: Inclui o arquivo dentro da pasta 'api'
+include 'api/db_config.php'; 
+// ----------------------------------------------------
 
 $email = $_POST['email'] ?? '';
 $senha = $_POST['senha'] ?? '';
@@ -16,18 +18,21 @@ if (empty($email) || empty($senha)) {
 try {
     // Busca o usuário pelo email
     $sql = "SELECT * FROM usuarios WHERE email = :email LIMIT 1";
-    $stmt = $conn->prepare($sql);
+    
+    // Use $conn se seu db_config.php usa $conn, ou $pdo se usa $pdo
+    $db = isset($conn) ? $conn : $pdo; 
+    
+    $stmt = $db->prepare($sql);
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Verifica senha
     if ($user && password_verify($senha, $user['senha'])) {
         
-        // --- A MÁGICA ACONTECE AQUI ---
-        $_SESSION['user_id'] = $user['email']; // Email é o ID único
-        $_SESSION['nome_completo'] = $user['nome']; // Nome para o Ranking
-        // ------------------------------
-
+        // SALVA OS DADOS DO USUÁRIO NA SESSÃO
+        $_SESSION['user_id'] = $user['email']; 
+        $_SESSION['nome_completo'] = $user['nome']; 
+        
         echo json_encode(['success' => true, 'message' => 'Login realizado!']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Email ou senha incorretos.']);
@@ -35,5 +40,7 @@ try {
 
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Erro no banco: ' . $e->getMessage()]);
+} catch (Exception $e) {
+     echo json_encode(['success' => false, 'message' => 'Erro geral: ' . $e->getMessage()]);
 }
 ?>
