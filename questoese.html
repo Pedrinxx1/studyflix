@@ -436,71 +436,112 @@
     
     // ⚠️ PONTO CRÍTICO DE CONFIGURAÇÃO!
     const API_BASE_URL = 'api'; 
-    const QUESTION_LIMIT = 10; // Limite de questões por sessão
+    const QUESTION_LIMIT = 10; // Adicionando o limite de questões por sessão
 
-    // Variáveis iniciais (serão preenchidas via fetch)
-    let currentUsername = 'guest_temp';
-    let currentDisplayName = 'Convidado';
+    // Variáveis de Usuário e Pontuação
+    // Se o usuário não estiver logado, o ranking não será salvo.
+    // Se você já estiver injetando o email e nome do PHP, substitua as linhas abaixo:
+    // let currentUsername = "<?php // echo $current_username; ?>";
+    // let currentDisplayName = "<?php // echo $current_display_name; ?>";
+    let currentUsername = "Convidado"; // MUDAR ISSO COM A LÓGICA DE LOGIN
+    let currentDisplayName = "Convidado"; // MUDAR ISSO COM A LÓGICA DE LOGIN
     let userId = currentUsername; 
-    let isLoggedIn = false;
+    let isLoggedIn = false; // Defina como true após a verificação de login/sessão
 
     // VARIÁVEIS DE PONTUAÇÃO DA SESSÃO ATUAL
     let sessionCorrectCount = 0;
     let sessionAttemptedCount = 0;
-    
-    // ... restante das referências de DOM ...
-    // [Seu código de referências de DOM]
+    // FIM DAS VARIÁVEIS DE PONTUAÇÃO
+
     const tabs = document.querySelectorAll(".tab-button");
-    // ...
+    const tabContents = document.querySelectorAll(".tab-content");
+    const startForm = document.getElementById("start-quiz-form");
+    const areaSelect = document.getElementById("area-select");
+    const quizStartContent = document.getElementById("quiz-start-content");
+    const quizContentContainer = document.getElementById("quiz-content-container");
+    const quizLoader = document.getElementById("quiz-loader");
+    const quizArea = document.getElementById("quiz-area");
+    const sessionStatus = document.getElementById("session-status"); // Adicionado
+    const questionText = document.getElementById("question-text");
+    const optionsList = document.getElementById("options-list");
+    const feedbackMessage = document.getElementById("feedback-message");
+    const nextQuestionBtn = document.getElementById("next-question-btn");
+    const rankingContent = document.getElementById("ranking-content");
+    const rankingLoader = document.getElementById("ranking-loader");
+    const rankingBody = document.getElementById("ranking-body");
 
-    // --- FUNÇÃO PARA CARREGAR DADOS DO USUÁRIO ---
-    async function loadUserData() {
-        try {
-            const url = `${API_BASE_URL}/user_data.php`;
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.is_logged_in) {
-                currentUsername = data.username;
-                currentDisplayName = data.display_name;
-                userId = currentUsername;
-                isLoggedIn = true;
-                console.log(`Usuário logado: ${currentDisplayName}`);
-            } else {
-                console.warn("Usuário não logado. Usando modo Convidado.");
-            }
-        } catch (error) {
-            console.error("Erro ao carregar dados do usuário:", error);
-            // Mantém como 'Convidado'
-        }
+    let currentQuestionId = null;
+    let currentArea = 'Natureza';
+    let answerSubmitted = false;
+    
+    // Simulação de carregamento de dados do usuário (ajuste para sua lógica de login)
+    // Se você usa o PHP que eu sugeri antes (user_data.php), você deve chamá-lo aqui.
+    if (currentUsername === 'Convidado') {
+        // Se estiver no modo convidado, o login deve ser implementado via fetch para user_data.php
+        // Por enquanto, vamos manter como "Convidado"
+        console.warn("Modo Convidado ativo. Pontuação não será salva no Ranking.");
+    } else {
+        isLoggedIn = true;
     }
-    // ---------------------------------------------
-    
-    // NOVO: Chama a função loadUserData no início
-    loadUserData(); 
-    
-    // ... restante do seu código JavaScript (tabs.forEach, startForm.addEventListener, etc.) ...
-    
-    // APENAS AS FUNÇÕES endQuizSession e loadRanking precisam de ajustes:
 
-    // ---------------------------------------------
-    // SUA NOVA FUNÇÃO endQuizSession (Mantida do código anterior)
-    async function endQuizSession() {
-        if (!isLoggedIn) {
-            feedbackMessage.textContent = "Faça login para salvar sua pontuação no Ranking!";
-            feedbackMessage.className = 'incorrect';
-            nextQuestionBtn.textContent = 'Voltar ao Início';
-            nextQuestionBtn.onclick = () => { window.location.href = 'index.html'; };
-            return;
-        }
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            const targetTab = tab.getAttribute("data-tab");
+            tabs.forEach(t => t.classList.remove("active"));
+            tabContents.forEach(c => c.classList.remove("active"));
+            tab.classList.add("active");
+
+            if (targetTab === 'ranking') {
+                rankingContent.classList.add("active");
+                loadRanking();
+            } else if (targetTab === 'quiz-start') {
+                quizStartContent.classList.add("active");
+            }
+        });
+    });
+
+    startForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        currentArea = areaSelect.value;
         
-        // ... (O resto da função endQuizSession é o mesmo que te passei antes) ...
-        // Esconde a área do quiz e exibe a mensagem de finalização
+        // Reset e inicializa a sessão para o novo quiz
+        sessionCorrectCount = 0;
+        sessionAttemptedCount = 0;
+        sessionStatus.textContent = `Questão 1 de ${QUESTION_LIMIT}`;
+
+        quizStartContent.classList.remove("active");
+        
+        // Garante que o container do quiz apareça
+        const quizContainerTab = document.querySelector('.tab-button[data-tab="quiz-start"]');
+        tabs.forEach(t => t.classList.remove("active"));
+        quizContainerTab.classList.add('active'); 
+        document.getElementById('quiz-content-container').classList.add("active");
+        
+        quizArea.style.display = 'none';
+        quizLoader.style.display = 'block';
+        loadQuestion();
+    });
+    
+    // NOVO: Função para encerrar a sessão do quiz e salvar a pontuação
+    async function endQuizSession() {
         quizArea.style.display = 'none';
         quizLoader.style.display = 'none'; 
         questionText.textContent = `🎉 Sessão de ${QUESTION_LIMIT} questões encerrada! Você acertou ${sessionCorrectCount} de ${sessionAttemptedCount} questões.`;
         optionsList.innerHTML = '';
-        
+        nextQuestionBtn.style.display = 'none'; // Esconde o botão Próxima Questão
+
+        if (!isLoggedIn) {
+            feedbackMessage.textContent = "Faça login para que sua pontuação seja salva no Ranking!";
+            feedbackMessage.className = 'incorrect';
+            nextQuestionBtn.textContent = 'Ver Ranking (Sem salvar)';
+            nextQuestionBtn.style.display = 'inline-flex';
+            nextQuestionBtn.onclick = () => {
+                document.querySelector('.tab-button[data-tab="ranking"]').click();
+            };
+            return;
+        }
+
         // Prepara e envia os 4 dados para o save_score.php
         try {
             const dataToSend = new URLSearchParams();
@@ -521,6 +562,7 @@
                 feedbackMessage.textContent = "Pontuação salva no Ranking!";
                 feedbackMessage.className = 'correct';
                 nextQuestionBtn.textContent = 'Ver Ranking';
+                nextQuestionBtn.style.display = 'inline-flex';
                 nextQuestionBtn.onclick = () => {
                     document.querySelector('.tab-button[data-tab="ranking"]').click();
                 };
@@ -537,11 +579,144 @@
         }
     }
 
-    // ---------------------------------------------
-    // SUA FUNÇÃO loadRanking (Mantida do código anterior)
+
+    async function loadQuestion() {
+        // NOVO: Verifica o limite antes de carregar
+        if (sessionAttemptedCount >= QUESTION_LIMIT) {
+            endQuizSession();
+            return;
+        }
+        
+        resetQuizUI();
+        quizLoader.style.display = 'block';
+
+        try {
+            const url = `${API_BASE_URL}/get_question.php?area=${currentArea}`;
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`Erro de rede (${response.status}). URL: ${url}`);
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+                questionText.textContent = `Erro do Servidor: ${data.error}. Verifique a conexão com o DB no db_connection.php.`;
+                quizLoader.style.display = 'none';
+                quizArea.style.display = 'block';
+                return;
+            }
+
+            currentQuestionId = data.question_id;
+            questionText.textContent = data.enunciado;
+
+            // Atualiza o status da sessão (Questão N de 10)
+            sessionStatus.textContent = `Questão ${sessionAttemptedCount + 1} de ${QUESTION_LIMIT} (${currentArea})`;
+
+            // Cria os botões de opção
+            ['a', 'b', 'c', 'd', 'e'].forEach(optionKey => {
+                const optionText = data[`option_${optionKey}`];
+                if (optionText) {
+                    createOptionButton(optionKey, optionText);
+                }
+            });
+
+            quizLoader.style.display = 'none';
+            quizArea.style.display = 'block';
+
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            questionText.textContent = `🚨 Erro fatal ao carregar questão. ${error.message}.`;
+            quizLoader.style.display = 'none';
+            quizArea.style.display = 'block';
+        }
+    }
+
+    function createOptionButton(value, text) {
+        const li = document.createElement('li');
+        const button = document.createElement('button');
+        button.className = 'option-button';
+        button.dataset.value = value;
+        button.textContent = `${value.toUpperCase()}) ${text}`;
+        button.addEventListener("click", () => handleOptionClick(button, value));
+        li.appendChild(button);
+        optionsList.appendChild(li);
+    }
+
+    async function handleOptionClick(clickedButton, selectedValue) {
+        if (answerSubmitted) return;
+        answerSubmitted = true;
+        
+        // NOVO: Incrementa a tentativa
+        sessionAttemptedCount++;
+        sessionStatus.textContent = `Questão ${sessionAttemptedCount} de ${QUESTION_LIMIT} (${currentArea})`;
+
+        document.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
+
+        try {
+            const url = `${API_BASE_URL}/submit_answer.php`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question_id: currentQuestionId,
+                    answer: selectedValue,
+                    user_id: userId 
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro de rede (${response.status}). URL: ${url}`);
+            }
+
+            const result = await response.json();
+
+            if (result.is_correct) {
+                clickedButton.classList.add('correct');
+                feedbackMessage.textContent = "✅ Você acertou!";
+                feedbackMessage.className = 'correct';
+                // NOVO: Incrementa o acerto
+                sessionCorrectCount++;
+            } else {
+                clickedButton.classList.add('incorrect');
+                feedbackMessage.textContent = "❌ Você errou!";
+                feedbackMessage.className = 'incorrect';
+
+                const correctButton = document.querySelector(`.option-button[data-value="${result.correct_option.toLowerCase()}"]`);
+                if (correctButton) correctButton.classList.add('correct');
+            }
+
+            nextQuestionBtn.style.display = 'inline-flex';
+            // Se já for a última questão, o texto deve mudar
+            if (sessionAttemptedCount >= QUESTION_LIMIT) {
+                nextQuestionBtn.textContent = 'Finalizar Sessão';
+                nextQuestionBtn.onclick = endQuizSession;
+            } else {
+                nextQuestionBtn.textContent = 'Próxima Questão';
+                nextQuestionBtn.onclick = loadQuestion;
+            }
+
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            feedbackMessage.textContent = `Erro ao salvar resposta: ${error.message}.`;
+            feedbackMessage.className = 'incorrect';
+            answerSubmitted = false;
+            // Se deu erro, desfaz a contagem para tentar de novo
+            sessionAttemptedCount--; 
+        }
+    }
+
+    nextQuestionBtn.addEventListener("click", loadQuestion);
+
+    function resetQuizUI() {
+        answerSubmitted = false;
+        optionsList.innerHTML = '';
+        feedbackMessage.textContent = '';
+        feedbackMessage.className = '';
+        nextQuestionBtn.style.display = 'none';
+    }
+
     async function loadRanking() {
-        // ... (Seu código loadRanking aqui - apenas o conteúdo do try/catch) ...
-        // ...
         rankingBody.innerHTML = '';
         rankingLoader.style.display = 'block';
 
@@ -562,8 +737,7 @@
                     rankingBody.innerHTML += `
                         <tr>
                             <td><b>${index + 1}º</b></td>
-                            <td>${user.display_name}</td> 
-                            <td>${user.total_correct}</td>
+                            <td>${user.display_name || user.username}</td> <td>${user.total_correct}</td>
                             <td>${user.total_attempted}</td>
                         </tr>
                     `;
@@ -575,11 +749,8 @@
         } finally {
             rankingLoader.style.display = 'none';
         }
-        // ...
     }
-    // ---------------------------------------------
-
-}); // Fim do DOMContentLoaded
+});
     </script>
 </body>
 
