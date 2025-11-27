@@ -20,13 +20,20 @@ include __DIR__ . '/db_config.php';
 // Obtém a área da URL, usa 'Natureza' como padrão
 $area = $_GET['area'] ?? 'Natureza';
 
+// ... (código anterior)
+
 try {
-    // 1. PostgreSQL usa RANDOM() para ordem aleatória
-    $sql = "SELECT question_id, enunciado, option_a, option_b, option_c, option_d, option_e 
-            FROM questions 
-            WHERE area = ? 
-            ORDER BY RANDOM() 
-            LIMIT 1";
+    // 1. PostgreSQL usa RANDOM() para ordem aleatória
+ $sql = "SELECT question_id, enunciado, option_a, option_b, option_c, option_d, option_e 
+ FROM questions 
+ WHERE LOWER(area) = LOWER(?)  // <<< CORREÇÃO AQUI
+ ORDER BY RANDOM() 
+ LIMIT 1";
+ 
+ $stmt = $conn->prepare($sql);
+ $stmt->execute([$area]); // Executa com o parâmetro
+
+// ... (resto do código)
             
     $stmt = $conn->prepare($sql);
     $stmt->execute([$area]); // Executa com o parâmetro
