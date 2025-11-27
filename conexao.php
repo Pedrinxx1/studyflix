@@ -2,7 +2,7 @@
 // Conexão com banco de dados Render (usando interno)
 $host = 'dpg-d4kbinodl3ps73dh16l0-a';
 $port = '5432';
-$dbname = 'studyflix_db_qurq';
+$dbname = 'studyflix_db_qurq_hi3g';
 $user = 'studyflix_user';
 $password = 'iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y';
 

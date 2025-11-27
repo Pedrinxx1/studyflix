@@ -3,7 +3,7 @@
 define('DB_HOST', 'dpg-d4kbinodl3ps73dh16l0-a'); // <<< NOVO HOST
 define('DB_USER', 'studyflix_user'); // Mantido
 define('DB_PASS', 'iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y'); // <<< NOVA SENHA
-define('DB_NAME', 'studyflix_db_qurq'); // Mantido
+define('DB_NAME', 'studyflix_db_qurq_hi3g'); // Mantido
 
 $options = [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
