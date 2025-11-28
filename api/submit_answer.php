@@ -1,14 +1,13 @@
 <?php
-// api/submit_answer.php - CÓDIGO FINAL CORRIGIDO
+// api/submit_answer.php - COM BLOQUEIO DE CONVIDADO E ASSOCIAÇÃO DE NOME
 header('Content-Type: application/json; charset=utf-8');
 include __DIR__ . '/db_config.php';
 
-// Certifique-se de que $pdo está disponível via db_config.php
 $db = $pdo ?? null;
 
 if (!$db) {
     http_response_code(500);
-    echo json_encode(['error' => 'Erro interno: Conexão com o banco não disponível. Verifique db_config.php.']);
+    echo json_encode(['error' => 'Erro interno: Conexão com o banco não disponível.']);
     exit;
 }
 
@@ -16,16 +15,22 @@ if (!$db) {
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
-// Validação dos dados críticos
 if (!isset($data['question_id'], $data['answer'], $data['user_id'])) {
     http_response_code(400);
-    echo json_encode(['error' => 'Dados incompletos: Faltando question_id, answer ou user_id.']);
+    echo json_encode(['error' => 'Dados incompletos.']);
     exit();
 }
 
 $question_id = $data['question_id'];
 $user_answer = $data['answer'];
-$user_id = $data['user_id']; 
+$user_id = $data['user_id']; // Esperamos receber o email aqui
+
+// 🚨 BLOQUEIO CRÍTICO: Rejeita se o user_id for um ID de convidado ou vazio.
+if (empty($user_id) || str_starts_with($user_id, 'guest_')) {
+    http_response_code(403); // Proibido
+    echo json_encode(['error' => 'Acesso negado. É necessário estar logado para salvar a pontuação.']);
+    exit();
+}
 
 try {
     $db->beginTransaction(); 
@@ -38,7 +43,7 @@ try {
     if (!$question_data) {
         http_response_code(404);
         echo json_encode(['error' => 'Questão não encontrada no banco de dados.']);
-        $db = null;
+        $db->rollBack();
         exit();
     }
 
@@ -46,31 +51,38 @@ try {
     $is_correct = (strtolower($user_answer) === strtolower($correct_option));
     $is_correct_int = $is_correct ? 1 : 0;
     
-    // 2. PostgreSQL UPSERT: Atualiza a pontuação
-    // O valor de $user_id (ex: guest_12345) é o ID vindo do frontend.
-    $username_value = ($user_id === 'guest') ? 'Visitante' : $user_id; 
+    // 2. Busca o nome real (display_name)
+    // 🚨 AJUSTE ESTA QUERY para a sua tabela de usuários e colunas (se necessário)!
+    $stmt_name = $db->prepare("SELECT nome_completo FROM users WHERE email = ?");
+    $stmt_name->execute([$user_id]);
+    $user_data = $stmt_name->fetch(PDO::FETCH_ASSOC);
 
-    // 🚨 CORREÇÃO: A query inclui 'user_id' para resolver o erro NOT NULL violation (23502)
+    // Usa o nome real do banco. Se não encontrar (erro), usa o email como fallback.
+    $display_name_value = $user_data['nome_completo'] ?? $user_id; 
+
+    
+    // 3. PostgreSQL UPSERT: user_id e username são o email do usuário.
+    // Isso resolve o erro NOT NULL e associa a pontuação ao email.
     $sql_upsert = "INSERT INTO user_scores (user_id, username, total_attempted, total_correct, display_name) 
                    VALUES (?, ?, 1, ?, ?)
                    ON CONFLICT (username) DO UPDATE 
                    SET total_attempted = user_scores.total_attempted + 1,
                        total_correct = user_scores.total_correct + ?,
-                       display_name = EXCLUDED.display_name";
+                       display_name = EXCLUDED.display_name"; // Mantém o nome de exibição mais recente do INSERT
 
     $stmt = $db->prepare($sql_upsert);
 
     $stmt->execute([
-        $user_id,             // 1. INSERT user_id (Valor bruto do ID)
-        $username_value,      // 2. INSERT username (Chave de conflito e ID/Visitante)
+        $user_id,             // 1. INSERT user_id (Email)
+        $user_id,             // 2. INSERT username (Email - Chave Única para CONFLICT)
         $is_correct_int,      // 3. INSERT total_correct
-        $username_value,      // 4. INSERT display_name
-        $is_correct_int       // 5. UPDATE total_correct (valor a ser adicionado)
+        $display_name_value,  // 4. INSERT display_name (Nome Real)
+        $is_correct_int       // 5. UPDATE total_correct
     ]);
 
     $db->commit(); // Confirma transação
 
-    // 3. Retorna o resultado
+    // 4. Retorna o resultado
     echo json_encode([
         'is_correct' => $is_correct,
         'correct_option' => $correct_option,
@@ -82,7 +94,6 @@ try {
         $db->rollBack(); 
     }
     http_response_code(500);
-    // Retorna o erro SQL detalhado
     echo json_encode(['error' => 'Erro SQL ao salvar resposta: ' . $e->getMessage()]);
 }
 
