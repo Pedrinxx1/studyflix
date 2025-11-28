@@ -16,6 +16,7 @@
             background: linear-gradient(to bottom, #e44aff5d, transparent);
             padding: 15px 20px;
             display: flex;
+            justify-content: space-between; 
             align-items: center;
             height: 60px;
         }
@@ -25,7 +26,40 @@
             height: 100px;
             width: 100px;
             cursor: pointer;
+            flex-shrink: 0;
         }
+        
+        /* Estilo para o Status do Usuário no Header */
+        #user-status-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 16px;
+        }
+        
+        #user-status-container span {
+            color: #ccc;
+        }
+
+        #user-status-container b {
+            color: #e44aff; /* Cor de destaque para o nome */
+        }
+
+        #user-status-container button {
+            background-color: #e44aff;
+            color: #141414;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        #user-status-container button:hover {
+            background-color: #d130e6;
+        }
+        /* Fim do Estilo do Status */
 
         main {
             padding: 20px;
@@ -41,125 +75,53 @@
             border-bottom: 2px solid #e44aff5d;
             padding-bottom: 8px;
             margin-bottom: 15px;
+            color: #e44aff;
         }
 
         #sinopse p {
             font-size: 18px;
             line-height: 1.5;
         }
-
-        #materia {
-            background-color: #222;
-            padding: 15px;
-            border-radius: 6px;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        #materia img {
-            max-width: 300px;
-            width: 100%;
-            border-radius: 6px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        #materia-content {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        #materia h3 {
-            margin-top: 0;
-            color: #e44aff;
-        }
-
-        #materia p {
-            font-size: 16px;
-            line-height: 1.4;
-        }
-
-        #player-section {
-            background-color: #222;
+        
+        /* Estilo para o CTA (Call to Action) */
+        #call-to-action {
+            background-color: #333;
+            border: 1px solid #e44aff;
+            padding: 30px;
             border-radius: 8px;
-            padding: 15px;
+            text-align: center;
         }
 
-        #main-video {
-            width: 100%;
-            height: 400px;
-            border-radius: 8px;
-            background-color: black;
+        #call-to-action p {
+            font-size: 20px;
+            margin-bottom: 25px;
         }
 
-        #video-list {
-            margin-top: 15px;
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-
-        #video-list::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        #video-list::-webkit-scrollbar-thumb {
-            background-color: #e44aff5d;
-            border-radius: 4px;
-        }
-
-        .video-thumb {
-            flex: 0 0 160px;
+        .cta-button {
+            background-color: #e44aff;
+            color: #141414;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 6px;
             cursor: pointer;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 2px solid transparent;
-            transition: border-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
         }
 
-        .video-thumb.selected {
-            border-color: #e44aff;
-        }
-
-        .video-thumb img {
-            width: 100%;
-            height: 90px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .video-thumb p {
-            margin: 5px 0 0 5px;
-            font-size: 14px;
-            color: #ccc;
+        .cta-button:hover {
+            background-color: #d130e6;
+            transform: scale(1.05);
         }
 
         @media (max-width: 600px) {
-            #materia {
+            header {
                 flex-direction: column;
+                height: auto;
+                padding-bottom: 15px;
             }
-
-            #main-video {
-                height: 220px;
-            }
-
-            #video-list {
-                gap: 10px;
-            }
-
-            .video-thumb {
-                flex: 0 0 120px;
-            }
-
-            .video-thumb img {
-                height: 70px;
-            }
-
-            .arv {
-                font-size: 80px;
+            #user-status-container {
+                margin-top: 10px;
             }
         }
     </style>
@@ -168,70 +130,106 @@
 
 <header>
     <img id="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo StudyFlix" />
+    <div id="user-status-container">
+        <span>Carregando status...</span>
+    </div>
 </header>
 
 <main>
     <section id="sinopse">
         <h2 class="arv">Sobre o StudyFlix</h2>
         <p>
-            O StudyFlix é uma plataforma online inspirada na Netflix, feita para organizar e facilitar o estudo. Aqui você encontra resumos, videoaulas e explicações.
+            O **StudyFlix** é sua plataforma de estudos online, organizada como um serviço de streaming. Nosso objetivo é facilitar o aprendizado com um conteúdo estruturado, que inclui resumos e, o mais importante, **Quizzes Competitivos**.
         </p>
+        <p>
+            Domine novos tópicos e teste seus conhecimentos com nosso sistema de perguntas e respostas. Quanto mais você acerta, mais alto você sobe no **Ranking Nacional**, competindo com outros estudantes!
+        </p>
+        
+        <h2>Recursos em Destaque</h2>
+        <p>
+            Navegue pelas áreas de conhecimento, valide seu aprendizado no modo Quiz. O StudyFlix transforma seu tempo de estudo em uma jornada divertida e competitiva.
+        </p>
+        <ul>
+            <li>**Conteúdo Curado:** Focado em temas essenciais.</li>
+            <li>**Sistema de Ranking:** Compita com outros usuários e veja seu nome no topo.</li>
+            <li>**Acesso Exclusivo:** Pontuação e ranking garantidos apenas para usuários logados.</li>
+        </ul>
+    </section>
+    
+    <section id="call-to-action">
+        <p>Aguarde...</p>
     </section>
 
-    <section id="materia">
-        <img src="https://conhecimentocientifico.r7.com/wp-content/uploads/2020/04/matematica-o-que-e-conceito-historia-e-importancia.jpg.webp" alt="Imagem ilustrativa de matemática" />
-        <div id="materia-content">
-            <h2>Matéria em Destaque</h2>
-            <h3>Matemática Básica</h3>
-            <p>
-                Nesta seção, você aprende operações fundamentais, frações, potenciação, radiciação e muito mais. Ideal para reforçar sua base matemática.
-            </p>
-        </div>
-    </section>
-
-    <section id="player-section">
-        <h2>Assista às Videoaulas</h2>
-        <!-- Agora o principal é o explicativo -->
-        <iframe id="main-video" src="https://www.youtube.com/embed/Q5g0o6MUpn8" title="Explicação do Site" allowfullscreen></iframe>
-
-        <div id="video-list">
-            <div class="video-thumb selected" data-video="https://www.youtube.com/embed/Q5g0o6MUpn8">
-                <img src="https://img.youtube.com/vi/Q5g0o6MUpn8/hqdefault.jpg" alt="Explicação do site" />
-                <p>Explicação do Site</p>
-            </div>
-            <div class="video-thumb" data-video="https://www.youtube.com/embed/_HEnohs6yYw">
-                <img src="https://img.youtube.com/vi/_HEnohs6yYw/hqdefault.jpg" alt="Operações básicas" />
-                <p>Operações Básicas</p>
-            </div>
-            <div class="video-thumb" data-video="https://www.youtube.com/embed/F7Jp0GpoK2I">
-                <img src="https://img.youtube.com/vi/F7Jp0GpoK2I/hqdefault.jpg" alt="Frações" />
-                <p>Frações</p>
-            </div>
-            <div class="video-thumb" data-video="https://www.youtube.com/embed/MjV6QAQJ8dY">
-                <img src="https://img.youtube.com/vi/MjV6QAQJ8dY/hqdefault.jpg" alt="Potenciação e radiciação" />
-                <p>Potenciação e Radiciação</p>
-            </div>
-        </div>
-    </section>
 </main>
 
 <script>
-    // Clique na logo → vai para page.html
-    document.getElementById("logo").addEventListener("click", () => {
-        window.location.href = "page.html";
-    });
+    // URLS importantes (certifique-se que estão corretas)
+    const USER_DATA_API = 'api/user_data.php';
+    const QUIZ_PAGE = 'questoese.html';
+    const LOGIN_PAGE = 'login.html'; // Altere se o nome do seu login/cadastro for diferente
+    
+    // Função para carregar dinamicamente o status do usuário e o CTA
+    document.addEventListener("DOMContentLoaded", () => {
+        const logo = document.getElementById("logo");
+        const statusContainer = document.getElementById("user-status-container");
+        const ctaSection = document.getElementById("call-to-action");
 
-    // Troca do vídeo principal
-    const mainVideo = document.getElementById('main-video');
-    const videoThumbs = document.querySelectorAll('.video-thumb');
-
-    videoThumbs.forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            const videoUrl = thumb.getAttribute('data-video');
-            mainVideo.src = videoUrl;
-            videoThumbs.forEach(t => t.classList.remove('selected'));
-            thumb.classList.add('selected');
+        // Clique na logo → volta para a página principal
+        logo.addEventListener("click", () => {
+            window.location.href = "study.html"; // Redireciona para esta página
         });
+        
+        // 1. Busca os dados de sessão no PHP
+        fetch(USER_DATA_API)
+            .then(response => response.json())
+            .then(data => {
+                let statusHTML = '';
+                let ctaHTML = '';
+
+                if (data.logged_in) {
+                    // --- USUÁRIO LOGADO ---
+                    const displayName = data.display_name || 'Usuário';
+                    
+                    // Status no Header
+                    statusHTML = `
+                        <span>Olá, <b>${displayName}</b>!</span>
+                        <button onclick="location.href='logout.php'">Sair</button>
+                    `;
+                    
+                    // CTA Principal: Jogar
+                    ctaHTML = `
+                        <p>Você está pronto para testar seus conhecimentos e subir no Ranking StudyFlix?</p>
+                        <button onclick="location.href='${QUIZ_PAGE}'" class="cta-button">
+                            🎮 Iniciar o Quiz Agora!
+                        </button>
+                    `;
+                } else {
+                    // --- VISITANTE / NÃO LOGADO ---
+                    
+                    // Status no Header
+                    statusHTML = `
+                        <span>Você é um Visitante.</span>
+                        <button onclick="location.href='${LOGIN_PAGE}'">Login/Cadastro</button>
+                    `;
+                    
+                    // CTA Principal: Fazer Login
+                    ctaHTML = `
+                        <p>Para salvar seu progresso, competir com outros usuários e ter acesso total, faça login agora!</p>
+                        <button onclick="location.href='${LOGIN_PAGE}'" class="cta-button login-required">
+                            🔑 Fazer Login e Jogar
+                        </button>
+                    `;
+                }
+
+                // Aplica o HTML gerado
+                statusContainer.innerHTML = statusHTML;
+                ctaSection.innerHTML = ctaHTML;
+            })
+            .catch(error => {
+                console.error('Erro ao carregar status do usuário:', error);
+                statusContainer.innerHTML = '<span>Erro ao carregar dados.</span>';
+                ctaSection.innerHTML = '<p>Não foi possível conectar ao servidor. Tente novamente mais tarde.</p>';
+            });
     });
 </script>
 
