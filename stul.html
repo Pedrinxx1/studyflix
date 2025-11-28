@@ -1,239 +1,93 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>StudyFlix - Plataforma de Estudos</title>
+    <title>Studyflix - Assista ao Vídeo Explicativo</title>
+    <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
     <style>
         body {
             margin: 0;
-            background-color: #141414;
+            padding: 0;
+            background-color: #000;
             color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             font-family: Arial, sans-serif;
+            flex-direction: column;
         }
 
-        header {
-            background: linear-gradient(to bottom, #e44aff5d, transparent);
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            height: 60px;
+        /* Container do Vídeo 16:9 */
+        .video-wrapper {
+            width: 90%;
+            max-width: 1000px; /* Limite de tamanho */
+            aspect-ratio: 16 / 9; /* Relação de aspecto moderna */
+            position: relative;
+            background: #141414;
+            box-shadow: 0 0 30px rgba(155, 89, 182, 0.8);
         }
 
-        #logo {
-            padding-top: 15px;
-            height: 100px;
-            width: 100px;
-            cursor: pointer;
-        }
-
-        main {
-            padding: 20px;
-            max-width: 900px;
-            margin: auto;
-        }
-
-        section {
-            margin-bottom: 40px;
-        }
-
-        h2 {
-            border-bottom: 2px solid #e44aff5d;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-        }
-
-        #sinopse p {
-            font-size: 18px;
-            line-height: 1.5;
-        }
-
-        #materia {
-            background-color: #222;
-            padding: 15px;
-            border-radius: 6px;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        #materia img {
-            max-width: 300px;
+        .video-wrapper video {
             width: 100%;
-            border-radius: 6px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        #materia-content {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        #materia h3 {
-            margin-top: 0;
-            color: #e44aff;
-        }
-
-        #materia p {
-            font-size: 16px;
-            line-height: 1.4;
-        }
-
-        #player-section {
-            background-color: #222;
-            border-radius: 8px;
-            padding: 15px;
-        }
-
-        #main-video {
-            width: 100%;
-            height: 400px;
-            border-radius: 8px;
-            background-color: black;
-        }
-
-        #video-list {
-            margin-top: 15px;
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-
-        #video-list::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        #video-list::-webkit-scrollbar-thumb {
-            background-color: #e44aff5d;
-            border-radius: 4px;
-        }
-
-        .video-thumb {
-            flex: 0 0 160px;
-            cursor: pointer;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 2px solid transparent;
-            transition: border-color 0.3s;
-        }
-
-        .video-thumb.selected {
-            border-color: #e44aff;
-        }
-
-        .video-thumb img {
-            width: 100%;
-            height: 90px;
-            object-fit: cover;
+            height: 100%;
             display: block;
         }
 
-        .video-thumb p {
-            margin: 5px 0 0 5px;
-            font-size: 14px;
-            color: #ccc;
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(155, 89, 182, 0.9); /* Roxo com transparência */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.3s;
         }
 
+        .back-button:hover {
+            background-color: #8e44ad;
+        }
+        
         @media (max-width: 600px) {
-            #materia {
-                flex-direction: column;
-            }
-
-            #main-video {
-                height: 220px;
-            }
-
-            #video-list {
-                gap: 10px;
-            }
-
-            .video-thumb {
-                flex: 0 0 120px;
-            }
-
-            .video-thumb img {
-                height: 70px;
-            }
-
-            .arv {
-                font-size: 80px;
+            .back-button {
+                padding: 8px 15px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <img id="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo StudyFlix" />
-</header>
+    <div class="video-wrapper">
+        <button class="back-button" onclick="window.history.back()">
+            ← Voltar para a Página Principal
+        </button>
+        <video id="main-video-player" controls autoplay preload="auto">
+            <source src="lv_0_20251121000112.mp4" type="video/mp4">
+            Seu navegador não suporta a tag de vídeo.
+        </video>
+    </div>
 
-<main>
-    <section id="sinopse">
-        <h2 class="arv">Sobre o StudyFlix</h2>
-        <p>
-            O StudyFlix é uma plataforma online inspirada na Netflix, feita para organizar e facilitar o estudo. Aqui você encontra resumos, videoaulas e explicações.
-        </p>
-    </section>
-
-    <section id="materia">
-        <img src="https://conhecimentocientifico.r7.com/wp-content/uploads/2020/04/matematica-o-que-e-conceito-historia-e-importancia.jpg.webp" alt="Imagem ilustrativa de matemática" />
-        <div id="materia-content">
-            <h2>Matéria em Destaque</h2>
-            <h3>Matemática Básica</h3>
-            <p>
-                Nesta seção, você aprende operações fundamentais, frações, potenciação, radiciação e muito mais. Ideal para reforçar sua base matemática.
-            </p>
-        </div>
-    </section>
-
-    <section id="player-section">
-        <h2>Assista às Videoaulas</h2>
-        <!-- Agora o principal é o explicativo -->
-        <iframe id="main-video" src="https://www.youtube.com/embed/Q5g0o6MUpn8" title="Explicação do Site" allowfullscreen></iframe>
-
-        <div id="video-list">
-            <div class="video-thumb selected" data-video="https://www.youtube.com/embed/Q5g0o6MUpn8">
-                <img src="https://img.youtube.com/vi/Q5g0o6MUpn8/hqdefault.jpg" alt="Explicação do site" />
-                <p>Explicação do Site</p>
-            </div>
-            <div class="video-thumb" data-video="https://www.youtube.com/embed/_HEnohs6yYw">
-                <img src="https://img.youtube.com/vi/_HEnohs6yYw/hqdefault.jpg" alt="Operações básicas" />
-                <p>Operações Básicas</p>
-            </div>
-            <div class="video-thumb" data-video="https://www.youtube.com/embed/F7Jp0GpoK2I">
-                <img src="https://img.youtube.com/vi/F7Jp0GpoK2I/hqdefault.jpg" alt="Frações" />
-                <p>Frações</p>
-            </div>
-            <div class="video-thumb" data-video="https://www.youtube.com/embed/MjV6QAQJ8dY">
-                <img src="https://img.youtube.com/vi/MjV6QAQJ8dY/hqdefault.jpg" alt="Potenciação e radiciação" />
-                <p>Potenciação e Radiciação</p>
-            </div>
-        </div>
-    </section>
-</main>
-
-<script>
-    // Clique na logo → vai para page.html
-    document.getElementById("logo").addEventListener("click", () => {
-        window.location.href = "page.html";
-    });
-
-    // Troca do vídeo principal
-    const mainVideo = document.getElementById('main-video');
-    const videoThumbs = document.querySelectorAll('.video-thumb');
-
-    videoThumbs.forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            const videoUrl = thumb.getAttribute('data-video');
-            mainVideo.src = videoUrl;
-            videoThumbs.forEach(t => t.classList.remove('selected'));
-            thumb.classList.add('selected');
+    <script>
+        // Oculta o botão de voltar quando o vídeo estiver em tela cheia (opcional)
+        const video = document.getElementById('main-video-player');
+        const backButton = document.querySelector('.back-button');
+        
+        video.addEventListener('fullscreenchange', function() {
+            if (document.fullscreenElement) {
+                backButton.style.display = 'none';
+            } else {
+                backButton.style.display = 'block';
+            }
         });
-    });
-</script>
+    </script>
 
 </body>
 </html>
