@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>StudyFlix - Plataforma de Estudos</title>
+    <title>StudyFlix - Painel de Recursos</title>
     <style>
         body {
             margin: 0;
@@ -29,37 +29,31 @@
             flex-shrink: 0;
         }
         
-        /* Estilo para o Status do Usuário no Header */
-        #user-status-container {
+        /* Estilo para a Barra de Navegação/Status */
+        #nav-status {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             font-size: 16px;
         }
         
-        #user-status-container span {
-            color: #ccc;
-        }
-
-        #user-status-container b {
-            color: #e44aff; /* Cor de destaque para o nome */
-        }
-
-        #user-status-container button {
-            background-color: #e44aff;
-            color: #141414;
-            border: none;
+        #nav-status a {
+            color: #fff;
+            text-decoration: none;
             padding: 8px 15px;
             border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
             transition: background-color 0.3s;
         }
-
-        #user-status-container button:hover {
-            background-color: #d130e6;
+        
+        #nav-status a:hover {
+            background-color: #333;
         }
-        /* Fim do Estilo do Status */
+        
+        #nav-status .highlight {
+            background-color: #e44aff;
+            color: #141414;
+            font-weight: bold;
+        }
 
         main {
             padding: 20px;
@@ -68,7 +62,10 @@
         }
 
         section {
-            margin-bottom: 40px;
+            background-color: #222;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
         }
 
         h2 {
@@ -78,40 +75,19 @@
             color: #e44aff;
         }
 
-        #sinopse p {
-            font-size: 18px;
-            line-height: 1.5;
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
         
-        /* Estilo para o CTA (Call to Action) */
-        #call-to-action {
-            background-color: #333;
-            border: 1px solid #e44aff;
-            padding: 30px;
-            border-radius: 8px;
-            text-align: center;
+        ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
         }
-
-        #call-to-action p {
-            font-size: 20px;
-            margin-bottom: 25px;
-        }
-
-        .cta-button {
-            background-color: #e44aff;
-            color: #141414;
-            border: none;
-            padding: 15px 30px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .cta-button:hover {
-            background-color: #d130e6;
-            transform: scale(1.05);
+        
+        ul li {
+            margin-bottom: 10px;
         }
 
         @media (max-width: 600px) {
@@ -120,8 +96,10 @@
                 height: auto;
                 padding-bottom: 15px;
             }
-            #user-status-container {
+            #nav-status {
                 margin-top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
         }
     </style>
@@ -130,106 +108,86 @@
 
 <header>
     <img id="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo StudyFlix" />
-    <div id="user-status-container">
-        <span>Carregando status...</span>
-    </div>
+    
+    <nav id="nav-status">
+        <a href="study.html" class="highlight">Início</a>
+        <a href="questoese.html">Iniciar Quiz</a>
+        <a href="logout.php">Sair</a>
+    </nav>
 </header>
 
 <main>
-    <section id="sinopse">
-        <h2 class="arv">Sobre o StudyFlix</h2>
+    <section id="welcome-message">
+        <h2>👋 Bem-vindo(a) ao StudyFlix!</h2>
         <p>
-            O **StudyFlix** é sua plataforma de estudos online, organizada como um serviço de streaming. Nosso objetivo é facilitar o aprendizado com um conteúdo estruturado, que inclui resumos e, o mais importante, **Quizzes Competitivos**.
+            Esta é a sua central de informações. Aqui você pode entender a estrutura da plataforma e como aproveitar ao máximo os recursos disponíveis.
+        </p>
+    </section>
+
+    <section id="sobre-plataforma">
+        <h2>📚 Sobre a Plataforma</h2>
+        <p>
+            O StudyFlix foi desenvolvido para tornar o aprendizado mais dinâmico e competitivo. Nosso conteúdo é dividido em módulos de conhecimento, cada um focando em tópicos essenciais para a sua formação.
         </p>
         <p>
-            Domine novos tópicos e teste seus conhecimentos com nosso sistema de perguntas e respostas. Quanto mais você acerta, mais alto você sobe no **Ranking Nacional**, competindo com outros estudantes!
+            Nossa missão é simples: **Transformar seu estudo em uma experiência de streaming**, onde o acesso à informação é rápido e o progresso é recompensado.
         </p>
-        
-        <h2>Recursos em Destaque</h2>
+    </section>
+    
+    <section id="recursos">
+        <h2>✨ Recursos Principais</h2>
         <p>
-            Navegue pelas áreas de conhecimento, valide seu aprendizado no modo Quiz. O StudyFlix transforma seu tempo de estudo em uma jornada divertida e competitiva.
+            Como um usuário logado, você tem acesso aos seguintes recursos integrados:
         </p>
         <ul>
-            <li>**Conteúdo Curado:** Focado em temas essenciais.</li>
-            <li>**Sistema de Ranking:** Compita com outros usuários e veja seu nome no topo.</li>
-            <li>**Acesso Exclusivo:** Pontuação e ranking garantidos apenas para usuários logados.</li>
+            <li>
+                <strong>Módulos de Estudo:</strong> Conteúdo organizado por temas, como História, Matemática, Ciências e Tecnologia.
+            </li>
+            <li>
+                <strong>Sistema de Quizzes Competitivos:</strong> Teste seu conhecimento em sessões rápidas de 10 perguntas. Sua pontuação é registrada **imediatamente** a cada resposta correta.
+            </li>
+            <li>
+                <strong>Ranking Global:</strong> Acompanhe sua performance em tempo real. Sua pontuação é somada e seu nome de usuário (ou nome completo) aparece no topo dos melhores.
+            </li>
+            <li>
+                <strong>Acompanhamento de Desempenho:</strong> Suas tentativas totais e acertos são armazenados, permitindo que você acompanhe sua evolução contínua.
+            </li>
         </ul>
     </section>
     
-    <section id="call-to-action">
-        <p>Aguarde...</p>
+    <section id="como-funciona">
+        <h2>▶️ Como Usar o StudyFlix</h2>
+        <ol>
+            <li>
+                <strong>Acesse o Quiz:</strong> Clique em 'Iniciar Quiz' no menu superior.
+            </li>
+            <li>
+                <strong>Escolha a Área:</strong> Selecione o módulo de conhecimento que deseja testar (ex: Natureza, História).
+            </li>
+            <li>
+                <strong>Responda:</strong> Complete as 10 questões da sessão.
+            </li>
+            <li>
+                <strong>Pontuação:</strong> A cada acerto, sua pontuação no ranking é atualizada. Você não precisa fazer nada, o sistema salva automaticamente!
+            </li>
+            <li>
+                <strong>Verifique o Ranking:</strong> Acompanhe o ranking na aba de pontuações para ver o seu progresso e o dos demais usuários.
+            </li>
+        </ol>
     </section>
 
 </main>
 
 <script>
-    // URLS importantes (certifique-se que estão corretas)
-    const USER_DATA_API = 'api/user_data.php';
-    const QUIZ_PAGE = 'questoese.html';
-    const LOGIN_PAGE = 'login.html'; // Altere se o nome do seu login/cadastro for diferente
+    // Clique na logo → redireciona para esta mesma página, o painel principal
+    document.getElementById("logo").addEventListener("click", () => {
+        window.location.href = "study.html";
+    });
     
-    // Função para carregar dinamicamente o status do usuário e o CTA
-    document.addEventListener("DOMContentLoaded", () => {
-        const logo = document.getElementById("logo");
-        const statusContainer = document.getElementById("user-status-container");
-        const ctaSection = document.getElementById("call-to-action");
-
-        // Clique na logo → volta para a página principal
-        logo.addEventListener("click", () => {
-            window.location.href = "study.html"; // Redireciona para esta página
-        });
-        
-        // 1. Busca os dados de sessão no PHP
-        fetch(USER_DATA_API)
-            .then(response => response.json())
-            .then(data => {
-                let statusHTML = '';
-                let ctaHTML = '';
-
-                if (data.logged_in) {
-                    // --- USUÁRIO LOGADO ---
-                    const displayName = data.display_name || 'Usuário';
-                    
-                    // Status no Header
-                    statusHTML = `
-                        <span>Olá, <b>${displayName}</b>!</span>
-                        <button onclick="location.href='logout.php'">Sair</button>
-                    `;
-                    
-                    // CTA Principal: Jogar
-                    ctaHTML = `
-                        <p>Você está pronto para testar seus conhecimentos e subir no Ranking StudyFlix?</p>
-                        <button onclick="location.href='${QUIZ_PAGE}'" class="cta-button">
-                            🎮 Iniciar o Quiz Agora!
-                        </button>
-                    `;
-                } else {
-                    // --- VISITANTE / NÃO LOGADO ---
-                    
-                    // Status no Header
-                    statusHTML = `
-                        <span>Você é um Visitante.</span>
-                        <button onclick="location.href='${LOGIN_PAGE}'">Login/Cadastro</button>
-                    `;
-                    
-                    // CTA Principal: Fazer Login
-                    ctaHTML = `
-                        <p>Para salvar seu progresso, competir com outros usuários e ter acesso total, faça login agora!</p>
-                        <button onclick="location.href='${LOGIN_PAGE}'" class="cta-button login-required">
-                            🔑 Fazer Login e Jogar
-                        </button>
-                    `;
-                }
-
-                // Aplica o HTML gerado
-                statusContainer.innerHTML = statusHTML;
-                ctaSection.innerHTML = ctaHTML;
-            })
-            .catch(error => {
-                console.error('Erro ao carregar status do usuário:', error);
-                statusContainer.innerHTML = '<span>Erro ao carregar dados.</span>';
-                ctaSection.innerHTML = '<p>Não foi possível conectar ao servidor. Tente novamente mais tarde.</p>';
-            });
+    // Simples JS para garantir que o link "Iniciar Quiz" funcione
+    document.querySelector('a[href="questoese.html"]').addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "questoese.html";
     });
 </script>
 
