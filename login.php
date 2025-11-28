@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json');
 
-// LINHA CORRIGIDA: Inclui o arquivo dentro da pasta 'api'
+// --- PONTO CORRIGIDO: O caminho para o db_config.php ---
 include 'api/db_config.php'; 
 // ----------------------------------------------------
 
@@ -16,12 +16,14 @@ if (empty($email) || empty($senha)) {
 }
 
 try {
-    // Busca o usuário pelo email
+    // Tenta usar $conn, se não existir, usa $pdo (adaptação para o db_config)
+    $db = isset($conn) ? $conn : (isset($pdo) ? $pdo : null);
+    
+    if (!$db) {
+        throw new Exception("Falha na conexão: Variável \$conn ou \$pdo não definida em db_config.php.");
+    }
+    
     $sql = "SELECT * FROM usuarios WHERE email = :email LIMIT 1";
-    
-    // Use $conn se seu db_config.php usa $conn, ou $pdo se usa $pdo
-    $db = isset($conn) ? $conn : $pdo; 
-    
     $stmt = $db->prepare($sql);
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -29,7 +31,7 @@ try {
     // Verifica senha
     if ($user && password_verify($senha, $user['senha'])) {
         
-        // SALVA OS DADOS DO USUÁRIO NA SESSÃO
+        // --- SALVANDO A SESSÃO DO USUÁRIO ---
         $_SESSION['user_id'] = $user['email']; 
         $_SESSION['nome_completo'] = $user['nome']; 
         

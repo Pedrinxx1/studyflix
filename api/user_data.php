@@ -1,17 +1,17 @@
 <?php
 // api/user_data.php
-session_start(); // <--- OBRIGATÓRIO PARA LER A SESSÃO
+session_start();
 header('Content-Type: application/json');
 
+// Verifica se os dados salvos pelo login.php existem
 if (isset($_SESSION['user_id']) && isset($_SESSION['nome_completo'])) {
-    // Se a sessão existe, retorna os dados reais
     echo json_encode([
         'logged_in' => true,
-        'username' => $_SESSION['user_id'],      // Email
-        'display_name' => $_SESSION['nome_completo'] // Nome Real
+        'username' => $_SESSION['user_id'],      // Email (usado como ID único)
+        'display_name' => $_SESSION['nome_completo'] // Nome Real (usado para exibir no ranking)
     ]);
 } else {
-    // Se não, retorna falso
+    // Modo Convidado
     echo json_encode([
         'logged_in' => false,
         'username' => null,
