@@ -204,9 +204,10 @@
       notificacao.textContent = '';
       notificacao.className = '';
 
+      // Validação de senhas no front-end
       if (senha !== confirmarSenha) {
         notificacao.textContent = 'As senhas não coincidem.';
-        notificacao.className = 'notificacao erro';
+        notificacao.className = 'erro';
         notificacao.style.display = 'block';
         return;
       }
@@ -216,38 +217,47 @@
       document.getElementById('btnCadastro').disabled = true;
       document.getElementById('btnCadastro').textContent = 'Enviando...';
 
-      fetch('cadastro.php', {
+      // 🚨 CORREÇÃO DE CAMINHO: Aponta para a API
+      fetch('api/cadastro.php', {
         method: 'POST',
         body: formData
       })
       .then(response => response.text())
+      // 🚨 MELHORIA: Trata a resposta como JSON
       .then(data => {
         document.getElementById('btnCadastro').disabled = false;
         document.getElementById('btnCadastro').textContent = 'Cadastrar';
-        notificacao.style.display = 'block';
+        
+        let responseJson;
+        try {
+            responseJson = JSON.parse(data);
+        } catch (e) {
+            // Se o JSON falhar, exibe a resposta bruta (pode ser um erro PHP)
+            notificacao.style.display = 'block';
+            notificacao.textContent = '⚠️ Erro inesperado. Resposta do servidor: ' + data.substring(0, 50) + '...';
+            notificacao.className = 'erro';
+            return;
+        }
 
-        if (data.includes('sucesso')) {
-          notificacao.textContent = '✅ Cadastro realizado com sucesso!';
-          notificacao.className = 'sucesso';
-          setTimeout(() => {
-            window.location.href = 'page.html';
-          }, 1200);
-        } else if (
-          data.toLowerCase().includes('email') &&
-          (data.toLowerCase().includes('existe') || data.toLowerCase().includes('cadastrado'))
-        ) {
-          notificacao.textContent = 'Este e-mail já está cadastrado. Use outro ou entre pelo login.';
-          notificacao.className = 'erro';
+        notificacao.style.display = 'block';
+        
+        if (responseJson.success) {
+            notificacao.textContent = '✅ Cadastro realizado com sucesso!';
+            notificacao.className = 'sucesso';
+            setTimeout(() => {
+              window.location.href = 'page.html';
+            }, 1200);
         } else {
-          notificacao.textContent = data;
-          notificacao.className = 'erro';
+            // Exibe a mensagem de erro fornecida pelo PHP (incluindo email já cadastrado)
+            notificacao.textContent = responseJson.message || 'Erro desconhecido no cadastro.';
+            notificacao.className = 'erro';
         }
       })
       .catch(() => {
         document.getElementById('btnCadastro').disabled = false;
         document.getElementById('btnCadastro').textContent = 'Cadastrar';
         notificacao.style.display = 'block';
-        notificacao.textContent = 'Erro no servidor. Tente novamente mais tarde.';
+        notificacao.textContent = '⚠️ Erro de rede ou servidor. Tente novamente mais tarde.';
         notificacao.className = 'erro';
       });
     });

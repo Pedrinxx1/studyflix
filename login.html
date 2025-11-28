@@ -232,7 +232,9 @@
       notificacao.style.display = "none";
       notificacao.textContent = "";
       notificacao.className = "";
-      fetch("login.php", {
+      
+      // 🚨 CORREÇÃO: O caminho foi ajustado de "login.php" para "api/login.php"
+      fetch("api/login.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "email=" + encodeURIComponent(email) + "&senha=" + encodeURIComponent(senha)
@@ -241,25 +243,42 @@
       .then(data => {
         btnLogin.disabled = false;
         btnLogin.textContent = "Entrar";
-        if (data.includes("sucesso")) {
+        
+        // Melhoria: Usar JSON.parse para tratar a resposta do PHP de forma correta
+        let responseJson;
+        try {
+            responseJson = JSON.parse(data);
+        } catch (e) {
+            // Se o JSON falhar (por exemplo, devido a um erro PHP ou Warning)
+            notificacao.style.display = "block";
+            notificacao.textContent = "⚠️ Erro inesperado. Resposta do servidor: " + data.substring(0, 50) + "...";
+            notificacao.className = "erro";
+            return;
+        }
+
+        if (responseJson.success) {
           notificacao.style.display = "block";
           notificacao.textContent = "✅ Login realizado com sucesso!";
           notificacao.className = "sucesso";
-          setTimeout(() => { window.location.href = "page.html"; }, 1200);
+          // Uso de responseJson.redirect se definido no PHP
+          setTimeout(() => { window.location.href = responseJson.redirect || "page.html"; }, 1200); 
         } else {
           notificacao.style.display = "block";
-          notificacao.textContent = data;
+          // Exibe a mensagem de erro fornecida pelo PHP
+          notificacao.textContent = responseJson.message || "Erro desconhecido no login.";
           notificacao.className = "erro";
         }
       })
-      .catch(() => {
+      .catch((error) => {
         btnLogin.disabled = false;
         btnLogin.textContent = "Entrar";
         notificacao.style.display = "block";
-        notificacao.textContent = "⚠️ Erro no servidor. Tente novamente mais tarde.";
+        notificacao.textContent = `⚠️ Erro de rede ou servidor: ${error.message}. Tente novamente mais tarde.`;
         notificacao.className = "erro";
       });
     }
+    
+    // Código para mostrar/ocultar senha (sem alterações)
     const senhaInput = document.getElementById('senha');
     const toggleSenha = document.getElementById('toggleSenha');
     let mostrando = false;
