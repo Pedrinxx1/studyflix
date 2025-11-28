@@ -18,12 +18,13 @@ if (empty($email) || empty($senha)) {
 }
 
 try {
-    // Linha 21: Garantindo que a variável de conexão é usada. Limpa e correta.
+    // --- GARANTE QUE A VARIÁVEL DE CONEXÃO É USADA ---
     $db = isset($conn) ? $conn : (isset($pdo) ? $pdo : null);
     
     if (!$db) {
         throw new Exception("Falha na conexão: Variável de conexão (\$conn ou \$pdo) não encontrada.");
     }
+    // -----------------------------------------------------
 
     // Seleciona apenas as colunas necessárias para o login e sessão
     $sql = "SELECT email, nome, senha FROM usuarios WHERE email = :email LIMIT 1"; 
@@ -35,7 +36,7 @@ try {
     if ($user && password_verify($senha, $user['senha'])) {
         
         // SESSÕES ESSENCIAIS PARA O RANKING
-        $_SESSION['user_id'] = $user['email'];    // O EMAIL (ID ÚNICO)
+        $_SESSION['user_id'] = $user['email'];      // O EMAIL (ID ÚNICO)
         $_SESSION['nome_completo'] = $user['nome']; // O NOME COMPLETO
 
         echo json_encode(['success' => true, 'message' => 'Login realizado!', 'redirect' => 'questoes.html']);
