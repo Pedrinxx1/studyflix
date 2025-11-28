@@ -1,15 +1,13 @@
 <?php
-// api/login.php
+// api/login.php - CÓDIGO FINAL E SINCRONIZADO
 session_start();
 header('Content-Type: application/json');
 
-// O include está correto, assumindo que db_config.php está no mesmo diretório (api/)
 include 'db_config.php'; 
 
 $email = $_POST['email'] ?? '';
 $senha = $_POST['senha'] ?? '';
 
-// Adiciona limpeza de e-mail (Segurança)
 $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
 if (empty($email) || empty($senha)) {
@@ -18,15 +16,14 @@ if (empty($email) || empty($senha)) {
 }
 
 try {
-    // --- GARANTE QUE A VARIÁVEL DE CONEXÃO É USADA ---
-    $db = isset($conn) ? $conn : (isset($pdo) ? $pdo : null);
+    // Usa a conexão PDO ($pdo) do db_config.php
+    $db = $pdo ?? null; 
     
     if (!$db) {
-        throw new Exception("Falha na conexão: Variável de conexão (\$conn ou \$pdo) não encontrada.");
+        throw new Exception("Falha na conexão: Variável \$pdo não encontrada.");
     }
-    // -----------------------------------------------------
 
-    // Seleciona apenas as colunas necessárias para o login e sessão
+    // Tabela: usuarios (ajustada para o seu código)
     $sql = "SELECT email, nome, senha FROM usuarios WHERE email = :email LIMIT 1"; 
     $stmt = $db->prepare($sql);
     $stmt->execute([':email' => $email]);
@@ -35,11 +32,11 @@ try {
     // Verifica se o usuário existe E se a senha é válida
     if ($user && password_verify($senha, $user['senha'])) {
         
-        // SESSÕES ESSENCIAIS PARA O RANKING
-        $_SESSION['user_id'] = $user['email'];      // O EMAIL (ID ÚNICO)
-        $_SESSION['nome_completo'] = $user['nome']; // O NOME COMPLETO
+        // 🚨 CRÍTICO: SINCRONIZAÇÃO DA SESSÃO
+        $_SESSION['user_email'] = $user['email'];    // Chave lida pelo user_data.php
+        $_SESSION['user_display_name'] = $user['nome']; // Nome para exibição
 
-        // CORREÇÃO AQUI: Garante que o redirecionamento seja apenas 'page.html'
+        // ✅ REDIRECIONAMENTO CORRETO: Manda para a página principal
         echo json_encode(['success' => true, 'message' => 'Login realizado!', 'redirect' => 'page.html']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Email ou senha incorretos.']);
