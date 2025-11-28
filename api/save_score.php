@@ -28,7 +28,7 @@ $username = trim($_POST['username']);
 $correct = (int)$_POST['correct'];
 $attempted = (int)$_POST['attempted'];
 $display_name = trim($_POST['display_name']); 
-$last_session_date = date('Y-m-d H:i:s'); 
+// $last_session_date = date('Y-m-d H:i:s'); // Removido: A coluna não existe ou tem o case errado
 
 if ($attempted === 0) {
     echo json_encode(['success' => true, 'message' => 'Nenhuma tentativa registrada, pontuação não salva.']);
@@ -37,27 +37,28 @@ if ($attempted === 0) {
 
 try {
     // SINTAXE POSTGRESQL (ON CONFLICT DO UPDATE)
-    $sql = "INSERT INTO user_scores (username, display_name, total_correct, total_attempted, last_session_date) 
-            VALUES (:username, :display_name, :correct, :attempted, :last_session_date)
+    // REMOVIDO: 'last_session_date' para evitar o erro 'Undefined column'
+    $sql = "INSERT INTO user_scores (username, display_name, total_correct, total_attempted) 
+            VALUES (:username, :display_name, :correct, :attempted)
             ON CONFLICT (username) DO UPDATE 
             SET total_correct = user_scores.total_correct + :correct_update, 
                 total_attempted = user_scores.total_attempted + :attempted_update,
-                display_name = :display_name_update, 
-                last_session_date = :last_session_date_update";
+                display_name = :display_name_update";
 
     $stmt = $db->prepare($sql);
     
-    // Binds
+    // Binds para INSERT
     $stmt->bindParam(':username', $username);
     $stmt->bindParam(':display_name', $display_name);
     $stmt->bindParam(':correct', $correct);
     $stmt->bindParam(':attempted', $attempted);
-    $stmt->bindParam(':last_session_date', $last_session_date);
+    // Bind de :last_session_date removido
 
+    // Binds para UPDATE
     $stmt->bindParam(':correct_update', $correct);
     $stmt->bindParam(':attempted_update', $attempted);
     $stmt->bindParam(':display_name_update', $display_name);
-    $stmt->bindParam(':last_session_date_update', $last_session_date); 
+    // Bind de :last_session_date_update removido
     
     $stmt->execute();
 
