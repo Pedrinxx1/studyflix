@@ -1,11 +1,10 @@
 <?php
-// login.php
+// api/login.php
 session_start();
 header('Content-Type: application/json');
 
-// CORREÇÃO AQUI: Assumindo que o arquivo de configuração está na subpasta 'api/'
-// Se estiver diretamente na pasta raiz (junto com login.php), use apenas include 'db_config.php';
-include 'api/db_config.php'; 
+// CORREÇÃO: O caminho foi ajustado para procurar db_config.php no mesmo diretório (api/)
+include 'db_config.php'; 
 
 $email = $_POST['email'] ?? '';
 $senha = $_POST['senha'] ?? '';
@@ -23,7 +22,6 @@ try {
     $db = isset($conn) ? $conn : (isset($pdo) ? $pdo : null);
     
     if (!$db) {
-        // Esta linha agora só será acionada se o db_config.php for incluído, mas não definir a conexão.
         throw new Exception("Falha na conexão: Variável de conexão (\$conn ou \$pdo) não encontrada.");
     }
     // -----------------------------------------------------
