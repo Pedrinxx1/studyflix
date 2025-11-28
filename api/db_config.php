@@ -24,13 +24,37 @@ $dbname = ltrim($url_parts['path'], '/');
 $port = $url_parts['port'] ?? 5432; // Adiciona a porta padrão 5432, se não estiver na URL
 
 try {
-    // String de conexão DSN completa para PostgreSQL
-    $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
+    // ... dentro do bloco try no submit_answer.php (após a linha $is_correct_int = ...)
+
+$is_correct_int = $is_correct ? 1 : 0;
+
+// Usamos o ID do usuário/convidado como o valor para username e display_name (se for 'guest' será 'Visitante', senão será o ID)
+// O valor de 'user_id' é o ID bruto para a coluna 'user_id'
+$username_value = ($user_id === 'guest') ? 'Visitante' : $user_id; 
     
-    $pdo = new PDO($dsn, $user, $password);
+// 🚨 CORREÇÃO: Adicionamos a coluna 'user_id' e seu valor à query INSERT para evitar NOT NULL violation (23502)
+// A query deve ser executada apenas pelo PHP/PDO.
+$sql_upsert = "INSERT INTO user_scores (user_id, username, total_attempted, total_correct, display_name) 
+               VALUES (?, ?, 1, ?, ?)
+               ON CONFLICT (username) DO UPDATE 
+               SET total_attempted = user_scores.total_attempted + 1,
+                   total_correct = user_scores.total_correct + ?,
+                   display_name = EXCLUDED.display_name";
     
-    // Configura o PDO para lançar exceções em caso de erro (CRÍTICO para o try/catch)
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$stmt = $db->prepare($sql_upsert);
+    
+// Binds:
+$stmt->execute([
+    $user_id,             // 1. INSERT user_id (Ex: guest_1764...)
+    $username_value,      // 2. INSERT username (Ex: guest_1764... ou Visitante)
+    $is_correct_int,      // 3. INSERT total_correct
+    $username_value,      // 4. INSERT display_name 
+    $is_correct_int       // 5. UPDATE total_correct (valor a ser adicionado)
+]);
+    
+$db->commit();
+
+// ... restante do código PHP
 
 } catch (PDOException $e) {
     // Se a conexão falhar, define $pdo como null (não usa die()!)
