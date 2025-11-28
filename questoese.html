@@ -432,23 +432,25 @@
     </footer>
 
     <script>
-       document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     
-    // ⚠️ PONTO CRÍTICO DE CONFIGURAÇÃO!
+    // Configurações
     const API_BASE_URL = 'api'; 
     const QUESTION_LIMIT = 10; 
 
-    // Variáveis de Usuário e Pontuação (Serão preenchidas via loadUserData())
-    let currentUsername = "guest_" + Date.now(); // ID único temporário
+    // --- VARIÁVEIS DE USUÁRIO (CRÍTICAS PARA O RANKING) ---
+    // Começa como 'Convidado' e será preenchido pelo user_data.php
+    let currentUsername = "guest_" + Date.now(); // ID único temporário (o email ou guest_ID)
     let currentDisplayName = "Convidado"; 
-    let userId = currentUsername; 
-    let isLoggedIn = false; 
+    let isLoggedIn = false;
+    // ---
 
     // VARIÁVEIS DE PONTUAÇÃO DA SESSÃO ATUAL
     let sessionCorrectCount = 0;
     let sessionAttemptedCount = 0;
     // ---
 
+    // Elementos DOM
     const tabs = document.querySelectorAll(".tab-button");
     const tabContents = document.querySelectorAll(".tab-content");
     const startForm = document.getElementById("start-quiz-form");
@@ -470,27 +472,33 @@
     let currentArea = 'Natureza';
     let answerSubmitted = false;
 
-    // Função para carregar dados do usuário (obtém o nome completo do user_data.php)
-    async function loadUserData() {
+    // Função 1: Inicialização - Busca os dados de login no servidor
+    async function initSystem() { // Renomeado para initSystem para ser mais claro
         try {
             const url = `${API_BASE_URL}/user_data.php`;
             const response = await fetch(url);
             const data = await response.json();
 
-            if (data.is_logged_in) {
+            // CORREÇÃO CRÍTICA AQUI: Usando 'logged_in' (correto) em vez de 'is_logged_in' (seu código original)
+            if (data.logged_in) { 
                 currentUsername = data.username;
                 currentDisplayName = data.display_name;
-                userId = currentUsername;
                 isLoggedIn = true;
                 console.log(`Usuário logado: ${currentDisplayName} (${currentUsername})`);
+            } else {
+                 // Mantém os valores 'guest_' se não estiver logado
+                 isLoggedIn = false;
+                 // As variáveis currentUsername e currentDisplayName já estão definidas como guest/Convidado no início
             }
         } catch (error) {
             console.error("Erro ao carregar dados do usuário:", error);
+            // Em caso de erro, continua como convidado
+            isLoggedIn = false;
         }
     }
     
     // ** CHAMA A FUNÇÃO DE CARREGAMENTO DE DADOS DO USUÁRIO **
-    loadUserData(); 
+    initSystem(); // Chamada padrão para iniciar o sistema
     // --------------------------------------------------------
 
     tabs.forEach(tab => {
@@ -513,14 +521,12 @@
         e.preventDefault();
         currentArea = areaSelect.value;
         
-        // Reseta e inicializa a sessão para o novo quiz
         sessionCorrectCount = 0;
         sessionAttemptedCount = 0;
         if (sessionStatus) sessionStatus.textContent = `Questão 1 de ${QUESTION_LIMIT} (${currentArea})`;
 
         quizStartContent.classList.remove("active");
         
-        // Garante que o container do quiz apareça
         const quizContainerTab = document.querySelector('.tab-button[data-tab="quiz-start"]');
         tabs.forEach(t => t.classList.remove("active"));
         quizContainerTab.classList.add('active'); 
@@ -531,7 +537,7 @@
         loadQuestion();
     });
     
-    // Função para encerrar a sessão do quiz e salvar a pontuação
+    // Função 2: Salva a pontuação no banco de dados (End Quiz)
     async function endQuizSession() {
         quizArea.style.display = 'none';
         quizLoader.style.display = 'none'; 
@@ -542,19 +548,22 @@
         if (!isLoggedIn || currentUsername.startsWith('guest_')) {
             feedbackMessage.textContent = "Faça login para salvar sua pontuação no Ranking!";
             feedbackMessage.className = 'incorrect';
-            nextQuestionBtn.textContent = 'Ver Ranking (Sem salvar)';
-            nextQuestionBtn.style.display = 'inline-flex';
-            nextQuestionBtn.onclick = () => {
-                document.querySelector('.tab-button[data-tab="ranking"]').click();
-            };
+            
+            // Adiciona o botão "Ver Ranking" para convidados
+            const btnRanking = document.createElement('button');
+            btnRanking.className = 'button';
+            btnRanking.textContent = "Ver Ranking";
+            btnRanking.onclick = () => document.querySelector('.tab-button[data-tab="ranking"]').click();
+            document.getElementById('quiz-feedback').appendChild(btnRanking); 
+            
             return;
         }
 
         // Envia os dados para o save_score.php
         try {
             const dataToSend = new URLSearchParams();
-            dataToSend.append('username', currentUsername);
-            dataToSend.append('display_name', currentDisplayName); 
+            dataToSend.append('username', currentUsername); // O EMAIL ÚNICO
+            dataToSend.append('display_name', currentDisplayName); // O NOME COMPLETO
             dataToSend.append('correct', sessionCorrectCount);
             dataToSend.append('attempted', sessionAttemptedCount);
 
@@ -566,7 +575,7 @@
 
             const result = await response.json();
             if (result.success) {
-                feedbackMessage.textContent = "Pontuação salva no Ranking!";
+                feedbackMessage.textContent = `Pontuação salva e atualizada para ${currentDisplayName}!`;
                 feedbackMessage.className = 'correct';
                 nextQuestionBtn.textContent = 'Ver Ranking';
                 nextQuestionBtn.style.display = 'inline-flex';
@@ -575,7 +584,7 @@
                 };
             } else {
                 console.error("Erro ao salvar pontuação:", result.error);
-                feedbackMessage.textContent = "Erro ao salvar pontuação no Ranking.";
+                feedbackMessage.textContent = `Erro ao salvar pontuação no Ranking: ${result.error || 'Erro desconhecido'}.`;
                 feedbackMessage.className = 'incorrect';
             }
 
@@ -588,7 +597,6 @@
 
 
     async function loadQuestion() {
-        // Verifica o limite antes de carregar
         if (sessionAttemptedCount >= QUESTION_LIMIT) {
             endQuizSession();
             return;
@@ -617,10 +625,8 @@
             currentQuestionId = data.question_id;
             questionText.textContent = data.enunciado;
 
-            // Atualiza o status
             if (sessionStatus) sessionStatus.textContent = `Questão ${sessionAttemptedCount + 1} de ${QUESTION_LIMIT} (${currentArea})`;
 
-            // Cria os botões de opção
             ['a', 'b', 'c', 'd', 'e'].forEach(optionKey => {
                 const optionText = data[`option_${optionKey}`];
                 if (optionText) {
@@ -654,14 +660,12 @@
         if (answerSubmitted) return;
         answerSubmitted = true;
         
-        // Incrementa a tentativa
         sessionAttemptedCount++;
         if (sessionStatus) sessionStatus.textContent = `Questão ${sessionAttemptedCount} de ${QUESTION_LIMIT} (${currentArea})`;
 
         document.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
 
         try {
-            // Usa JSON para enviar a resposta ao submit_answer.php
             const url = `${API_BASE_URL}/submit_answer.php`;
             const response = await fetch(url, {
                 method: 'POST',
@@ -669,7 +673,7 @@
                 body: JSON.stringify({
                     question_id: currentQuestionId,
                     answer: selectedValue,
-                    user_id: userId 
+                    // Não precisamos mais de 'user_id', pois a pontuação é salva no final com currentUsername
                 })
             });
             
@@ -683,7 +687,6 @@
                 clickedButton.classList.add('correct');
                 feedbackMessage.textContent = "✅ Você acertou!";
                 feedbackMessage.className = 'correct';
-                // Incrementa o acerto
                 sessionCorrectCount++;
             } else {
                 clickedButton.classList.add('incorrect');
@@ -696,7 +699,6 @@
 
             nextQuestionBtn.style.display = 'inline-flex';
             
-            // Verifica se é a última questão
             if (sessionAttemptedCount >= QUESTION_LIMIT) {
                 nextQuestionBtn.textContent = 'Finalizar Sessão';
                 nextQuestionBtn.onclick = endQuizSession;
@@ -718,9 +720,10 @@
         feedbackMessage.textContent = '';
         feedbackMessage.className = '';
         nextQuestionBtn.style.display = 'none';
-        nextQuestionBtn.onclick = loadQuestion; // Garante o handler padrão
+        nextQuestionBtn.onclick = loadQuestion;
     }
 
+    // Função 3: Carrega o Ranking
     async function loadRanking() {
         rankingBody.innerHTML = '';
         rankingLoader.style.display = 'block';
@@ -739,8 +742,8 @@
                 rankingBody.innerHTML = '<tr><td colspan="4">Nenhum ranking disponível. Jogue para começar!</td></tr>';
             } else {
                 data.forEach((user, index) => {
-                    // Usa o display_name (nome completo) que agora está sendo salvo
-                    const displayName = user.display_name || user.username; 
+                    // O get_ranking.php agora garante que user.display_name será o nome completo
+                    const displayName = user.display_name; 
                     rankingBody.innerHTML += `
                         <tr>
                             <td><b>${index + 1}º</b></td>
@@ -759,7 +762,7 @@
         }
     }
 });
-    </script>
+</script>
 </body>
 
 </html>

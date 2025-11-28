@@ -1,7 +1,17 @@
 <?php
+// api/save_score.php
+
 include __DIR__ . '/db_config.php'; 
 
 header('Content-Type: application/json; charset=utf-8');
+
+// Tenta obter a conexão (usando $conn ou $pdo)
+$db = isset($conn) ? $conn : (isset($pdo) ? $pdo : null);
+if (!$db) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Erro de conexão: Variável de conexão indisponível.']);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -11,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 if (!isset($_POST['username']) || !isset($_POST['correct']) || !isset($_POST['attempted']) || !isset($_POST['display_name'])) {
     http_response_code(400); 
-    // AGORA EXIGE O display_name
     echo json_encode(['error' => 'Dados incompletos. São necessários username, correct, attempted e display_name.']);
     exit;
 }
@@ -19,42 +28,50 @@ if (!isset($_POST['username']) || !isset($_POST['correct']) || !isset($_POST['at
 $username = trim($_POST['username']);
 $correct = (int)$_POST['correct'];
 $attempted = (int)$_POST['attempted'];
-$display_name = trim($_POST['display_name']); // NOVO CAMPO
+$display_name = trim($_POST['display_name']); 
+// Adiciona o timestamp para rastrear a última sessão
+$last_session_date = date('Y-m-d H:i:s'); 
+
+if ($attempted === 0) {
+    echo json_encode(['success' => true, 'message' => 'Nenhuma tentativa registrada, pontuação não salva.']);
+    exit;
+}
 
 try {
-    // 1. Tenta ATUALIZAR (UPDATE): soma a pontuação E atualiza o nome de exibição (caso o usuário mude)
-    $sql_update = "UPDATE user_scores
-                   SET total_correct = total_correct + :correct,
-                       total_attempted = total_attempted + :attempted,
-                       display_name = :display_name
-                   WHERE username = :username";
+    // A query de UPSERT nativa do PostgreSQL usando ON CONFLICT
+    // IMPORTANTE: O campo 'username' DEVE ser uma UNIQUE KEY na tabela user_scores!
+    $sql = "INSERT INTO user_scores (username, display_name, total_correct, total_attempted, last_session_date) 
+            VALUES (:username, :display_name, :correct, :attempted, :last_session_date)
+            ON CONFLICT (username) DO UPDATE 
+            SET total_correct = user_scores.total_correct + :correct_update, 
+                total_attempted = user_scores.total_attempted + :attempted_update,
+                display_name = :display_name_update, 
+                last_session_date = :last_session_date_update";
 
-    $stmt = $conn->prepare($sql_update);
+    $stmt = $db->prepare($sql);
+    
+    // Binds para a parte INSERT (primeira tentativa)
     $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':display_name', $display_name);
     $stmt->bindParam(':correct', $correct);
     $stmt->bindParam(':attempted', $attempted);
-    $stmt->bindParam(':display_name', $display_name); // BIND DO NOVO CAMPO
+    $stmt->bindParam(':last_session_date', $last_session_date);
+
+    // Binds para a parte UPDATE (se houver conflito)
+    // Os campos de atualização precisam de aliases diferentes (ex: _update)
+    $stmt->bindParam(':correct_update', $correct);
+    $stmt->bindParam(':attempted_update', $attempted);
+    $stmt->bindParam(':display_name_update', $display_name);
+    $stmt->bindParam(':last_session_date_update', $last_session_date); 
+    
     $stmt->execute();
 
-    if ($stmt->rowCount() == 0) {
-        // 2. Tenta INSERIR (INSERT): cria um novo registro com o nome de exibição
-        $sql_insert = "INSERT INTO user_scores (username, total_correct, total_attempted, display_name)
-                       VALUES (:username, :correct, :attempted, :display_name)";
-
-        $stmt = $conn->prepare($sql_insert);
-        $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':correct', $correct);
-        $stmt->bindParam(':attempted', $attempted);
-        $stmt->bindParam(':display_name', $display_name); // BIND DO NOVO CAMPO
-        $stmt->execute();
-    }
-
-    echo json_encode(['success' => true, 'message' => 'Pontuação salva/atualizada com sucesso!']);
+    echo json_encode(['success' => true, 'message' => 'Pontuação registrada/atualizada com sucesso!']);
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Erro ao salvar a pontuação: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Erro no banco de dados: ' . $e->getMessage()]);
 }
 
-$conn = null;
+$db = null; // Fecha a conexão
 ?>

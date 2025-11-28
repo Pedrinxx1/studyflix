@@ -1,9 +1,9 @@
 <?php
 // login.php
-session_start(); // <--- OBRIGATÓRIO NA PRIMEIRA LINHA
-header('Content-Type: application/json'); // Resposta sempre em JSON para o JS
+session_start();
+header('Content-Type: application/json');
 
-include 'db_config.php'; // Usa a conexão PDO do seu db_config.php
+include 'db_config.php'; 
 
 $email = $_POST['email'] ?? '';
 $senha = $_POST['senha'] ?? '';
@@ -14,19 +14,27 @@ if (empty($email) || empty($senha)) {
 }
 
 try {
+    // --- NOVO: GARANTE QUE A VARIÁVEL DE CONEXÃO É USADA ---
+    $db = isset($conn) ? $conn : (isset($pdo) ? $pdo : null);
+    
+    if (!$db) {
+        throw new Exception("Falha na conexão: Variável de conexão (\$conn ou \$pdo) não encontrada.");
+    }
+    // -----------------------------------------------------
+
     // Busca o usuário pelo email
     $sql = "SELECT * FROM usuarios WHERE email = :email LIMIT 1";
-    $stmt = $conn->prepare($sql);
+    $stmt = $db->prepare($sql); // Usa $db (variável segura) no lugar de $conn
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Verifica senha
     if ($user && password_verify($senha, $user['senha'])) {
         
-        // --- A MÁGICA ACONTECE AQUI ---
-        $_SESSION['user_id'] = $user['email']; // Email é o ID único
-        $_SESSION['nome_completo'] = $user['nome']; // Nome para o Ranking
-        // ------------------------------
+        // --- AS SESSÕES ESSENCIAIS ESTÃO AQUI E CORRETAS ---
+        $_SESSION['user_id'] = $user['email'];    // O EMAIL (ID ÚNICO)
+        $_SESSION['nome_completo'] = $user['nome']; // O NOME COMPLETO
+        // -------------------------------------------------
 
         echo json_encode(['success' => true, 'message' => 'Login realizado!']);
     } else {
@@ -35,5 +43,8 @@ try {
 
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Erro no banco: ' . $e->getMessage()]);
+} catch (Exception $e) {
+    // Captura o novo erro de conexão, caso ocorra
+    echo json_encode(['success' => false, 'message' => 'Erro fatal: ' . $e->getMessage()]);
 }
 ?>
