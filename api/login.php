@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json');
 
-// CORREÇÃO: O caminho foi ajustado para procurar db_config.php no mesmo diretório (api/)
+// O include está correto, assumindo que db_config.php está no mesmo diretório (api/)
 include 'db_config.php'; 
 
 $email = $_POST['email'] ?? '';
@@ -39,7 +39,8 @@ try {
         $_SESSION['user_id'] = $user['email'];      // O EMAIL (ID ÚNICO)
         $_SESSION['nome_completo'] = $user['nome']; // O NOME COMPLETO
 
-        echo json_encode(['success' => true, 'message' => 'Login realizado!', 'redirect' => 'questoes.html']);
+        // CORREÇÃO AQUI: Garante que o redirecionamento seja apenas 'page.html'
+        echo json_encode(['success' => true, 'message' => 'Login realizado!', 'redirect' => 'page.html']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Email ou senha incorretos.']);
     }
