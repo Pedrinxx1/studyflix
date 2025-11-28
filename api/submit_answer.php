@@ -1,13 +1,24 @@
 <?php
+// api/submit_answer.php
 header('Content-Type: application/json; charset=utf-8');
 include __DIR__ . '/db_config.php';
+
+// CRÍTICO: Garante que a variável de conexão correta ($pdo) seja usada
+$db = $pdo ?? null;
+
+if (!$db) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Erro interno: Conexão com o banco não disponível.']);
+    exit;
+}
 
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
+// A validação de dados é crucial para evitar o Erro 400
 if (!isset($data['question_id'], $data['answer'], $data['user_id'])) {
     http_response_code(400);
-    echo json_encode(['error' => 'Dados incompletos fornecidos.']);
+    echo json_encode(['error' => 'Dados incompletos: Faltando question_id, answer ou user_id.']);
     exit();
 }
 
@@ -16,18 +27,18 @@ $user_answer = $data['answer'];
 $user_id = $data['user_id']; 
 
 try {
-    $conn->beginTransaction(); // Inicia transação
+    // 1. Inicia transação
+    $db->beginTransaction(); 
 
-    // 1. Busca a resposta correta
-    $stmt = $conn->prepare("SELECT correct_option FROM questions WHERE question_id = ?");
+    // 2. Busca a resposta correta
+    $stmt = $db->prepare("SELECT correct_option FROM questions WHERE question_id = ?");
     $stmt->execute([$question_id]);
     $question_data = $stmt->fetch(PDO::FETCH_ASSOC);
-    $stmt = null; 
 
     if (!$question_data) {
         http_response_code(404);
-        echo json_encode(['error' => 'Questão não encontrada.']);
-        $conn = null;
+        echo json_encode(['error' => 'Questão não encontrada no banco de dados.']);
+        $db = null;
         exit();
     }
 
@@ -35,23 +46,30 @@ try {
     $is_correct = (strtolower($user_answer) === strtolower($correct_option));
     $is_correct_int = $is_correct ? 1 : 0;
     
-    // 2. PostgreSQL UPSERT: Garante que o usuário existe e atualiza a pontuação
+    // 3. PostgreSQL UPSERT: Garante que o usuário existe e atualiza a pontuação
+    // Usaremos 'username' como a chave de conflito, assim como no save_score.php.
     $username = ($user_id === 'guest') ? 'Visitante' : $user_id;
-
-    $sql_upsert = "INSERT INTO user_scores (user_id, username, total_attempted, total_correct) 
-                   VALUES (?, ?, 1, ?)
-                   ON CONFLICT (user_id) DO UPDATE 
+    
+    $sql_upsert = "INSERT INTO user_scores (username, total_attempted, total_correct, display_name) 
+                   VALUES (?, 1, ?, ?)
+                   ON CONFLICT (username) DO UPDATE 
                    SET total_attempted = user_scores.total_attempted + 1,
-                       total_correct = user_scores.total_correct + ?
-                   WHERE user_scores.user_id = ?"; // Necessário para evitar que a atualização afete todos os registros.
+                       total_correct = user_scores.total_correct + ?,
+                       display_name = EXCLUDED.display_name"; // Atualiza o display_name se for o caso
     
-    $stmt = $conn->prepare($sql_upsert);
-    $stmt->execute([$user_id, $username, $is_correct_int, $is_correct_int, $user_id]);
-    $stmt = null;
+    $stmt = $db->prepare($sql_upsert);
     
-    $conn->commit(); // Confirma transação
+    // Os binds agora são para: INSERT (username, 1, is_correct_int, display_name), UPDATE (is_correct_int)
+    $stmt->execute([
+        $username,           // 1. INSERT username
+        $is_correct_int,     // 2. INSERT total_correct
+        $username,           // 3. INSERT display_name (usando username como display_name inicial)
+        $is_correct_int      // 4. UPDATE total_correct (EXCLUDED.display_name pega o valor do INSERT)
+    ]);
+    
+    $db->commit(); // Confirma transação
 
-    // 3. Retorna o resultado
+    // 4. Retorna o resultado
     echo json_encode([
         'is_correct' => $is_correct,
         'correct_option' => $correct_option,
@@ -59,12 +77,12 @@ try {
     ]);
 
 } catch (PDOException $e) {
-    if ($conn->inTransaction()) {
-        $conn->rollBack(); 
+    if ($db->inTransaction()) {
+        $db->rollBack(); 
     }
     http_response_code(500);
     echo json_encode(['error' => 'Erro interno do servidor ao salvar resposta: ' . $e->getMessage()]);
 }
 
-$conn = null;
+$db = null; // Fecha a conexão
 ?>
