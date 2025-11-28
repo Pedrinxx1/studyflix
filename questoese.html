@@ -439,7 +439,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const QUESTION_LIMIT = 10; 
 
     // --- VARIÁVEIS DE USUÁRIO (CRÍTICAS PARA O RANKING) ---
-    // Começa como 'Convidado' e será preenchido pelo user_data.php
     let currentUsername = "guest_" + Date.now(); // ID único temporário (o email ou guest_ID)
     let currentDisplayName = "Convidado"; 
     let isLoggedIn = false;
@@ -473,32 +472,28 @@ document.addEventListener("DOMContentLoaded", () => {
     let answerSubmitted = false;
 
     // Função 1: Inicialização - Busca os dados de login no servidor
-    async function initSystem() { // Renomeado para initSystem para ser mais claro
+    async function initSystem() { 
         try {
             const url = `${API_BASE_URL}/user_data.php`;
             const response = await fetch(url);
             const data = await response.json();
 
-            // CORREÇÃO CRÍTICA AQUI: Usando 'logged_in' (correto) em vez de 'is_logged_in' (seu código original)
             if (data.logged_in) { 
                 currentUsername = data.username;
                 currentDisplayName = data.display_name;
                 isLoggedIn = true;
                 console.log(`Usuário logado: ${currentDisplayName} (${currentUsername})`);
             } else {
-                 // Mantém os valores 'guest_' se não estiver logado
-                 isLoggedIn = false;
-                 // As variáveis currentUsername e currentDisplayName já estão definidas como guest/Convidado no início
+                isLoggedIn = false;
             }
         } catch (error) {
             console.error("Erro ao carregar dados do usuário:", error);
-            // Em caso de erro, continua como convidado
             isLoggedIn = false;
         }
     }
     
     // ** CHAMA A FUNÇÃO DE CARREGAMENTO DE DADOS DO USUÁRIO **
-    initSystem(); // Chamada padrão para iniciar o sistema
+    initSystem(); 
     // --------------------------------------------------------
 
     tabs.forEach(tab => {
@@ -549,7 +544,6 @@ document.addEventListener("DOMContentLoaded", () => {
             feedbackMessage.textContent = "Faça login para salvar sua pontuação no Ranking!";
             feedbackMessage.className = 'incorrect';
             
-            // Adiciona o botão "Ver Ranking" para convidados
             const btnRanking = document.createElement('button');
             btnRanking.className = 'button';
             btnRanking.textContent = "Ver Ranking";
@@ -561,9 +555,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Envia os dados para o save_score.php
         try {
+            // Usando URLSearchParams para save_score.php
             const dataToSend = new URLSearchParams();
-            dataToSend.append('username', currentUsername); // O EMAIL ÚNICO
-            dataToSend.append('display_name', currentDisplayName); // O NOME COMPLETO
+            dataToSend.append('username', currentUsername);
+            dataToSend.append('display_name', currentDisplayName);
             dataToSend.append('correct', sessionCorrectCount);
             dataToSend.append('attempted', sessionAttemptedCount);
 
@@ -673,7 +668,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     question_id: currentQuestionId,
                     answer: selectedValue,
-                    // Não precisamos mais de 'user_id', pois a pontuação é salva no final com currentUsername
+                    user_id: currentUsername // 🚨 CORREÇÃO APLICADA AQUI
                 })
             });
             
@@ -742,7 +737,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 rankingBody.innerHTML = '<tr><td colspan="4">Nenhum ranking disponível. Jogue para começar!</td></tr>';
             } else {
                 data.forEach((user, index) => {
-                    // O get_ranking.php agora garante que user.display_name será o nome completo
                     const displayName = user.display_name; 
                     rankingBody.innerHTML += `
                         <tr>

@@ -12,10 +12,11 @@ if (!$db) {
     exit;
 }
 
+// Recebe dados como JSON
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
-// A validação de dados é crucial para evitar o Erro 400
+// A validação agora SUCEDERÁ, pois o JS enviará 'user_id'
 if (!isset($data['question_id'], $data['answer'], $data['user_id'])) {
     http_response_code(400);
     echo json_encode(['error' => 'Dados incompletos: Faltando question_id, answer ou user_id.']);
@@ -24,7 +25,7 @@ if (!isset($data['question_id'], $data['answer'], $data['user_id'])) {
 
 $question_id = $data['question_id'];
 $user_answer = $data['answer'];
-$user_id = $data['user_id']; 
+$user_id = $data['user_id']; // CRÍTICO: Agora recebido do JS
 
 try {
     // 1. Inicia transação
@@ -46,25 +47,26 @@ try {
     $is_correct = (strtolower($user_answer) === strtolower($correct_option));
     $is_correct_int = $is_correct ? 1 : 0;
     
-    // 3. PostgreSQL UPSERT: Garante que o usuário existe e atualiza a pontuação
-    // Usaremos 'username' como a chave de conflito, assim como no save_score.php.
+    // 3. PostgreSQL UPSERT: Atualiza a pontuação
     $username = ($user_id === 'guest') ? 'Visitante' : $user_id;
     
+    // Usamos $username como o valor para display_name (se for 'guest' será 'Visitante', senão será o ID)
+    // CRÍTICO: ON CONFLICT usa o 'username'
     $sql_upsert = "INSERT INTO user_scores (username, total_attempted, total_correct, display_name) 
                    VALUES (?, 1, ?, ?)
                    ON CONFLICT (username) DO UPDATE 
                    SET total_attempted = user_scores.total_attempted + 1,
                        total_correct = user_scores.total_correct + ?,
-                       display_name = EXCLUDED.display_name"; // Atualiza o display_name se for o caso
+                       display_name = EXCLUDED.display_name";
     
     $stmt = $db->prepare($sql_upsert);
     
-    // Os binds agora são para: INSERT (username, 1, is_correct_int, display_name), UPDATE (is_correct_int)
+    // Binds:
     $stmt->execute([
-        $username,           // 1. INSERT username
+        $username,           // 1. INSERT username (chave de conflito)
         $is_correct_int,     // 2. INSERT total_correct
         $username,           // 3. INSERT display_name (usando username como display_name inicial)
-        $is_correct_int      // 4. UPDATE total_correct (EXCLUDED.display_name pega o valor do INSERT)
+        $is_correct_int      // 4. UPDATE total_correct (valor a ser adicionado)
     ]);
     
     $db->commit(); // Confirma transação
