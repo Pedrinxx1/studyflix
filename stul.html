@@ -23,16 +23,22 @@
         .video-wrapper {
             width: 90%;
             max-width: 1000px; /* Limite de tamanho */
-            aspect-ratio: 16 / 9; /* Relação de aspecto moderna */
+            aspect-ratio: 16 / 9; /* Relação de aspecto 16:9 */
             position: relative;
             background: #141414;
             box-shadow: 0 0 30px rgba(155, 89, 182, 0.8);
+            border-radius: 8px; /* Borda para combinar com o estilo Studyflix */
+            overflow: hidden;
         }
 
-        .video-wrapper video {
+        /* Estilo para o iframe do YouTube */
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            display: block;
+            border: none;
         }
 
         .back-button {
@@ -67,27 +73,16 @@
 
     <div class="video-wrapper">
         <button class="back-button" onclick="window.history.back()">
-            ← Voltar para a Página Principal
+            ← Voltar
         </button>
-        <video id="main-video-player" controls autoplay preload="auto">
-            <source src="lv_0_20251121000112.mp4" type="video/mp4">
-            Seu navegador não suporta a tag de vídeo.
-        </video>
-    </div>
-
-    <script>
-        // Oculta o botão de voltar quando o vídeo estiver em tela cheia (opcional)
-        const video = document.getElementById('main-video-player');
-        const backButton = document.querySelector('.back-button');
         
-        video.addEventListener('fullscreenchange', function() {
-            if (document.fullscreenElement) {
-                backButton.style.display = 'none';
-            } else {
-                backButton.style.display = 'block';
-            }
-        });
-    </script>
+        <iframe 
+            src="https://www.youtube.com/embed/WL95ypH64QA?autoplay=1&mute=0&controls=1&modestbranding=1" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen 
+            title="Vídeo Explicativo Studyflix">
+        </iframe>
+    </div>
 
 </body>
 </html>
