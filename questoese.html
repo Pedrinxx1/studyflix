@@ -438,10 +438,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const API_BASE_URL = 'api'; 
     const QUESTION_LIMIT = 10; 
 
-    // --- VARIÁVEIS DE USUÁRIO (CRÍTICAS PARA O RANKING) ---
-    // 🚨 CORREÇÃO: Variável de fallback para garantir que o user_id nunca seja vazio
+    // --- VARIÁVEIS DE USUÁRIO ---
     let fallbackUsername = "guest_" + Date.now();
-    let currentUsername = fallbackUsername; // ID único temporário (o email ou guest_ID)
+    let currentUsername = fallbackUsername; 
     let currentDisplayName = "Convidado"; 
     let isLoggedIn = false;
     // ---
@@ -451,7 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let sessionAttemptedCount = 0;
     // ---
 
-    // Elementos DOM
+    // Elementos DOM (Seus elementos originais)
     const tabs = document.querySelectorAll(".tab-button");
     const tabContents = document.querySelectorAll(".tab-content");
     const startForm = document.getElementById("start-quiz-form");
@@ -478,8 +477,14 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const url = `${API_BASE_URL}/user_data.php`;
             const response = await fetch(url);
+            
+            // 🚨 CRÍTICO: Validação contra SyntaxError do PHP
+            if (!response.ok) {
+                 throw new Error(`Erro de rede (${response.status}). URL: ${url}`);
+            }
+            
             const data = await response.json();
-
+            
             if (data.logged_in) { 
                 currentUsername = data.username;
                 currentDisplayName = data.display_name;
@@ -490,13 +495,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) {
             console.error("Erro ao carregar dados do usuário:", error);
+            // Se falhar, currentUsername permanece como fallbackUsername
             isLoggedIn = false;
         }
     }
     
-    // ** CHAMA A FUNÇÃO DE CARREGAMENTO DE DADOS DO USUÁRIO **
     initSystem(); 
-    // --------------------------------------------------------
 
     tabs.forEach(tab => {
         tab.addEventListener("click", () => {
@@ -557,7 +561,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Envia os dados para o save_score.php
         try {
-            // Usando URLSearchParams para save_score.php
             const dataToSend = new URLSearchParams();
             dataToSend.append('username', currentUsername);
             dataToSend.append('display_name', currentDisplayName);
@@ -657,9 +660,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (answerSubmitted) return;
         answerSubmitted = true;
         
-        // 🚨 CORREÇÃO: Força a variável a ter o valor de fallback se estiver vazia
-        // Isso garante que o user_id seja enviado corretamente.
         const userIdentifier = currentUsername || fallbackUsername;
+        
+        // 🚨 Validação para prevenir 400 se question_id estiver nulo
+        if (!currentQuestionId || !selectedValue || !userIdentifier) {
+            console.error("ERRO JS: Variáveis críticas faltando.", { 
+                question_id: currentQuestionId, 
+                answer: selectedValue, 
+                user_id: userIdentifier 
+            });
+            feedbackMessage.textContent = "Erro: Dados incompletos. Tente recarregar a questão.";
+            feedbackMessage.className = 'incorrect';
+            answerSubmitted = false;
+            document.querySelectorAll('.option-button').forEach(btn => btn.disabled = false);
+            return;
+        }
 
         sessionAttemptedCount++;
         if (sessionStatus) sessionStatus.textContent = `Questão ${sessionAttemptedCount} de ${QUESTION_LIMIT} (${currentArea})`;
@@ -674,12 +689,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     question_id: currentQuestionId,
                     answer: selectedValue,
-                    user_id: userIdentifier // Enviando o identificador garantido
+                    user_id: userIdentifier
                 })
             });
             
             if (!response.ok) {
-                throw new Error(`Erro de rede (${response.status}). URL: ${url}`);
+                // Tenta ler a mensagem de erro detalhada do PHP (se for 400 ou 500)
+                const errorBody = await response.json(); 
+                throw new Error(errorBody.error || `Erro de rede desconhecido. Status: ${response.status}`);
             }
 
             const result = await response.json();
