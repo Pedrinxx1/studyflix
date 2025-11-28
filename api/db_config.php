@@ -1,29 +1,33 @@
 <?php
-// Credenciais do Render PostgreSQL
-define('DB_HOST', 'dpg-d4kbinodl3ps73dh16l0-a'); // <<< NOVO HOST
-define('DB_USER', 'studyflix_user'); // Mantido
-define('DB_PASS', 'iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y'); // <<< NOVA SENHA
-define('DB_NAME', 'studyflix_db_qurq_hi3g'); // Mantido
+// api/db_config.php - Configuração para PostgreSQL (Render)
 
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_EMULATE_PREPARES => false,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
+// Sua string de conexão (exposta no prompt, ajustada aqui para variáveis)
+$db_url = "postgresql://studyflix_user:iofU2bx0K4LEvFJU7kHYjoHnXaKj2R2y@dpg-d4kbinodl3ps73dh16l0-a/studyflix_db_qurq_hi3g";
+
+// Parseia a URL de conexão para obter as credenciais separadas
+$url_parts = parse_url($db_url);
+
+if ($url_parts === false || !isset($url_parts['host'], $url_parts['user'], $url_parts['pass'], $url_parts['path'])) {
+    die("Erro: String de conexão PostgreSQL inválida.");
+}
+
+$host = $url_parts['host'];
+$user = $url_parts['user'];
+$password = $url_parts['pass'];
+$dbname = ltrim($url_parts['path'], '/'); // Remove a barra inicial do nome do DB
 
 try {
-    $dsn = "pgsql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";sslmode=require;client_encoding=utf8";
+    // ⚠️ String de conexão DSN específica para PostgreSQL usando as variáveis
+    $dsn = "pgsql:host=$host;dbname=$dbname";
     
-    $conn = new PDO(
-        $dsn,
-        DB_USER,
-        DB_PASS,
-        $options
-    );
+    $pdo = new PDO($dsn, $user, $password);
+    
+    // Configura o PDO para lançar exceções em caso de erro
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 } catch (PDOException $e) {
-    header('Content-Type: application/json');
-    http_response_code(500);
-    echo json_encode(['error' => 'Falha na conexão com o Banco de Dados. Detalhe: ' . $e->getMessage()]);
-    exit();
+    // Se a conexão falhar, o script para com um erro fatal que resultará em 500.
+    // Isso confirma que o problema é a conexão se o erro persistir.
+    die("Erro de Conexão com o PostgreSQL: " . $e->getMessage());
 }
 ?>
