@@ -13,10 +13,9 @@ if (!$db) {
 }
 
 try {
-    // Seleciona o display_name (Nome Real), filtra por qualquer ID de convidado antigo.
     $sql = "SELECT display_name, total_correct, total_attempted 
             FROM user_scores 
-            WHERE username NOT LIKE 'guest_%' -- Garante que só usuários logados apareçam
+            WHERE username NOT LIKE 'guest_%' -- Garante que só usuários logados (emails) apareçam
             ORDER BY total_correct DESC, total_attempted DESC
             LIMIT 10";
 
@@ -24,7 +23,6 @@ try {
     $stmt->execute();
     $ranking_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Retorna o JSON limpo
     echo json_encode($ranking_data);
 
 } catch (PDOException $e) {

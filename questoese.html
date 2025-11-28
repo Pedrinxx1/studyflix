@@ -438,10 +438,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const API_BASE_URL = 'api'; 
     const QUESTION_LIMIT = 10; 
 
-    // --- VARIÁVEIS DE USUÁRIO ---
-    let fallbackUsername = "guest_" + Date.now();
-    let currentUsername = fallbackUsername; 
-    let currentDisplayName = "Convidado"; 
+    // --- VARIÁVEIS DE USUÁRIO (Não há mais fallback de convidado) ---
+    let currentUsername = null; 
+    let currentDisplayName = "Visitante (Faça Login)"; 
     let isLoggedIn = false;
     // ---
 
@@ -450,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let sessionAttemptedCount = 0;
     // ---
 
-    // Elementos DOM (Seus elementos originais)
+    // Elementos DOM
     const tabs = document.querySelectorAll(".tab-button");
     const tabContents = document.querySelectorAll(".tab-content");
     const startForm = document.getElementById("start-quiz-form");
@@ -478,7 +477,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const url = `${API_BASE_URL}/user_data.php`;
             const response = await fetch(url);
             
-            // 🚨 CRÍTICO: Validação contra SyntaxError do PHP
             if (!response.ok) {
                  throw new Error(`Erro de rede (${response.status}). URL: ${url}`);
             }
@@ -486,22 +484,25 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             
             if (data.logged_in) { 
-                currentUsername = data.username;
-                currentDisplayName = data.display_name;
+                currentUsername = data.username; // Será o email
+                currentDisplayName = data.display_name; // Será o nome real
                 isLoggedIn = true;
                 console.log(`Usuário logado: ${currentDisplayName} (${currentUsername})`);
             } else {
                 isLoggedIn = false;
+                currentUsername = null; // Garante que o ID do usuário é nulo se não logado
+                currentDisplayName = "Visitante (Faça Login)";
             }
         } catch (error) {
             console.error("Erro ao carregar dados do usuário:", error);
-            // Se falhar, currentUsername permanece como fallbackUsername
             isLoggedIn = false;
+            currentUsername = null;
         }
     }
     
     initSystem(); 
 
+    // Navegação de Tabs
     tabs.forEach(tab => {
         tab.addEventListener("click", () => {
             const targetTab = tab.getAttribute("data-tab");
@@ -518,8 +519,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Início do Quiz - Contém o BLOQUEIO
     startForm.addEventListener("submit", (e) => {
         e.preventDefault();
+        
+        // 🚨 BLOQUEIO CRÍTICO: IMPEDE O INÍCIO DO QUIZ
+        if (!isLoggedIn) {
+            quizStartContent.classList.remove("active");
+            quizContentContainer.classList.add("active");
+            quizArea.style.display = 'block';
+            quizLoader.style.display = 'none';
+            questionText.textContent = `🚫 Você deve estar logado para iniciar o quiz.`;
+            optionsList.innerHTML = '';
+            
+            // Esconde elementos de jogo
+            feedbackMessage.textContent = 'Faça login para salvar sua pontuação no Ranking!';
+            feedbackMessage.className = 'incorrect';
+            nextQuestionBtn.style.display = 'none';
+            
+            return; // Bloqueia a execução
+        }
+        // FIM DO BLOQUEIO
+
         currentArea = areaSelect.value;
         
         sessionCorrectCount = 0;
@@ -538,61 +559,26 @@ document.addEventListener("DOMContentLoaded", () => {
         loadQuestion();
     });
     
-    // Função 2: Salva a pontuação no banco de dados (End Quiz)
+    // Função 2: Finaliza a Sessão (Chama-se automaticamente se o limite for atingido)
     async function endQuizSession() {
         quizArea.style.display = 'none';
         quizLoader.style.display = 'none'; 
+        
+        // Se o usuário estiver logado (o que deve ser verdade se ele chegou aqui)
         questionText.textContent = `🎉 Sessão de ${QUESTION_LIMIT} questões encerrada! Você acertou ${sessionCorrectCount} de ${sessionAttemptedCount} questões.`;
         optionsList.innerHTML = '';
         nextQuestionBtn.style.display = 'none';
 
-        if (!isLoggedIn || currentUsername.startsWith('guest_')) {
-            feedbackMessage.textContent = "Faça login para salvar sua pontuação no Ranking!";
-            feedbackMessage.className = 'incorrect';
-            
-            const btnRanking = document.createElement('button');
-            btnRanking.className = 'button';
-            btnRanking.textContent = "Ver Ranking";
-            btnRanking.onclick = () => document.querySelector('.tab-button[data-tab="ranking"]').click();
-            document.getElementById('quiz-feedback').appendChild(btnRanking); 
-            
-            return;
-        }
-
-        // Envia os dados para o save_score.php
-        try {
-            const dataToSend = new URLSearchParams();
-            dataToSend.append('username', currentUsername);
-            dataToSend.append('display_name', currentDisplayName);
-            dataToSend.append('correct', sessionCorrectCount);
-            dataToSend.append('attempted', sessionAttemptedCount);
-
-            const response = await fetch(`${API_BASE_URL}/save_score.php`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
-                body: dataToSend
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                feedbackMessage.textContent = `Pontuação salva e atualizada para ${currentDisplayName}!`;
-                feedbackMessage.className = 'correct';
-                nextQuestionBtn.textContent = 'Ver Ranking';
-                nextQuestionBtn.style.display = 'inline-flex';
-                nextQuestionBtn.onclick = () => {
-                    document.querySelector('.tab-button[data-tab="ranking"]').click();
-                };
-            } else {
-                console.error("Erro ao salvar pontuação:", result.error);
-                feedbackMessage.textContent = `Erro ao salvar pontuação no Ranking: ${result.error || 'Erro desconhecido'}.`;
-                feedbackMessage.className = 'incorrect';
-            }
-
-        } catch (error) {
-            console.error("Erro fatal ao tentar salvar a pontuação:", error);
-            feedbackMessage.textContent = "Erro de conexão ao salvar pontuação.";
-            feedbackMessage.className = 'incorrect';
-        }
+        // Não precisa mais de save_score.php separado, pois o submit_answer.php já salva a cada questão.
+        
+        feedbackMessage.textContent = `Pontuação registrada com sucesso para ${currentDisplayName}!`;
+        feedbackMessage.className = 'correct';
+        
+        nextQuestionBtn.textContent = 'Ver Ranking';
+        nextQuestionBtn.style.display = 'inline-flex';
+        nextQuestionBtn.onclick = () => {
+            document.querySelector('.tab-button[data-tab="ranking"]').click();
+        };
     }
 
 
@@ -616,7 +602,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (data.error) {
-                questionText.textContent = `Erro do Servidor: ${data.error}. Verifique a conexão com o DB no db_connection.php.`;
+                questionText.textContent = `Erro do Servidor: ${data.error}.`;
                 quizLoader.style.display = 'none';
                 quizArea.style.display = 'block';
                 return;
@@ -656,20 +642,23 @@ document.addEventListener("DOMContentLoaded", () => {
         optionsList.appendChild(li);
     }
 
+    // Submissão da Resposta
     async function handleOptionClick(clickedButton, selectedValue) {
+        // Bloqueio de submissão dupla (cliques rápidos)
         if (answerSubmitted) return;
         answerSubmitted = true;
         
-        const userIdentifier = currentUsername || fallbackUsername;
+        // currentUsername será o email, se logado. Se for nulo, a submissão falhará no backend (403).
+        const userIdentifier = currentUsername; 
         
-        // 🚨 Validação para prevenir 400 se question_id estiver nulo
+        // Validação básica do frontend
         if (!currentQuestionId || !selectedValue || !userIdentifier) {
-            console.error("ERRO JS: Variáveis críticas faltando.", { 
+            console.error("ERRO JS: Variáveis críticas faltando ou usuário não logado.", { 
                 question_id: currentQuestionId, 
                 answer: selectedValue, 
                 user_id: userIdentifier 
             });
-            feedbackMessage.textContent = "Erro: Dados incompletos. Tente recarregar a questão.";
+            feedbackMessage.textContent = "Erro: Usuário não identificado. Recarregue a página e faça login.";
             feedbackMessage.className = 'incorrect';
             answerSubmitted = false;
             document.querySelectorAll('.option-button').forEach(btn => btn.disabled = false);
@@ -689,18 +678,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     question_id: currentQuestionId,
                     answer: selectedValue,
-                    user_id: userIdentifier
+                    user_id: userIdentifier // Enviando o email
                 })
             });
             
+            if (response.status === 403) {
+                // Bloqueio do backend (se o user_id for inválido)
+                const errorBody = await response.json();
+                throw new Error(errorBody.error || "Acesso negado pelo servidor. Você não está logado.");
+            }
+            
             if (!response.ok) {
-                // Tenta ler a mensagem de erro detalhada do PHP (se for 400 ou 500)
                 const errorBody = await response.json(); 
                 throw new Error(errorBody.error || `Erro de rede desconhecido. Status: ${response.status}`);
             }
 
             const result = await response.json();
 
+            // Lógica de feedback (correto/incorreto)
             if (result.is_correct) {
                 clickedButton.classList.add('correct');
                 feedbackMessage.textContent = "✅ Você acertou!";
@@ -760,6 +755,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 rankingBody.innerHTML = '<tr><td colspan="4">Nenhum ranking disponível. Jogue para começar!</td></tr>';
             } else {
                 data.forEach((user, index) => {
+                    // Usa display_name (Nome Real) que o backend fornece
                     const displayName = user.display_name; 
                     rankingBody.innerHTML += `
                         <tr>
