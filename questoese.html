@@ -439,7 +439,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const QUESTION_LIMIT = 10; 
 
     // --- VARIÁVEIS DE USUÁRIO (CRÍTICAS PARA O RANKING) ---
-    let currentUsername = "guest_" + Date.now(); // ID único temporário (o email ou guest_ID)
+    // 🚨 CORREÇÃO: Variável de fallback para evitar erro 400 antes da inicialização
+    let fallbackUsername = "guest_" + Date.now();
+    let currentUsername = fallbackUsername; // ID único temporário (o email ou guest_ID)
     let currentDisplayName = "Convidado"; 
     let isLoggedIn = false;
     // ---
@@ -668,7 +670,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     question_id: currentQuestionId,
                     answer: selectedValue,
-                    user_id: currentUsername // 🚨 CORREÇÃO APLICADA AQUI
+                    // 🚨 CORREÇÃO: Usa o fallback se currentUsername ainda não foi definido por initSystem()
+                    user_id: currentUsername || fallbackUsername 
                 })
             });
             
