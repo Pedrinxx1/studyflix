@@ -3,7 +3,6 @@
 header('Content-Type: application/json; charset=utf-8');
 include __DIR__ . '/db_config.php';
 
-// Garante que a variável de conexão correta ($pdo) seja usada
 $db = $pdo ?? null;
 
 if (!$db) {
@@ -12,11 +11,10 @@ if (!$db) {
     exit;
 }
 
-// Recebe dados como JSON
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
-// A validação agora SUCEDERÁ, pois o JS enviará 'user_id'
+// Esta é a linha que está causando o erro 400.
 if (!isset($data['question_id'], $data['answer'], $data['user_id'])) {
     http_response_code(400);
     echo json_encode(['error' => 'Dados incompletos: Faltando question_id, answer ou user_id.']);
@@ -49,7 +47,6 @@ try {
     // 2. PostgreSQL UPSERT: Atualiza a pontuação
     $username = ($user_id === 'guest') ? 'Visitante' : $user_id;
     
-    // CRÍTICO: ON CONFLICT usa o 'username'
     $sql_upsert = "INSERT INTO user_scores (username, total_attempted, total_correct, display_name) 
                    VALUES (?, 1, ?, ?)
                    ON CONFLICT (username) DO UPDATE 
@@ -59,15 +56,11 @@ try {
     
     $stmt = $db->prepare($sql_upsert);
     
-    // Binds:
     $stmt->execute([
-        $username,           // 1. INSERT username (chave de conflito)
-        $is_correct_int,     // 2. INSERT total_correct
-        $username,           // 3. INSERT display_name (usando username como display_name inicial)
-        $is_correct_int      // 4. UPDATE total_correct (valor a ser adicionado)
+        $username, $is_correct_int, $username, $is_correct_int
     ]);
     
-    $db->commit(); // Confirma transação
+    $db->commit();
 
     // 3. Retorna o resultado
     echo json_encode([
@@ -84,5 +77,5 @@ try {
     echo json_encode(['error' => 'Erro interno do servidor ao salvar resposta: ' . $e->getMessage()]);
 }
 
-$db = null; // Fecha a conexão
+$db = null;
 ?>

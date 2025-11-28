@@ -439,7 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const QUESTION_LIMIT = 10; 
 
     // --- VARIÁVEIS DE USUÁRIO (CRÍTICAS PARA O RANKING) ---
-    // 🚨 CORREÇÃO: Variável de fallback para evitar erro 400 antes da inicialização
+    // 🚨 CORREÇÃO: Variável de fallback para garantir que o user_id nunca seja vazio
     let fallbackUsername = "guest_" + Date.now();
     let currentUsername = fallbackUsername; // ID único temporário (o email ou guest_ID)
     let currentDisplayName = "Convidado"; 
@@ -657,6 +657,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (answerSubmitted) return;
         answerSubmitted = true;
         
+        // 🚨 CORREÇÃO: Força a variável a ter o valor de fallback se estiver vazia
+        // Isso garante que o user_id seja enviado corretamente.
+        const userIdentifier = currentUsername || fallbackUsername;
+
         sessionAttemptedCount++;
         if (sessionStatus) sessionStatus.textContent = `Questão ${sessionAttemptedCount} de ${QUESTION_LIMIT} (${currentArea})`;
 
@@ -670,8 +674,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     question_id: currentQuestionId,
                     answer: selectedValue,
-                    // 🚨 CORREÇÃO: Usa o fallback se currentUsername ainda não foi definido por initSystem()
-                    user_id: currentUsername || fallbackUsername 
+                    user_id: userIdentifier // Enviando o identificador garantido
                 })
             });
             
