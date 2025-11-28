@@ -1,7 +1,6 @@
 <?php
-// api/submit_answer.php - COM BLOQUEIO DE CONVIDADO E ASSOCIAÇÃO DE NOME
+// api/submit_answer.php - CÓDIGO FINAL E SEGURO
 header('Content-Type: application/json; charset=utf-8');
-// 🚨 Necessário para acesso futuro à sessão se o sistema evoluir
 session_start(); 
 include __DIR__ . '/db_config.php';
 
@@ -24,11 +23,11 @@ if (!isset($data['question_id'], $data['answer'], $data['user_id'])) {
 
 $question_id = $data['question_id'];
 $user_answer = $data['answer'];
-$user_id = $data['user_id']; 
+$user_id = $data['user_id']; // Esperamos receber o email aqui
 
-// 🚨 BLOQUEIO CRÍTICO: Rejeita se o ID for vazio ou for de convidado antigo.
+// 🚨 BLOQUEIO CRÍTICO: Rejeita se não for um email logado
 if (empty($user_id) || str_starts_with($user_id, 'guest_')) {
-    http_response_code(403); // Proibido
+    http_response_code(403); 
     echo json_encode(['error' => 'Acesso negado. É necessário estar logado para salvar a pontuação.']);
     exit();
 }
@@ -53,15 +52,14 @@ try {
     $is_correct_int = $is_correct ? 1 : 0;
     
     // 2. Busca o nome real (display_name)
-    // 🚨 AJUSTE ESTA QUERY se necessário!
-    $stmt_name = $db->prepare("SELECT nome_completo FROM users WHERE email = ?");
+    $stmt_name = $db->prepare("SELECT nome FROM usuarios WHERE email = ?"); // ⚠️ AJUSTE A COLUNA 'nome' se necessário!
     $stmt_name->execute([$user_id]);
     $user_data = $stmt_name->fetch(PDO::FETCH_ASSOC);
 
-    $display_name_value = $user_data['nome_completo'] ?? $user_id; 
+    $display_name_value = $user_data['nome'] ?? $user_id; 
 
     
-    // 3. PostgreSQL UPSERT: user_id e username são o email do usuário.
+    // 3. PostgreSQL UPSERT: user_id e username são o email do usuário (resolve NOT NULL)
     $sql_upsert = "INSERT INTO user_scores (user_id, username, total_attempted, total_correct, display_name) 
                    VALUES (?, ?, 1, ?, ?)
                    ON CONFLICT (username) DO UPDATE 
@@ -72,11 +70,11 @@ try {
     $stmt = $db->prepare($sql_upsert);
 
     $stmt->execute([
-        $user_id,             // 1. INSERT user_id (Email)
-        $user_id,             // 2. INSERT username (Email - Chave Única)
-        $is_correct_int,      // 3. INSERT total_correct
-        $display_name_value,  // 4. INSERT display_name (Nome Real)
-        $is_correct_int       // 5. UPDATE total_correct
+        $user_id,             
+        $user_id,             
+        $is_correct_int,      
+        $display_name_value,  
+        $is_correct_int       
     ]);
 
     $db->commit(); 

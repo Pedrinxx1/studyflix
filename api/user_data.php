@@ -1,8 +1,8 @@
 <?php
-// api/user_data.php - CONFIGURADO PARA USUÁRIOS LOGADOS
+// api/user_data.php - CÓDIGO FINAL E SINCRONIZADO
 header('Content-Type: application/json; charset=utf-8');
 
-// 🚨 CRÍTICO: INICIA A SESSÃO para ler o email que foi escrito no login_process.php
+// 🚨 LÊ A SESSÃO ESCRITA PELO login.php ou cadastro.php
 session_start(); 
 
 include __DIR__ . '/db_config.php';
@@ -15,26 +15,23 @@ if (!$db) {
     exit;
 }
 
-// Assume que o email do usuário logado está em $_SESSION['user_email']
+// Lendo a chave de sessão configurada no login/cadastro
 $user_email = $_SESSION['user_email'] ?? null; 
 
 if ($user_email) {
     try {
-        // Busca o email e o nome real do usuário
-        // 🚨 AJUSTE ESTA QUERY se a sua tabela de usuários ou colunas tiverem nomes diferentes!
-        // Tabela: users, Colunas: email, nome_completo
-        $stmt = $db->prepare("SELECT email, nome_completo FROM users WHERE email = ?");
+        // Busca o nome real para o frontend
+        $stmt = $db->prepare("SELECT email, nome FROM usuarios WHERE email = ?"); // ⚠️ AJUSTE A COLUNA 'nome' se necessário!
         $stmt->execute([$user_email]);
         $user_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user_data) {
             echo json_encode([
                 'logged_in' => true,
-                'username' => $user_data['email'],      // Email é o ID Único
-                'display_name' => $user_data['nome_completo'] // Nome para exibição
+                'username' => $user_data['email'],      
+                'display_name' => $user_data['nome'] 
             ]);
         } else {
-            // Caso o email exista na sessão, mas não mais no banco (erro de integridade)
             echo json_encode(['logged_in' => false, 'error' => 'Usuário logado não encontrado no banco de dados.']);
         }
 
@@ -43,7 +40,6 @@ if ($user_email) {
         echo json_encode(['logged_in' => false, 'error' => 'Erro SQL ao buscar dados.']);
     }
 } else {
-    // Não logado - Resposta clara para o JS bloquear o quiz
     echo json_encode(['logged_in' => false]);
 }
 ?>

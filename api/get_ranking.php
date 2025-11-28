@@ -1,5 +1,5 @@
 <?php
-// api/get_ranking.php - EXIBIÇÃO DE RANKING DE USUÁRIOS LOGADOS
+// api/get_ranking.php - CÓDIGO FINAL
 header('Content-Type: application/json; charset=utf-8');
 
 include 'db_config.php'; 
@@ -15,7 +15,7 @@ if (!$db) {
 try {
     $sql = "SELECT display_name, total_correct, total_attempted 
             FROM user_scores 
-            WHERE username NOT LIKE 'guest_%' -- Garante que só usuários logados (emails) apareçam
+            WHERE username NOT LIKE 'guest_%' 
             ORDER BY total_correct DESC, total_attempted DESC
             LIMIT 10";
 
