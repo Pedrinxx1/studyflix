@@ -19,8 +19,22 @@ $senha_clara = $_POST['senha'] ?? '';
 
 $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
-if (empty($nome) || empty($email) || empty($senha_clara)) {
+// 🚨 VERIFICAÇÃO DE TODOS OS CAMPOS (Incluindo confirmarSenha)
+if (empty($nome) || empty($email) || empty($senha_clara) || empty($_POST['confirmarSenha'])) {
     echo json_encode(['success' => false, 'message' => 'Preencha todos os campos.']);
+    exit;
+}
+
+// 🚨 NOVO: Validação de Comprimento Mínimo da Senha (Segurança crítica)
+if (strlen($senha_clara) < 6) {
+    echo json_encode(['success' => false, 'message' => 'A senha deve ter no mínimo 6 caracteres.']);
+    exit;
+}
+
+// 🚨 NOVO: Validação de Confirmação da Senha no Back-end (Segurança crítica)
+$confirmarSenha = $_POST['confirmarSenha'] ?? '';
+if ($senha_clara !== $confirmarSenha) {
+    echo json_encode(['success' => false, 'message' => 'As senhas não coincidem.']);
     exit;
 }
 
@@ -36,8 +50,8 @@ try {
     $stmt_check = $db->prepare("SELECT email FROM usuarios WHERE email = ?");
     $stmt_check->execute([$email]);
     if ($stmt_check->fetch()) {
-         echo json_encode(['success' => false, 'message' => 'Este email já está cadastrado.']);
-         exit;
+        echo json_encode(['success' => false, 'message' => 'Este email já está cadastrado.']);
+        exit;
     }
 
     // 2. Insere o novo usuário

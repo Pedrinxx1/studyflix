@@ -181,10 +181,10 @@
       <input type="email" name="email" placeholder="E-mail" required autocomplete="email" />
     </div>
     <div class="input-container">
-      <input type="password" name="senha" placeholder="Senha" required autocomplete="new-password" />
+      <input type="password" name="senha" placeholder="Senha (Mín. 6 caracteres)" required autocomplete="new-password" minlength="6" />
     </div>
     <div class="input-container">
-      <input type="password" name="confirmarSenha" placeholder="Confirmar Senha" required autocomplete="new-password" />
+      <input type="password" name="confirmarSenha" placeholder="Confirmar Senha" required autocomplete="new-password" minlength="6" />
     </div>
     <button type="submit" id="btnCadastro">Cadastrar</button>
     <p id="loginlink">Já tem conta? <a href="login.html">Entrar agora</a></p>
@@ -204,6 +204,14 @@
       notificacao.textContent = '';
       notificacao.className = '';
 
+      // 🚨 NOVO: Validação de Comprimento Mínimo (Reforço no Front-end)
+      if (senha.length < 6) {
+        notificacao.textContent = 'A senha deve ter no mínimo 6 caracteres.';
+        notificacao.className = 'erro';
+        notificacao.style.display = 'block';
+        return;
+      }
+      
       // Validação de senhas no front-end
       if (senha !== confirmarSenha) {
         notificacao.textContent = 'As senhas não coincidem.';
