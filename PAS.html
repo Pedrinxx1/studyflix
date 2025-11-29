@@ -2,13 +2,13 @@
 <html lang="pt-br">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Studyflix</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" />
-  <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
-  <style>
-    /* Reset básico */
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>Studyflix</title>
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" />
+ <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
+ <style>
+/* Reset básico */
     * {
       margin: 0;
       padding: 0;
@@ -82,7 +82,8 @@
 
     .nav-link:hover,
     .nav-link.active {
-      color: #9b59b6; /* Roxo */
+      color: #9b59b6;
+      /* Roxo */
       border-bottom: 3px solid #9b59b6;
     }
 
@@ -138,10 +139,16 @@
       border: none;
     }
 
-    .button img {
+    .button img,
+    .button i {
       width: 22px;
       height: 22px;
       filter: invert(1);
+    }
+
+    .button i {
+      filter: none;
+      color: white;
     }
 
     .button:hover {
@@ -273,150 +280,174 @@
         font-size: 2rem;
       }
     }
-  </style>
+ </style>
 </head>
 
 <body>
-  <header>
-    <img class="logo" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo Studyflix" />
-    <nav>
-      <h3 id="iten" class="nav-link">INICÍO</h3>
-      <h3 id="itens" class="nav-link">ENEM</h3>
-    </nav>
-  </header>
+  <header>
+    <img class="logo" id="logo-main" src="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" alt="Logo Studyflix" />
+    <nav>
+      <h3 id="iten" class="nav-link">PAS</h3>
+      <h3 id="itens" class="nav-link">ENEM</h3>
+      <h3 id="btn-questoes-header" class="nav-link">QUESTÕES</h3>
+    </nav>
+  </header>
 
-  <img id="imagem" src="https://i.ibb.co/nqG7kvKS/Whats-App-Image-2025-04-10-at-19-33-18.jpg" alt="Sua Imagem" />
+  <img id="imagem" src="https://i.ibb.co/nqG7kvKS/Whats-App-Image-2025-04-10-at-19-33-18.jpg" alt="Sua Imagem" />
 
-  <main>
-    <section class="intro">
-      <h1 id="nameimg">PAS: Saiba como funciona a<br />prova para realiza-la</h1>
-      <div class="button-container">
-        <a href="asspas.html" class="button" aria-label="Assistir">
-          <img src="https://icons.iconarchive.com/icons/steve/zondicons/256/Play-icon.png" alt="Ícone Play" />
-          <span>ASSISTIR</span>
-        </a>
-        <a href="infpas.html" class="button" aria-label="Mais informações">
-          <img src="https://img.icons8.com/?size=100&id=77&format=png&color=FFFFFF" alt="Ícone Informação" />
-          <span>MAIS INFORMAÇÕES</span>
-        </a>
-      </div>
-    </section>
+  <main>
+    <section class="intro">
+      <h1 id="nameimg">COMO FUNCIONA O STUDYFLIX E<br />PARA QUE SERVE</h1>
+      <div class="button-container">
+        <a href="stul.html" class="button" aria-label="Assistir">
+          <img src="https://icons.iconarchive.com/icons/steve/zondicons/256/Play-icon.png" alt="Ícone Play" />
+          <span>ASSISTIR</span>
+        </a>
+        <a href="study.html" class="button" aria-label="Mais informações">
+          <img src="https://img.icons8.com/?size=100&id=77&format=png&color=FFFFFF" alt="Ícone Informação" />
+          <span>MAIS INFORMAÇÕES</span>
+        </a>
+      </div>
+    </section>
 
-    <section class="content-section">
-      <h2 class="section-title">CIÊNCIAS DA NATUREZA</h2>
-      <div class="grid-container">
-        <div class="card" onclick="window.location.href='p.html'" role="button" tabindex="0" aria-label="Biologia">
-          <img src="https://i.ibb.co/1YJBLpsW/Whats-App-Image-2025-02-27-at-19-58-54.jpg" alt="Biologia" />
-          <div class="card-title">Biologia</div>
-        </div>
-        <div class="card" role="img" aria-label="Física">
-          <img src="https://i.ibb.co/vCCktjL9/Whats-App-Image-2025-02-27-at-20-06-41.jpg" alt="Física" />
-          <div class="card-title">Física</div>
-        </div>
-        <div class="card" role="img" aria-label="Química">
-          <img src="https://i.ibb.co/gZsn7cpW/Whats-App-Image-2025-02-27-at-20-41-39.jpg" alt="Química" />
-          <div class="card-title">Química</div>
-        </div>
-      </div>
-    </section>
+    <section class="content-section">
+      <h2 class="section-title">CIÊNCIAS DA NATUREZA</h2>
+      <div class="grid-container">
+        <div class="card" onclick="window.location.href='apas.html'" role="button" tabindex="0" aria-label="Biologia"
+          onkeypress="if(event.key==='Enter'){window.location.href='apas.html'}">
+          <img src="https://i.ibb.co/1YJBLpsW/Whats-App-Image-2025-02-27-at-19-58-54.jpg" alt="Biologia" />
+          <div class="card-title">Biologia</div>
+        </div>
+        <div class="card" onclick="window.location.href='bpas.html'" role="button" tabindex="0" aria-label="Física"
+          onkeypress="if(event.key==='Enter'){window.location.href='bpas.html'}">
+          <img src="https://i.ibb.co/vCCktjL9/Whats-App-Image-2025-02-27-at-20-06-41.jpg" alt="Física" />
+          <div class="card-title">Física</div>
+        </div>
+        <div class="card" onclick="window.location.href='cpas.html'" role="button" tabindex="0" aria-label="Química"
+          onkeypress="if(event.key==='Enter'){window.location.href='cpas.html'}">
+          <img src="https://i.ibb.co/gZsn7cpW/Whats-App-Image-2025-02-27-at-20-41-39.jpg" alt="Química" />
+          <div class="card-title">Química</div>
+        </div>
+      </div>
+    </section>
 
-    <section class="content-section">
-      <h2 class="section-title">CIÊNCIAS HUMANAS</h2>
-      <div class="grid-container">
-        <div class="card" role="img" aria-label="História Geral">
-          <img src="https://i.ibb.co/vxkpd9PD/Whats-App-Image-2025-02-28-at-14-57-59.jpg" alt="História Geral" />
-          <div class="card-title">História Geral</div>
-        </div>
-        <div class="card" role="img" aria-label="Geografia">
-          <img src="https://i.ibb.co/Kj1q9YG6/Whats-App-Image-2025-02-28-at-15-08-38.jpg" alt="Geografia" />
-          <div class="card-title">Geografia</div>
-        </div>
-        <div class="card" role="img" aria-label="Sociologia">
-          <img src="https://i.ibb.co/HL79L3w8/Whats-App-Image-2025-02-28-at-16-14-29.jpg" alt="Sociologia" />
-          <div class="card-title">Sociologia</div>
-        </div>
-        <div class="card" role="img" aria-label="Filosofia">
-          <img src="https://i.ibb.co/G4rJS2fr/Whats-App-Image-2025-02-28-at-16-19-39.jpg" alt="Filosofia" />
-          <div class="card-title">Filosofia</div>
-        </div>
-      </div>
-    </section>
+    <section class="content-section">
+      <h2 class="section-title">CIÊNCIAS HUMANAS</h2>
+      <div class="grid-container">
+        <div class="card" onclick="window.location.href='dpas.html'" role="button" tabindex="0"
+          aria-label="História Geral" onkeypress="if(event.key==='Enter'){window.location.href='dpas.html'}">
+          <img src="https://i.ibb.co/vxkpd9PD/Whats-App-Image-2025-02-28-at-14-57-59.jpg" alt="História Geral" />
+          <div class="card-title">História Geral</div>
+        </div>
+        <div class="card" onclick="window.location.href='epas.html'" role="button" tabindex="0" aria-label="Geografia"
+          onkeypress="if(event.key==='Enter'){window.location.href='epas.html'}">
+          <img src="https://i.ibb.co/Kj1q9YG6/Whats-App-Image-2025-02-28-at-15-08-38.jpg" alt="Geografia" />
+          <div class="card-title">Geografia</div>
+        </div>
+        <div class="card" onclick="window.location.href='fpas.html'" role="button" tabindex="0" aria-label="Sociologia"
+          onkeypress="if(event.key==='Enter'){window.location.href='fpas.html'}">
+          <img src="https://i.ibb.co/HL79L3w8/Whats-App-Image-2025-02-28-at-16-14-29.jpg" alt="Sociologia" />
+          <div class="card-title">Sociologia</div>
+        </div>
+        <div class="card" onclick="window.location.href='gpas.html'" role="button" tabindex="0" aria-label="Filosofia"
+          onkeypress="if(event.key==='Enter'){window.location.href='gpas.html'}">
+          <img src="https://i.ibb.co/G4rJS2fr/Whats-App-Image-2025-02-28-at-16-19-39.jpg" alt="Filosofia" />
+          <div class="card-title">Filosofia</div>
+        </div>
+      </div>
+    </section>
 
-    <section class="content-section">
-      <h2 class="section-title">MATEMÁTICA</h2>
-      <div class="grid-container">
-        <div class="card" role="img" aria-label="Matemática Básica">
-          <img src="https://i.ibb.co/DHVtkXbR/Whats-App-Image-2025-02-28-at-21-48-52.jpg" alt="Matemática Básica" />
-          <div class="card-title">Matemática Básica</div>
-        </div>
-        <div class="card" role="img" aria-label="Álgebra">
-          <img src="https://i.ibb.co/b5VTFyBM/Whats-App-Image-2025-02-28-at-21-57-35.jpg" alt="Álgebra" />
-          <div class="card-title">Álgebra</div>
-        </div>
-        <div class="card" role="img" aria-label="Estatística e Probabilidade">
-          <img src="https://i.ibb.co/2Yn8gbTD/Whats-App-Image-2025-02-28-at-22-09-28.jpg" alt="Estatística e Probabilidade" />
-          <div class="card-title">Estatística e Probabilidade</div>
-        </div>
-        <div class="card" role="img" aria-label="Geometria">
-          <img src="https://i.ibb.co/WNZ4rzSW/Whats-App-Image-2025-02-28-at-22-19-44.jpg" alt="Geometria" />
-          <div class="card-title">Geometria</div>
-        </div>
-      </div>
-    </section>
+    <section class="content-section">
+      <h2 class="section-title">MATEMÁTICA</h2>
+      <div class="grid-container">
+        <div class="card" onclick="window.location.href='hpas.html'" role="button" tabindex="0"
+          aria-label="Matemática Básica" onkeypress="if(event.key==='Enter'){window.location.href='hpas.html'}">
+          <img src="https://i.ibb.co/DHVtkXbR/Whats-App-Image-2025-02-28-at-21-48-52.jpg" alt="Matemática Básica" />
+          <div class="card-title">Matemática Básica</div>
+        </div>
+        <div class="card" onclick="window.location.href='ipas.html'" role="button" tabindex="0" aria-label="Álgebra"
+          onkeypress="if(event.key==='Enter'){window.location.href='ipas.html'}">
+          <img src="https://i.ibb.co/b5VTFyBM/Whats-App-Image-2025-02-28-at-21-57-35.jpg" alt="Álgebra" />
+          <div class="card-title">Álgebra</div>
+        </div>
+        <div class="card" onclick="window.location.href='jpas.html'" role="button" tabindex="0"
+          aria-label="Estatística e Probabilidade" onkeypress="if(event.key==='Enter'){window.location.href='jpas.html'}">
+          <img src="https://i.ibb.co/2Yn8gbTD/Whats-App-Image-2025-02-28-at-22-09-28.jpg"
+            alt="Estatística e Probabilidade" />
+          <div class="card-title">Estatística e Probabilidade</div>
+        </div>
+        <div class="card" onclick="window.location.href='kpas.html'" role="button" tabindex="0" aria-label="Geometria"
+          onkeypress="if(event.key==='Enter'){window.location.href='kpas.html'}">
+          <img src="https://i.ibb.co/WNZ4rzSW/Whats-App-Image-2025-02-28-at-22-19-44.jpg" alt="Geometria" />
+          <div class="card-title">Geometria</div>
+        </div>
+      </div>
+    </section>
 
-    <section class="content-section">
-      <h2 class="section-title">LINGUAGENS</h2>
-      <div class="grid-container">
-        <div class="card" role="img" aria-label="Linguagem 1">
-          <img src="https://i.ibb.co/Y4b7kjRw/Whats-App-Image-2025-03-03-at-16-46-53.jpg" alt="Literatura" />
-          <div class="card-title">Literatura</div>
-        </div>
-        <div class="card" role="img" aria-label="Linguagem 2">
-          <img src="https://i.ibb.co/RpLjKf2z/Whats-App-Image-2025-03-03-at-16-54-27.jpg" alt="Artes" />
-          <div class="card-title">Artes</div>
-        </div>
-        <div class="card" role="img" aria-label="Linguagem 3">
-          <img src="https://i.ibb.co/qzWfLmW/Whats-App-Image-2025-03-03-at-17-05-21.jpg" alt="Gramática" />
-          <div class="card-title">Gramática</div>
-        </div>
-        <div class="card" role="img" aria-label="Linguagem 4">
-          <img src="https://i.ibb.co/z95XYZr/Whats-App-Image-2025-03-03-at-17-36-12.jpg" alt="Lingua Estrangeira" />
-          <div class="card-title">Lingua Estrangeira</div>
-        </div>
-      </div>
-    </section>
-  </main>
+    <section class="content-section">
+      <h2 class="section-title">LINGUAGENS</h2>
+      <div class="grid-container">
+        <div class="card" onclick="window.location.href='lpas.html'" role="button" tabindex="0" aria-label="Literatura"
+          onkeypress="if(event.key==='Enter'){window.location.href='lpas.html'}">
+          <img src="https://i.ibb.co/Y4b7kjRw/Whats-App-Image-2025-03-03-at-16-46-53.jpg" alt="Literatura" />
+          <div class="card-title">Literatura</div>
+        </div>
+        <div class="card" onclick="window.location.href='mpas.html'" role="button" tabindex="0" aria-label="Artes"
+          onkeypress="if(event.key==='Enter'){window.location.href='mpas.html'}">
+          <img src="https://i.ibb.co/RpLjKf2z/Whats-App-Image-2025-03-03-at-16-54-27.jpg" alt="Artes" />
+          <div class="card-title">Artes</div>
+        </div>
+        <div class="card" onclick="window.location.href='npas.html'" role="button" tabindex="0" aria-label="Gramática"
+          onkeypress="if(event.key==='Enter'){window.location.href='npas.html'}">
+          <img src="https://i.ibb.co/qzWfLmW/Whats-App-Image-2025-03-03-at-17-05-21.jpg" alt="Gramática" />
+          <div class="card-title">Gramática</div>
+        </div>
+        <div class="card" onclick="window.location.href='opas.html'" role="button" tabindex="0" aria-label="Língua Estrangeira"
+          onkeypress="if(event.key==='Enter'){window.location.href='opas.html'}">
+          <img src="https://i.ibb.co/z95XYZr/Whats-App-Image-2025-03-03-at-17-36-12.jpg" alt="Lingua Estrangeira" />
+          <div class="card-title">Língua Estrangeira</div>
+        </div>
+      </div>
+    </section>
 
-  <footer>
-    <div class="social-links">
-      <a href="#" id="meuLink" aria-label="Instagram"><img class="pp" src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png" alt="Instagram" /></a>
-      <a href="#" id="meulink" aria-label="WhatsApp"><img class="ppp" src="https://i.ibb.co/N6W8q1KF/Whats-App-256.png" alt="WhatsApp" /></a>
-    </div>
-    <p>© Studyflix, Inc.</p>
-  </footer>
+    <footer>
+      <div class="social-links">
+        <a href="https://www.instagram.com/study.flixx?igsh=MW9jOXE0aTBhbGFxeg==" target="_blank" rel="noopener"
+          aria-label="Instagram">
+          <img class="pp" src="https://www.edigitalagency.com.au/wp-content/uploads/new-Instagram-logo-white-glyph.png"
+            alt="Instagram" />
+        </a>
+        <a href="https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23" target="_blank" rel="noopener"
+          aria-label="WhatsApp">
+          <img class="ppp" src="https://i.ibb.co/N6W8q1KF/Whats-App-256.png" alt="WhatsApp" />
+        </a>
+      </div>
+      <p>© Studyflix, Inc.</p>
+    </footer>
 
-  <script>
-    // Links sociais e navegação
-    document.getElementById("meuLink").addEventListener("click", function (event) {
-      event.preventDefault();
-      window.location.href = "https://www.instagram.com/study.flixx?igsh=MW9jOXE0aTBhbGFxeg==";
-    });
+    <script>
+      // Navegação dos links do header (Mantidos os nomes originais)
+      document.getElementById("iten").addEventListener("click", function (event) {
+        event.preventDefault();
+        window.location.href = "PAS.html"; // Redireciona para PAS.html (ou a página principal do PAS)
+      });
 
-    document.getElementById("meulink").addEventListener("click", function (event) {
-      event.preventDefault();
-      window.location.href = "https://www.whatsapp.com/channel/0029Vb3wmHHHrDZXghjluA23";
-    });
+      document.getElementById("itens").addEventListener("click", function (event) {
+        event.preventDefault();
+        window.location.href = "ENEM.html";
+      });
 
-    document.getElementById("iten").addEventListener("click", function (event) {
-      event.preventDefault();
-      window.location.href = "page.html";
-    });
+      document.getElementById("logo-main").addEventListener("click", function (event) {
+        event.preventDefault();
+        window.location.href = "page.html"; // Redireciona a logo para a página principal (page.html, assumido)
+      });
 
-    document.getElementById("itens").addEventListener("click", function (event) {
-      event.preventDefault();
-      window.location.href = "ENEM.html";
-    });
-  </script>
+      // NOVO: Clique no botão Questões do Header
+      document.getElementById("btn-questoes-header").addEventListener("click", function (event) {
+        event.preventDefault();
+        window.location.href = "questoese.html";
+      });
+    </script>
+  </main>
 </body>
-
 </html>
