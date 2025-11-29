@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Studyflix - Gramática PAS e ENEM</title>
+    <title>Studyflix - História Geral PAS e ENEM</title>
     <link rel="shortcut icon" type="image/png" href="https://i.ibb.co/Z1BfkM6Y/Logo-1.png" />
     <style>
         body {
@@ -241,7 +241,7 @@
         </aside>
 
         <section class="videos-area">
-            <h2 id="topic-title">Gramática</h2>
+            <h2 id="topic-title">História Geral</h2>
             <div class="videos-grid" id="videos-grid">
                 </div>
             <a href="#" target="_blank" rel="noopener" class="btn-obras" id="btn-obras" aria-label="Ver obras" style="display: block; text-align: center; margin-top: 20px; color: #7100bc; font-weight: 700; text-decoration: none;">Ver obras</a>
@@ -254,83 +254,95 @@
             window.location.href = 'page.html';
         });
 
-        // Dados de Gramática para o PAS
+        // Dados de História Geral para o PAS
         const pasData = {
             pas1: {
                 obrasUrl: "https://passeandounb.com/obras-do-pas-1/",
                 topics: {
-                    // 1º ano - Morfologia e Estrutura das Palavras
-                    "Morfologia Básica": [
-                        { title: "Estrutura e Formação de Palavras", url: "https://www.youtube.com/embed/5U9T4-z6k3c" },
-                        { title: "Classes de Palavras I: Substantivo, Adjetivo e Artigo", url: "https://www.youtube.com/embed/0Xz_y8Z_oUo" }
+                    // 1º ano - Antiguidade, Idade Média e Transição para a Modernidade
+                    "Mundo Antigo": [
+                        { title: "Pré-História: Nomadismo e Sedentarismo", url: "https://www.youtube.com/embed/5U9T4-z6k3c" },
+                        { title: "Antiguidade Oriental (Mesopotâmia e Egito)", url: "https://www.youtube.com/embed/0Xz_y8Z_oUo" },
+                        { title: "Grécia Antiga: Polis, Democracia e Cultura", url: "https://www.youtube.com/embed/a7S4-kQy3hY" },
+                        { title: "Roma Antiga: República e Império", url: "https://www.youtube.com/embed/c0t3K1xN4kE" }
                     ],
-                    "Morfologia Intermediária": [
-                        { title: "Classes de Palavras II: Verbo e Advérbio", url: "https://www.youtube.com/embed/a7S4-kQy3hY" },
-                        { title: "Classes de Palavras III: Pronomes e Numerais", url: "https://www.youtube.com/embed/c0t3K1xN4kE" }
+                    "Idade Média": [
+                        { title: "Feudalismo e Sociedade Medieval", url: "https://www.youtube.com/embed/s37Y8y0zKFY" },
+                        { title: "O papel da Igreja na Idade Média", url: "https://www.youtube.com/embed/8rYnC967G-o" }
                     ],
-                    "Introdução à Sintaxe": [
-                        { title: "Termos Essenciais da Oração: Sujeito e Predicado", url: "https://www.youtube.com/embed/s37Y8y0zKFY" },
-                        { title: "Tipos de Sujeito (Simples, Composto, Oculto, Indeterminado e Oração sem Sujeito)", url: "https://www.youtube.com/embed/8rYnC967G-o" }
+                    "Transição para a Modernidade": [
+                        { title: "Renascimento Cultural e Científico", url: "https://www.youtube.com/embed/p1X1l4jE8g8" },
+                        { title: "Expansão Marítima e Grandes Navegações", url: "https://www.youtube.com/embed/hB554I5rV8M" }
                     ]
                 }
             },
             pas2: {
                 obrasUrl: "https://passeandounb.com/obras-do-pas-2/",
                 topics: {
-                    // 2º ano - Sintaxe do Período Simples e Concordância
-                    "Sintaxe do Período Simples I": [
-                        { title: "Termos Integrantes: Objeto Direto e Indireto", url: "https://www.youtube.com/embed/1E3FpY-gB3I" },
-                        { title: "Termos Integrantes: Complemento Nominal e Agente da Passiva", url: "https://www.youtube.com/embed/iO84T3n8NRY" }
+                    // 2º ano - Modernidade, Absolutismo, Revoluções Burguesas
+                    "Absolutismo e Mercantilismo": [
+                        { title: "Absolutismo Monárquico e Formação dos Estados Nacionais", url: "https://www.youtube.com/embed/1E3FpY-gB3I" },
+                        { title: "Mercantilismo e o Antigo Sistema Colonial", url: "https://www.youtube.com/embed/iO84T3n8NRY" }
                     ],
-                    "Sintaxe do Período Simples II": [
-                        { title: "Termos Acessórios: Adjuntos Adnominais e Adverbiais", url: "https://www.youtube.com/embed/9G3t_5fX0gE" },
-                        { title: "Aposto e Vocativo", url: "https://www.youtube.com/embed/Pj1l4gYc7yE" }
+                    "Revoluções Burguesas": [
+                        { title: "Revolução Inglesa (Século XVII)", url: "https://www.youtube.com/embed/9G3t_5fX0gE" },
+                        { title: "Iluminismo: Ideias e Filósofos", url: "https://www.youtube.com/embed/Pj1l4gYc7yE" },
+                        { title: "Revolução Francesa (Fases e Legado)", url: "https://www.youtube.com/embed/o08zG1B9-7U" }
                     ],
-                    "Concordância Nominal e Verbal": [
-                        { title: "Concordância Verbal (Casos Gerais e Específicos)", url: "https://www.youtube.com/embed/o08zG1B9-7U" },
-                        { title: "Concordância Nominal (Adjetivo, Numeral e Pronome)", url: "https://www.youtube.com/embed/yW1f6tK4bX4" }
+                    "Século XIX": [
+                        { title: "Revolução Industrial", url: "https://www.youtube.com/embed/yW1f6tK4bX4" },
+                        { title: "Unificações Italiana e Alemã", url: "https://www.youtube.com/embed/W9fnE9NdFzo" }
                     ]
                 }
             },
             pas3: {
                 obrasUrl: "https://passeandounb.com/obras-do-pas-3/",
                 topics: {
-                    // 3º ano - Sintaxe do Período Composto, Regência e Crase
-                    "Sintaxe do Período Composto": [
-                        { title: "Oração Coordenada (Sindética e Assindética)", url: "https://www.youtube.com/embed/G6QY6v1bSVs" },
-                        { title: "Oração Subordinada Substantiva", url: "https://www.youtube.com/embed/rV58D6k_9a4" },
-                        { title: "Oração Subordinada Adjetiva e o Uso do 'Que' e 'Se'", url: "https://www.youtube.com/embed/w7Wj5bC4d-I" }
+                    // 3º ano - Século XX e História Contemporânea
+                    "Imperialismo e Primeira Guerra": [
+                        { title: "Imperialismo e Neocolonialismo (África e Ásia)", url: "https://www.youtube.com/embed/G6QY6v1bSVs" },
+                        { title: "Primeira Guerra Mundial", url: "https://www.youtube.com/embed/rV58D6k_9a4" }
                     ],
-                    "Regência e Crase": [
-                        { title: "Regência Verbal e Nominal", url: "https://www.youtube.com/embed/p1X1l4jE8g8" },
-                        { title: "Uso da Crase (Regras e Casos Proibidos)", url: "https://www.youtube.com/embed/uD-60z2YVds" }
+                    "Período Entreguerras": [
+                        { title: "Revolução Russa de 1917", url: "https://www.youtube.com/embed/w7Wj5bC4d-I" },
+                        { title: "Crise de 1929 e Fascismos", url: "https://www.youtube.com/embed/p1X1l4jE8g8" }
                     ],
-                    "Colocação Pronominal": [
-                        { title: "Próclise, Mesóclise e Ênclise", url: "https://www.youtube.com/embed/l5_6S6S_OOU" }
+                    "Segunda Guerra e Guerra Fria": [
+                        { title: "Segunda Guerra Mundial", url: "https://www.youtube.com/embed/uD-60z2YVds" },
+                        { title: "Guerra Fria: Bipolaridade e Conflitos", url: "https://www.youtube.com/embed/l5_6S6S_OOU" }
+                    ],
+                    "Mundo Contemporâneo": [
+                        { title: "Fim da URSS e Nova Ordem Mundial", url: "https://www.youtube.com/embed/z2t8O_jFp4s" },
+                        { title: "Conflitos do Oriente Médio", url: "https://www.youtube.com/embed/8b51g_qLw1o" }
                     ]
                 }
             }
         };
 
-        // Dados de Gramática para o ENEM
+        // Dados de História Geral para o ENEM
         const enemData = {
             obrasUrl: "https://passeandounb.com/obras-do-enem/",
             topics: {
-                // Tópicos recorrentes no ENEM com foco em Variação, Semântica e Coerência
-                "Variação Linguística e Norma Padrão": [
-                    { title: "Variação Linguística (Diastrática, Diatópica, etc.)", url: "https://www.youtube.com/embed/q3bQ0xQ_N8o" },
-                    { title: "Adequação da Linguagem ao Contexto (ENEM)", url: "https://www.youtube.com/embed/H-bUuB38iJk" }
+                // Tópicos recorrentes no ENEM
+                "Mundo Contemporâneo": [
+                    { title: "Guerra Fria, Queda do Muro e Nova Ordem", url: "https://www.youtube.com/embed/q3bQ0xQ_N8o" }
                 ],
-                "Semântica e Estilística": [
-                    { title: "Conotação e Denotação", url: "https://www.youtube.com/embed/H37H02iM320" },
-                    { title: "Sinonímia, Antonímia, Polissemia e Homonímia", url: "https://www.youtube.com/embed/i02zYp8X-uQ" }
+                "Idade Contemporânea (Séculos XIX/XX)": [
+                    { title: "Revoluções Industriais e Imperialismo", url: "https://www.youtube.com/embed/H-bUuB38iJk" },
+                    { title: "Guerras Mundiais e Crise de 1929", url: "https://www.youtube.com/embed/H37H02iM320" }
                 ],
-                "Coerência e Coesão Textual": [
-                    { title: "Mecanismos de Coesão Referencial e Sequencial", url: "https://www.youtube.com/embed/6i30k_l-x4s" },
-                    { title: "Elementos que Garantem a Coerência Textual", url: "https://www.youtube.com/embed/g6H1g1Y_XjI" }
+                "Idade Moderna": [
+                    { title: "Absolutismo, Mercantilismo e Expansão", url: "https://www.youtube.com/embed/i02zYp8X-uQ" },
+                    { title: "Revolução Francesa e Iluminismo", url: "https://www.youtube.com/embed/6i30k_l-x4s" }
                 ],
-                "Morfossintaxe no ENEM": [
-                    { title: "Revisão de Crase, Regência e Concordância em Questões", url: "https://www.youtube.com/embed/42x0J4-t88Q" }
+                "Mundo Clássico": [
+                    { title: "Grécia e Roma Antiga", url: "https://www.youtube.com/embed/g6H1g1Y_XjI" }
+                ],
+                "Idade Média": [
+                    { title: "Feudalismo, Igreja e Transição", url: "https://www.youtube.com/embed/i02zYp8X-uQ" }
+                ],
+                "Totalitarismos": [
+                    { title: "Fascismo, Nazismo e Stalinismo", url: "https://www.youtube.com/embed/42x0J4-t88Q" }
                 ]
             }
         };
@@ -395,10 +407,10 @@
             sidebarTitle.textContent = `Tópicos - ${currentPas.toUpperCase()}`;
             clearTopics();
             clearVideos();
-            topicTitle.textContent = 'Selecione um tópico de Gramática';
+            topicTitle.textContent = 'Selecione um tópico de História Geral';
             btnObras.href = pasData[currentPas].obrasUrl;
             btnObras.style.display = 'block';
-            btnObras.textContent = `Ver todas as obras do ${currentPas.toUpperCase()}`; // Texto atualizado (mantemos para contexto)
+            btnObras.textContent = `Ver todas as obras do ${currentPas.toUpperCase()}`; // Texto atualizado
 
             const topics = pasData[currentPas].topics;
             Object.keys(topics).forEach(topicName => {
@@ -438,8 +450,8 @@
             sidebarTitle.textContent = 'Tópicos - ENEM';
             clearTopics();
             clearVideos();
-            topicTitle.textContent = 'Selecione um tópico de Gramática para o ENEM';
-            btnObras.style.display = 'none'; // Esconde "Ver obras" no ENEM para Gramática pura
+            topicTitle.textContent = 'Selecione um tópico de História Geral para o ENEM';
+            btnObras.style.display = 'none'; // Esconde "Ver obras" no ENEM
 
             const topics = enemData.topics;
 
