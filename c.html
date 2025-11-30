@@ -51,7 +51,7 @@
         }
 
         button:hover {
-            background-color: #7100bc;
+            background-color: #8c00e1; /* Levemente mais claro para o hover */
         }
 
         button.active {
@@ -201,7 +201,7 @@
         }
 
         .btn-questoes:hover {
-            background-color: #7100bc;
+            background-color: #8c00e1;
         }
 
         @media (max-width: 700px) {
@@ -230,21 +230,23 @@
     </header>
 
     <nav id="subject-bar" aria-label="Seleção de PAS ou Matéria">
-        </nav>
+    </nav>
 
     <div class="container">
         <aside class="sidebar" aria-label="Seleção de tópicos">
             <h2 id="sidebar-title">Tópicos</h2>
             <ul class="topic-list" id="topic-list">
-                </ul>
+            </ul>
             <button class="btn-questoes" id="btn-questoes">Questões</button>
         </aside>
 
         <section class="videos-area">
             <h2 id="topic-title">Química</h2>
             <div class="videos-grid" id="videos-grid">
-                </div>
-            <a href="#" target="_blank" rel="noopener" class="btn-obras" id="btn-obras" aria-label="Ver obras" style="display: block; text-align: center; margin-top: 20px; color: #7100bc; font-weight: 700; text-decoration: none;">Ver obras</a>
+            </div>
+            <a href="#" target="_blank" rel="noopener" class="btn-obras" id="btn-obras" aria-label="Ver obras"
+                style="display: block; text-align: center; margin-top: 20px; color: #7100bc; font-weight: 700; text-decoration: none;">Ver
+                obras</a>
         </section>
     </div>
 
@@ -254,98 +256,103 @@
             window.location.href = 'page.html';
         });
 
-        // Dados de Química para o PAS
-        const pasData = {
-            pas1: {
-                obrasUrl: "https://passeandounb.com/obras-do-pas-1/",
-                topics: {
-                    // 1º ano - Química Geral e Físico-Química Inicial
-                    "Matéria e suas Propriedades": [
-                        { title: "ESTUDO DA MATÉRIA: Estados, Transformações e Misturas", url: "https://www.youtube.com/embed/s37Y8y0zKFY" }
-                    ],
-                    "Modelos Atômicos": [
-                        { title: "Modelos Atômicos: Dalton, Thomson, Rutherford e Bohr", url: "https://www.youtube.com/embed/5-0r8-90VnQ" }
-                    ],
-                    "Tabela Periódica": [
-                        { title: "Tabela Periódica - Completa", url: "https://www.youtube.com/embed/p1X1l4jE8g8" }
-                    ],
-                    "Ligações Químicas": [
-                        { title: "Ligações Químicas (Iônica, Covalente, Metálica)", url: "https://www.youtube.com/embed/8rYnC967G-o" }
-                    ],
-                    "Físico-Química (Gases)": [
-                        { title: "Transformações dos Gases (Clapeyron, Boyle, Charles)", url: "https://www.youtube.com/embed/hB554I5rV8M" }
-                    ]
-                }
-            },
-            pas2: {
-                obrasUrl: "https://passeandounb.com/obras-do-pas-2/",
-                topics: {
-                    // 2º ano - Funções Inorgânicas, Soluções, Termoquímica, Cinética e Eletroquímica
-                    "Funções Inorgânicas": [
-                        { title: "Funções Inorgânicas: Ácidos, Bases, Sais e Óxidos", url: "https://www.youtube.com/embed/1E3FpY-gB3I" }
-                    ],
-                    "Estequiometria": [
-                        { title: "Cálculos Estequiométricos - Do Zero", url: "https://www.youtube.com/embed/iO84T3n8NRY" }
-                    ],
-                    "Soluções": [
-                        { title: "SOLUÇÕES: TUDO sobre Concentração de Soluções", url: "https://www.youtube.com/embed/9G3t_5fX0gE" }
-                    ],
-                    "Termoquímica": [
-                        { title: "Termoquímica - Entalpia e Lei de Hess", url: "https://www.youtube.com/embed/Pj1l4gYc7yE" }
-                    ],
-                    "Cinética Química": [
-                        { title: "Cinética Química - Fatores que Alteram a Velocidade", url: "https://www.youtube.com/embed/o08zG1B9-7U" }
-                    ]
-                }
-            },
-            pas3: {
-                obrasUrl: "https://passeandounb.com/obras-do-pas-3/",
-                topics: {
-                    // 3º ano - Química Orgânica, Equilíbrio e Eletroquímica
-                    "Química Orgânica I": [
-                        { title: "Química Orgânica I: Introdução, Classificação e Nomenclatura", url: "https://www.youtube.com/embed/G6QY6v1bSVs" }
-                    ],
-                    "Química Orgânica II": [
-                        { title: "Funções Oxigenadas e Nitrogenadas", url: "https://www.youtube.com/embed/rV58D6k_9a4" }
-                    ],
-                    "Equilíbrio Químico": [
-                        { title: "Equilíbrio Químico: Kp, Kc, Deslocamento e pH", url: "https://www.youtube.com/embed/w7Wj5bC4d-I" }
-                    ],
-                    "Eletroquímica": [
-                        { title: "Eletroquímica: Pilhas e Eletrólise", url: "https://www.youtube.com/embed/p1X1l4jE8g8" }
-                    ],
-                    "Química Ambiental": [
-                        { title: "Química Ambiental (Chuva Ácida, Camada de Ozônio)", url: "https://www.youtube.com/embed/l5_6S6S_OOU" }
-                    ]
-                }
-            }
-        };
+        // ---------------------------------------------------------------------------------
+        // DADOS DE VÍDEO CORRIGIDOS E ATUALIZADOS PARA O FORMATO EMBED (YouTube)
+        // ---------------------------------------------------------------------------------
 
-        // Dados de Química para o ENEM
-        const enemData = {
-            obrasUrl: "https://passeandounb.com/obras-do-enem/",
-            topics: {
-                // Tópicos recorrentes no ENEM
-                "Química Orgânica": [
-                    { title: "Química Orgânica: Revisão Completa para o ENEM", url: "https://www.youtube.com/embed/i02zYp8X-uQ" }
-                ],
-                "Estequiometria": [
-                    { title: "Estequiometria: Tudo o que cai no ENEM", url: "https://www.youtube.com/embed/rK8xR-9H_M4" }
-                ],
-                "Soluções e Concentração": [
-                    { title: "SOLUÇÕES: TUDO sobre Concentração de Soluções", url: "https://www.youtube.com/embed/9G3t_5fX0gE" }
-                ],
-                "Termoquímica e Cinética": [
-                    { title: "Termoquímica e Cinética (Revisão ENEM)", url: "https://www.youtube.com/embed/3e2o1R6X-hY" }
-                ],
-                "Eletroquímica": [
-                    { title: "Eletroquímica para o ENEM", url: "https://www.youtube.com/embed/p1X1l4jE8g8" }
-                ],
-                "Química Geral": [
-                    { title: "Química Geral (Estrutura, Ligações, Tabela)", url: "https://www.youtube.com/embed/hB554I5rV8M" }
-                ]
-            }
-        };
+// ============================================================
+// DADOS ATUALIZADOS (CANAIS QUE PERMITEM REPRODUÇÃO EM SITES)
+// ============================================================
+
+const pasData = {
+    pas1: {
+        obrasUrl: "https://passeandounb.com/obras-do-pas-1/",
+        topics: {
+            "Matéria e suas Propriedades": [
+                { title: "Estados Físicos e Mudanças de Estado (Química em Ação)", url: "https://www.youtube.com/embed/Q6kQjezV2zA" }
+            ],
+            "Modelos Atômicos": [
+                { title: "Modelos Atômicos Resumão (Professor Jubilut)", url: "https://www.youtube.com/embed/H5V8wRrWxf0" }
+            ],
+            "Tabela Periódica": [
+                { title: "Tabela Periódica Completa (Química em Ação)", url: "https://www.youtube.com/embed/Wm4M8LojYaw" }
+            ],
+            "Ligações Químicas": [
+                { title: "Ligações Químicas - Iônica, Covalente e Metálica (Prof. Boaro)", url: "https://www.youtube.com/embed/Y7rjI-8DmFY" }
+            ],
+            "Físico-Química (Gases)": [
+                { title: "Leis dos Gases (Me Salva!)", url: "https://www.youtube.com/embed/CJtVymOYFJE" }
+            ]
+        }
+    },
+
+    pas2: {
+        obrasUrl: "https://passeandounb.com/obras-do-pas-2/",
+        topics: {
+            "Funções Inorgânicas": [
+                { title: "Ácidos, Bases, Sais e Óxidos (Química em Ação)", url: "https://www.youtube.com/embed/j4U3EjFUmL0" }
+            ],
+            "Estequiometria": [
+                { title: "Estequiometria – AULA COMPLETA (Ferretto)", url: "https://www.youtube.com/embed/PaGz3f-9k3w" }
+            ],
+            "Soluções": [
+                { title: "Soluções – Concentração e Diluição (Me Salva!)", url: "https://www.youtube.com/embed/xtH8l5MbR5A" }
+            ],
+            "Termoquímica": [
+                { title: "Termoquímica Resumo (Curso Enem Gratuito)", url: "https://www.youtube.com/embed/LLxNT5MMEEM" }
+            ],
+            "Cinética Química": [
+                { title: "Cinética – Velocidade das Reações (Química em Ação)", url: "https://www.youtube.com/embed/NkE1-j2ymlQ" }
+            ]
+        }
+    },
+
+    pas3: {
+        obrasUrl: "https://passeandounb.com/obras-do-pas-3/",
+        topics: {
+            "Química Orgânica I": [
+                { title: "Introdução à Química Orgânica (Química em Ação)", url: "https://www.youtube.com/embed/KY4HJqoeE1A" }
+            ],
+            "Química Orgânica II": [
+                { title: "Funções Orgânicas – Resumo (Ferretto)", url: "https://www.youtube.com/embed/Qf5-LJDrd9E" }
+            ],
+            "Equilíbrio Químico": [
+                { title: "Equilíbrio Químico Explicado (Me Salva!)", url: "https://www.youtube.com/embed/NXDxM2Pp1FQ" }
+            ],
+            "Eletroquímica": [
+                { title: "Pilhas e Eletrólise (Química em Ação)", url: "https://www.youtube.com/embed/2E5e0MyoVoA" }
+            ],
+            "Química Ambiental": [
+                { title: "Poluição e Química Ambiental (Brasil Escola)", url: "https://www.youtube.com/embed/ZxRjqTdRZ5o" }
+            ]
+        }
+    }
+};
+
+const enemData = {
+    obrasUrl: "https://passeandounb.com/obras-do-enem/",
+    topics: {
+        "Química Orgânica": [
+            { title: "Revisão de Orgânica para o ENEM (Ferretto)", url: "https://www.youtube.com/embed/vDZ8Vx4FjdI" }
+        ],
+        "Estequiometria": [
+            { title: "Estequiometria – ENEM (Professor Jubilut)", url: "https://www.youtube.com/embed/iP-b0ZspuN0" }
+        ],
+        "Soluções e Concentração": [
+            { title: "Concentração Comum e Molar (Ferretto)", url: "https://www.youtube.com/embed/MOYVZsUwEuk" }
+        ],
+        "Termoquímica e Cinética": [
+            { title: "Termoquímica – Resumo ENEM (Me Salva!)", url: "https://www.youtube.com/embed/VCXFZBLETUE" }
+        ],
+        "Eletroquímica": [
+            { title: "Eletrólise e Pilhas (Ferretto)", url: "https://www.youtube.com/embed/6onyFwnOYeM" }
+        ],
+        "Química Geral": [
+            { title: "Separação de Misturas (Ferretto)", url: "https://www.youtube.com/embed/-4nWQbaO5jU" }
+        ]
+    }
+};
+
 
 
         // DOM Elements
